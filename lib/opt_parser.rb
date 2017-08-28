@@ -19,7 +19,7 @@ module OptParser
     OptParser.raise_verbose_help('REPO') if @options[:repo].nil?
     OptParser.raise_verbose_help('CONTEXT') if @options[:context].nil?
     OptParser.raise_verbose_help('DESCRIPTION') if @options[:description].nil?
-    OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil?
+    OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil? and @options[:changes_test].nil?
     OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil? 
     OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil? 
   end
@@ -51,7 +51,11 @@ module OptParser
              'script which contain test to be executed against pr') do |test_file|
         @options[:test_file] = test_file
       end
-      
+
+      opt.on("--changelogtest", 'check if the PR include a changelog entry') do |changelogtest|
+        @options[:changelog_test] = changelogtest
+      end
+
       opt.on('-f', "--file \'.py\'", 'specify the file type of the pr which you want' \
                   'to run the test against ex .py, .java, .rb') do |file_type|
         @options[:file_type] = file_type

@@ -30,6 +30,29 @@ def pr_test(upstream, pr_sha_com, repo, pr_branch)
   git.del_pr_branch(upstream, pr_branch)
 end
 
+def check_if_changes_files_changed(repo, pr)
+  if @changelog_test
+    @j_status = 'success'
+
+    if @pr_files.any? == false
+      @j_status = 'failure'
+      pr_number = pr.number
+      comments = @client.issue_comments(repo, pr_number)
+      if ! comments.nil?
+        comments.each do |com|
+          if com.body.include?("no changelog needed!")
+            @j_status = 'success'
+            break
+          end
+        end
+      end
+    end
+    @client.create_status(repo, pr.head.sha, @j_status,
+                          context: @context, description: @description,
+                          target_url: @target_url)
+  end
+end
+
 # check all files of a Prs Number if they are a specific type
 # EX: Pr 56, we check if files are '.rb'
 def check_for_all_files(repo, pr_number, type)
@@ -61,6 +84,7 @@ def launch_test_and_setup_status(repo, pr_head_sha, pr_head_ref, pr_base_ref)
 end
 # *********************************************
 
+
 @options = OptParser.get_options
 # git_dir is where we have the github repo in our machine
 @git_dir = @options[:git_dir]
@@ -70,6 +94,7 @@ repo = @options[:repo]
 @context = @options[:context]
 @description = @options[:description]
 @test_file = @options[:test_file]
+@changelog_test = @options[:changelog_test]
 @timeout = @options[:timeout]
 # optional, this url will be appended on github page.(usually a jenkins)
 @target_url = @options[:target_url]
@@ -97,7 +122,10 @@ prs.each do |pr|
   rescue NoMethodError
     # in this situation we have no reviews-tests set at all.
     check_for_all_files(repo, pr.number, @file_type)
-    if @pr_files.any? == false
+    if @changelog_test
+      check_if_changes_files_changed(repo, pr)
+      next
+    elsif @pr_files.any? == false
       puts "no files of type #{@file_type} found! skipping"
       next
     else
@@ -132,17 +160,25 @@ prs.each do |pr|
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
     check_for_all_files(repo, pr.number, @file_type)
+    if @changelog_test
+      check_if_changes_files_changed(repo, pr)
+      exit 0
+    end
     next if @pr_files.any? == false
     exit 1 if @check
     launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
     break
   end
- # we want redo sometimes test on a specific PR number
- # (if the jenkins job get lost) even if the test was ok
+  # we want redo sometimes test on a specific PR number
+  # (if the jenkins job get lost) even if the test was ok
   next if @pr_number.nil?
   puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
   if @pr_number == pr.number
     puts "found an open pr #{@pr_number}"
+    if @changelog_test
+      check_if_changes_files_changed(repo, pr)
+      exit 0
+    end
     exit 1 if @check
     launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
     break
