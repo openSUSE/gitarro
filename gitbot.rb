@@ -9,7 +9,6 @@ require_relative 'lib/git_op'
 def run_script
   f_not_exist_msg = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
   raise f_not_exist_msg if File.file?(@test_file) == false
-
   out = `#{@test_file}`
   @j_status = 'failure' if $?.exitstatus.nonzero?
   @j_status = 'success' if $?.exitstatus.zero?
@@ -46,12 +45,16 @@ end
 # this function will check if the PR contains in comment the magic word
 # # for retrigger all the tests.
 def magicword(repo, pr_number)
+   # FIXME: we cannot target all contexts.
+   # We need to do specific tests
    magic_word_trigger = '@gitbot rerun the macarena'
    pr_comm = @client.issue_comments(repo, pr_number)
-   # check author organisation ("suse")
    pr_comm.each do |com|
      puts com.body
-     return true if com.body.include?  magic_word_trigger
+     next unless @client.organization_member?(@org, com.user.login)
+     if com.body.include?  magic_word_trigger
+       return true
+     end
    end
    false
 end
@@ -90,7 +93,8 @@ repo = @options[:repo]
 Octokit.auto_paginate = true
 @client = Octokit::Client.new(netrc: true)
 @j_status = ''
-
+# FIXME: remove hardcode and add an option param for organisation.
+@org = 'SUSE'
 # fetch all open PRS
 prs = @client.pull_requests(repo, state: 'open')
 # exit if repo has no prs open
