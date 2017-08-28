@@ -46,7 +46,7 @@ end
 # this function will check if the PR contains in comment the magic word
 # # for retrigger all the tests.
 def magicword(repo, pr_number, context)
-  magic_word_trigger = "@gitbot rerun #{context}!"
+  magic_word_trigger = "@gitbot rerun #{context} !!!"
   puts magic_word_trigger
   pr_comm = @client.issue_comments(repo, pr_number)
   pr_comm.each do |com|
