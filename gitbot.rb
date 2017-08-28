@@ -46,13 +46,14 @@ end
 # this function will check if the PR contains in comment the magic word
 # # for retrigger all the tests.
 def magicword(repo, pr_number)
-   magic_word_trigger = 'gitbot rerun the macarena'
-   pr_comm = @client.pull_request_comments(repo, pr_number)
+   magic_word_trigger = '@gitbot rerun the macarena'
+   pr_comm = @client.issue_comments(repo, pr_number)
+   # check author organisation ("suse")
    pr_comm.each do |com|
-     com.include?  magic_word_trigger
-     return True
+     puts com.body
+     return true if com.body.include?  magic_word_trigger
    end
-   False
+   false
 end
 
 # this function setup first pending to PR, then execute the tests
@@ -73,7 +74,7 @@ def launch_test_and_setup_status(repo, pr_head_sha, pr_head_ref, pr_base_ref)
 end
 # *********************************************
 
-@options = OptParser.get_options
+@options = OptParser.gitbot_options
 # git_dir is where we have the github repo in our machine
 @git_dir = @options[:git_dir]
 @pr_files = []
@@ -149,14 +150,13 @@ prs.each do |pr|
     break
   end
  # we want redo sometimes test on a specific PR number
-  next if magicword == false
+  next if magicword(repo, pr.number) == false
   check_for_all_files(repo, pr.number, @file_type)
   next if @pr_files.any? == false
   puts 'Got retriggered by magic word'
   exit 1 if @check
   launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
   break
-  end
 end
 
 STDOUT.flush

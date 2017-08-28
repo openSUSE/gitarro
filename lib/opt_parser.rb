@@ -24,12 +24,12 @@ module OptParser
     OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil?
   end
 
-  def self.get_options
+  def self.gitbot_options
     name = './gitbot.rb'
     @opt_parser = OptionParser.new do |opt|
       opt.banner = "************************************************\n" \
         "Usage: gitbot [OPTIONS] \n" \
-        " EXAMPLE: ======> #{name} -r MalloZup/galaxy-botkins -c \"python-test\" " \
+        " EXAMPLE: ======> #{name} -r openSUSE/gitbot -c \"pysthon-test\" " \
         "-d \"pyflakes_linttest\" -g /tmp/pr-ruby01/ -t /tmp/tests-to-be-executed -f \".py\"\n\n"
       opt.separator 'MANDATORY Options'
 
