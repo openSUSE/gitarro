@@ -45,10 +45,8 @@ end
 
 # this function will check if the PR contains in comment the magic word
 # # for retrigger all the tests.
-def magicword(repo, pr_number)
-   # FIXME: we cannot target all contexts.
-   # We need to do specific tests
-  magic_word_trigger = '@gitbot rerun the macarena'
+def magicword(repo, pr_number, context)
+  magic_word_trigger = "@gitbot rerun #{context}"
   pr_comm = @client.issue_comments(repo, pr_number)
   pr_comm.each do |com|
     puts com.body
@@ -153,7 +151,7 @@ prs.each do |pr|
     break
   end
  # we want redo sometimes test on a specific PR number
-  next if magicword(repo, pr.number) == false
+  next if magicword(repo, pr.number, @context) == false
   check_for_all_files(repo, pr.number, @file_type)
   next if @pr_files.any? == false
   puts 'Got retriggered by magic word'
