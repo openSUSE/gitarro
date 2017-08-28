@@ -72,4 +72,8 @@ EXAMPLE:
 The context trigger the exec. of tests.
 
 
+#### Advanced documentation
+
+- Retrigger the jobs. [Advanced_doc](doc/ADVANCED.md)
+
 ************************************************
