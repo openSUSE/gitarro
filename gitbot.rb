@@ -162,7 +162,7 @@ prs.each do |pr|
     check_for_all_files(repo, pr.number, @file_type)
     if @changelog_test
       check_if_changes_files_changed(repo, pr)
-      exit 0
+      next
     end
     next if @pr_files.any? == false
     exit 1 if @check
@@ -177,7 +177,7 @@ prs.each do |pr|
     puts "found an open pr #{@pr_number}"
     if @changelog_test
       check_if_changes_files_changed(repo, pr)
-      exit 0
+      next
     end
     exit 1 if @check
     launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
