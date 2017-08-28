@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 
+require 'English'
 require 'octokit'
 require 'optparse'
 require_relative 'lib/opt_parser'
@@ -10,8 +11,8 @@ def run_script
   f_not_exist_msg = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
   raise f_not_exist_msg if File.file?(@test_file) == false
   out = `#{@test_file}`
-  @j_status = 'failure' if $?.exitstatus.nonzero?
-  @j_status = 'success' if $?.exitstatus.zero?
+  @j_status = 'failure' if $CHILD_STATUS.exitstatus.nonzero?
+  @j_status = 'success' if $CHILD_STATUS.exitstatus.zero?
   puts out
 end
 
@@ -47,16 +48,14 @@ end
 def magicword(repo, pr_number)
    # FIXME: we cannot target all contexts.
    # We need to do specific tests
-   magic_word_trigger = '@gitbot rerun the macarena'
-   pr_comm = @client.issue_comments(repo, pr_number)
-   pr_comm.each do |com|
-     puts com.body
-     next unless @client.organization_member?(@org, com.user.login)
-     if com.body.include?  magic_word_trigger
-       return true
-     end
-   end
-   false
+  magic_word_trigger = '@gitbot rerun the macarena'
+  pr_comm = @client.issue_comments(repo, pr_number)
+  pr_comm.each do |com|
+    puts com.body
+    next unless @client.organization_member?(@org, com.user.login)
+    return true if com.body.include? magic_word_trigger
+  end
+  false
 end
 
 # this function setup first pending to PR, then execute the tests
