@@ -2,7 +2,7 @@
 ![GUNDAM image](help/gundam.jpg)
 ![GUNDAM image](help/gundam.jpg)
 
-[![Build Status Master branch](https://travis-ci.org/MalloZup/gitbot.svg?branch=master)](https://travis-ci.org/MalloZup/gitbot)
+[![Build Status Master branch](https://travis-ci.org/openSUSE/gitbot.svg?branch=master)](https://travis-ci.org/openSUSE/gitbot)
 
 ## Gitbot: automatize your Prs testing with your custom test env.
 Gitbot allow you to run tests on prs. It run on each Systems that support ruby and octokit.
