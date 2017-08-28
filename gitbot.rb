@@ -43,6 +43,18 @@ def create_comment(repo, pr, comment)
   @client.create_commit_comment(repo, pr, comment)
 end
 
+# this function will check if the PR contains in comment the magic word
+# # for retrigger all the tests.
+def magicword(repo, pr_number)
+   magic_word_trigger = 'gitbot rerun the macarena'
+   pr_comm = @client.pull_request_comments(repo, pr_number)
+   pr_comm.each do |com|
+     com.include?  magic_word_trigger
+     return True
+   end
+   False
+end
+
 # this function setup first pending to PR, then execute the tests
 # then set the status according to the results of script executed.
 # pr_head = is the PR branch
@@ -73,7 +85,6 @@ repo = @options[:repo]
 @timeout = @options[:timeout]
 # optional, this url will be appended on github page.(usually a jenkins)
 @target_url = @options[:target_url]
-@pr_number = @options[:pr_number]
 @check = @options[:check]
 Octokit.auto_paginate = true
 @client = Octokit::Client.new(netrc: true)
@@ -138,14 +149,13 @@ prs.each do |pr|
     break
   end
  # we want redo sometimes test on a specific PR number
- # (if the jenkins job get lost) even if the test was ok
-  next if @pr_number.nil?
-  puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
-  if @pr_number == pr.number
-    puts "found an open pr #{@pr_number}"
-    exit 1 if @check
-    launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
-    break
+  next if magicword == false
+  check_for_all_files(repo, pr.number, @file_type)
+  next if @pr_files.any? == false
+  puts 'Got retriggered by magic word'
+  exit 1 if @check
+  launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
+  break
   end
 end
 
