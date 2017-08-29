@@ -4,6 +4,7 @@ require 'octokit'
 require 'optparse'
 require_relative 'lib/opt_parser'
 require_relative 'lib/git_op'
+require_relative 'lib/gitbot_backend'
 
 # run validation script for validating the PR.
 def run_script
