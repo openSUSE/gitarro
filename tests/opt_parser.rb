@@ -7,7 +7,7 @@ class GitbotOptionTest < Minitest::Test
   def set_option(hash, s)
     OptParser.options = hash
     ex = assert_raises OptionParser::MissingArgument do
-      OptParser.get_options
+      OptParser.gitbot_options
     end
     assert_equal("missing argument: #{s}", ex.message)
   end
@@ -25,7 +25,7 @@ class GitbotOptionTest < Minitest::Test
                   description: 'functional', test_file: 'gino.sh',
                   file_type: '.sh', git_dir: 'gitty' }
     OptParser.options = full_hash
-    options = OptParser.get_options
+    options = OptParser.gitbot_options
     assert_equal('gino/gitbot', options[:repo])
     assert_equal('python-t', options[:context])
     assert_equal('functional', options[:description])

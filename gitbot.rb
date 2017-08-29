@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 
+require 'English'
 require 'octokit'
 require 'optparse'
 require_relative 'lib/opt_parser'
@@ -9,10 +10,9 @@ require_relative 'lib/git_op'
 def run_script
   f_not_exist_msg = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
   raise f_not_exist_msg if File.file?(@test_file) == false
-
   out = `#{@test_file}`
-  @j_status = 'failure' if $?.exitstatus.nonzero?
-  @j_status = 'success' if $?.exitstatus.zero?
+  @j_status = 'failure' if $CHILD_STATUS.exitstatus.nonzero?
+  @j_status = 'success' if $CHILD_STATUS.exitstatus.zero?
   puts out
 end
 
@@ -66,6 +66,25 @@ def create_comment(repo, pr, comment)
   @client.create_commit_comment(repo, pr, comment)
 end
 
+# this function will check if the PR contains in comment the magic word
+# # for retrigger all the tests.
+def magicword(repo, pr_number, context)
+  magic_word_trigger = "@gitbot rerun #{context} !!!"
+  pr_comment = @client.issue_comments(repo, pr_number)
+  # a pr contain always a comments, cannot be nil		
+  pr_comment.each do |com|
+    puts com.body
+    # if user in @org retrigger only
+    next unless @client.organization_member?(@org, com.user.login)
+    # delete comment otherwise it will be retrigger infinetely
+    if com.body.include? magic_word_trigger
+      @client.delete_comment(repo, com.id)
+      return true
+    end
+  end
+  false
+end
+
 # this function setup first pending to PR, then execute the tests
 # then set the status according to the results of script executed.
 # pr_head = is the PR branch
@@ -84,8 +103,7 @@ def launch_test_and_setup_status(repo, pr_head_sha, pr_head_ref, pr_base_ref)
 end
 # *********************************************
 
-
-@options = OptParser.get_options
+@options = OptParser.gitbot_options
 # git_dir is where we have the github repo in our machine
 @git_dir = @options[:git_dir]
 @pr_files = []
@@ -98,12 +116,12 @@ repo = @options[:repo]
 @timeout = @options[:timeout]
 # optional, this url will be appended on github page.(usually a jenkins)
 @target_url = @options[:target_url]
-@pr_number = @options[:pr_number]
 @check = @options[:check]
 Octokit.auto_paginate = true
 @client = Octokit::Client.new(netrc: true)
 @j_status = ''
-
+# FIXME: remove hardcode and add an option param for organisation.
+@org = 'SUSE'
 # fetch all open PRS
 prs = @client.pull_requests(repo, state: 'open')
 # exit if repo has no prs open
@@ -169,20 +187,14 @@ prs.each do |pr|
     launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
     break
   end
-  # we want redo sometimes test on a specific PR number
-  # (if the jenkins job get lost) even if the test was ok
-  next if @pr_number.nil?
-  puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
-  if @pr_number == pr.number
-    puts "found an open pr #{@pr_number}"
-    if @changelog_test
-      check_if_changes_files_changed(repo, pr)
-      next
-    end
-    exit 1 if @check
-    launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
-    break
-  end
+  # we want redo sometimes test
+  next if magicword(repo, pr.number, @context) == false
+  check_for_all_files(repo, pr.number, @file_type)
+  next if @pr_files.any? == false
+  puts 'Got retriggered by magic word'
+  exit 1 if @check
+  launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
+  break
 end
 
 STDOUT.flush
