@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-gem 'rubocop'
-gem 'octokit'
-gem 'netrc'
 gem 'english'
 gem 'minitest'
 gem 'minitest-reporters'
+gem 'netrc'
+gem 'octokit'
+gem 'rubocop'

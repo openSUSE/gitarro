@@ -48,11 +48,18 @@ end
 def magicword(repo, pr_number, context)
   magic_word_trigger = "@gitbot rerun #{context} !!!"
   puts magic_word_trigger
-  pr_comm = @client.issue_comments(repo, pr_number)
-  pr_comm.each do |com|
+  pr_comment = @client.issue_comments(repo, pr_number)
+  # a pr contain always a comments, cannot be nil		
+  pr_comment.each do |com|
     puts com.body
+    # if user in @org retrigger only
     next unless @client.organization_member?(@org, com.user.login)
-    return true if com.body.include? magic_word_trigger
+    # delete comment otherwise it will be retrigger infinetely
+    #
+    if com.body.include? magic_word_trigger
+      @client.delete_comment(repo, com.id)
+      return true
+    end
   end
   false
 end
@@ -151,7 +158,7 @@ prs.each do |pr|
     launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
     break
   end
- # we want redo sometimes test on a specific PR number
+  # we want redo sometimes test on a specific PR number
   next if magicword(repo, pr.number, @context) == false
   check_for_all_files(repo, pr.number, @file_type)
   next if @pr_files.any? == false
