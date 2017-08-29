@@ -26,7 +26,7 @@ module OptParser
     @options[:file_type] = ".changes" if @options[:changelog_test]
   end
 
-  def OptParser.get_options
+  def OptParser.gitbot_options
   name = './gitbot.rb'
    @opt_parser = OptionParser.new do |opt|
       opt.banner = "************************************************\n" \
