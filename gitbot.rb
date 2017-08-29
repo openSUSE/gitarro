@@ -6,17 +6,6 @@ require_relative 'lib/opt_parser'
 require_relative 'lib/git_op'
 require_relative 'lib/gitbot_backend'
 
-# run validation script for validating the PR.
-def run_script
-  f_not_exist_msg = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
-  raise f_not_exist_msg if File.file?(@test_file) == false
-
-  out = `#{@test_file}`
-  @j_status = 'failure' if $?.exitstatus.nonzero?
-  @j_status = 'success' if $?.exitstatus.zero?
-  puts out
-end
-
 # main function for doing the test
 def pr_test(upstream, pr_sha_com, repo, pr_branch)
   git = GitOp.new(@git_dir)
@@ -62,23 +51,6 @@ def launch_test_and_setup_status(repo, pr_head_sha, pr_head_ref, pr_base_ref)
 end
 # *********************************************
 
-@options = OptParser.get_options
-# git_dir is where we have the github repo in our machine
-@git_dir = @options[:git_dir]
-@pr_files = []
-@file_type = @options[:file_type]
-repo = @options[:repo]
-@context = @options[:context]
-@description = @options[:description]
-@test_file = @options[:test_file]
-@timeout = @options[:timeout]
-# optional, this url will be appended on github page.(usually a jenkins)
-@target_url = @options[:target_url]
-@pr_number = @options[:pr_number]
-@check = @options[:check]
-Octokit.auto_paginate = true
-@client = Octokit::Client.new(netrc: true)
-@j_status = ''
 
 # fetch all open PRS
 prs = @client.pull_requests(repo, state: 'open')
