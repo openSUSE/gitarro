@@ -186,12 +186,19 @@ prs.each do |pr|
     launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
     break
   end
-  # we want redo sometimes test
+  # we want redo sometimes tests
   next if magicword(repo, pr.number, @context) == false
   check_for_all_files(repo, pr.number, @file_type)
   next if @pr_files.any? == false
   puts 'Got retriggered by magic word'
-  exit 1 if @check
+  if @check
+    # if check is set, the comment in the trigger job will be del.
+    # so setting it to pending, it will be remembered
+    @client.create_status(repo, pr.head.sha, 'pending',
+                          context: @context, description: @description,
+                          target_url: @target_url)
+    exit 1
+  end
   launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
   break
 end
