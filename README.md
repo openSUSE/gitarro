@@ -35,7 +35,7 @@ Configure the netrc file like this:
 machine api.github.com login MY_GITHUB_USE password MY_PASSWORD
 ```
 
-### 3) run it : USAGE:
+### 3) run it : 
 ```console
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x tests.sh
@@ -45,8 +45,12 @@ ruby gitbot.rb -r openSUSE/gitbot -c "ruby-test" -d "ruby-gitbot-tuto" -g /tmp/p
 
 ### Documentation
 
-Basically gitbot run a validation script/commands (-t) (could be bash, python, ruby) against each open PR of your XXX Branch.
-The Open Pull-request will then scanned for modifications on specific file type modified (-f ".py" as example). If the pr doesn't modify a python file( -f '.py') gitbot doesn't run a test against the pr.
+
+#### Basic design
+Basically gitbot run a validation script/commands (-t) (could be bash, python, ruby, etc) against each open PR of your XXX Branch.
+
+All open Pull-request will be then scanned for modifications on specific file type modified (-f ".py" as example). 
+If the pr doesn't modify a python file( -f '.py') gitbot doesn't run a test against the pr.
 
 If you have 10 untested PRs, you have to run it 10 times. 
 Gitbot was especially so designed, because 1 run equals a 1 Jenkins Job.
@@ -59,6 +63,7 @@ EXAMPLE:
 
 The context trigger the exec. of tests.
 
+For more doc refer to [Documentation](doc/README.md)
 
 #### Advanced documentation
 
