@@ -19,11 +19,13 @@ module OptParser
     OptParser.raise_verbose_help('REPO') if @options[:repo].nil?
     OptParser.raise_verbose_help('CONTEXT') if @options[:context].nil?
     OptParser.raise_verbose_help('DESCRIPTION') if @options[:description].nil?
-    OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil?
+    OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil? && @options[:changelog_test].nil?
     OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil? 
     OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil? 
+
+    @options[:file_type] = ".changes" if @options[:changelog_test]
   end
- 
+
   def OptParser.get_options
   name = './gitbot.rb'
    @opt_parser = OptionParser.new do |opt|
@@ -51,7 +53,7 @@ module OptParser
              'script which contain test to be executed against pr') do |test_file|
         @options[:test_file] = test_file
       end
-      
+
       opt.on('-f', "--file \'.py\'", 'specify the file type of the pr which you want' \
                   'to run the test against ex .py, .java, .rb') do |file_type|
         @options[:file_type] = file_type
@@ -79,6 +81,10 @@ module OptParser
                   ' when using this option, you force gitbot to run tests against a specific PR NUMBER, even if the test was already run') do |pr_number|
   
         @options[:pr_number] = Integer(pr_number)
+      end
+
+      opt.on("--changelogtest", 'check if the PR include a changelog entry. Automatically set --file ".changes"') do |changelogtest|
+        @options[:changelog_test] = changelogtest
       end
 
       opt.on('-C', "--check", "check, if a PR requires test" \
