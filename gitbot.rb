@@ -47,7 +47,6 @@ end
 # # for retrigger all the tests.
 def magicword(repo, pr_number, context)
   magic_word_trigger = "@gitbot rerun #{context} !!!"
-  puts magic_word_trigger
   pr_comment = @client.issue_comments(repo, pr_number)
   # a pr contain always a comments, cannot be nil		
   pr_comment.each do |com|
@@ -55,7 +54,6 @@ def magicword(repo, pr_number, context)
     # if user in @org retrigger only
     next unless @client.organization_member?(@org, com.user.login)
     # delete comment otherwise it will be retrigger infinetely
-    #
     if com.body.include? magic_word_trigger
       @client.delete_comment(repo, com.id)
       return true
