@@ -5,6 +5,10 @@
 
 For retrigger a specific test, you need to add a comment on the pr.
 
+**TAKE CARE**: gitbot will delete the comment where you write the retriggering magic word, 
+so make sure you write the retrigger in different comment
+
+
 The user must be in the SUSE org for retrigger the tests, and the msg should have :
 
 
