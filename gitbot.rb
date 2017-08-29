@@ -25,16 +25,16 @@ prs.each do |pr|
     puts commit_state.statuses[0]['state']
   rescue NoMethodError
     # in this situation we have no reviews-tests set at all.
-    check_for_all_files(repo, pr.number, @file_type)
+    gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
     if @changelog_test
-      check_if_changes_files_changed(repo, pr)
+      gb.check_if_changes_files_changed(gb.repo, pr)
       next
-    elsif @pr_files.any? == false
-      puts "no files of type #{@file_type} found! skipping"
+    elsif gb.pr_files.any? == false
+      puts "no files of type #{gb.file_type} found! skipping"
       next
     else
-      exit 1 if @check
-      launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
+      exit 1 if gb.check
+      gb.launch_test_and_setup_status(gb.repo, pr.head.sha, pr.head.ref, pr.base.ref)
       break
     end
   end
