@@ -3,33 +3,35 @@
 # Opt_parser module, is for getting needed options
 
 module OptParser
-  # this is for testing 
+  # this is for testing
   class << self; attr_accessor :options; end
   @options = {}
   @options = options.clone if options.any? == true
-  
-  def OptParser.raise_verbose_help(msg)
+
+  def self.raise_verbose_help(msg)
     puts @opt_parser
     puts "************************************************\n"
     raise OptionParser::MissingArgument, msg
   end
 
-  def OptParser.parse(opt_parser)
+  def self.parse(opt_parser)
     opt_parser.parse!
     OptParser.raise_verbose_help('REPO') if @options[:repo].nil?
     OptParser.raise_verbose_help('CONTEXT') if @options[:context].nil?
     OptParser.raise_verbose_help('DESCRIPTION') if @options[:description].nil?
-    OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil?
+    OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil? && @options[:changelog_test].nil?
     OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil? 
     OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil? 
+
+    @options[:file_type] = ".changes" if @options[:changelog_test]
   end
- 
-  def OptParser.get_options
+
+  def OptParser.gitbot_options
   name = './gitbot.rb'
    @opt_parser = OptionParser.new do |opt|
       opt.banner = "************************************************\n" \
         "Usage: gitbot [OPTIONS] \n" \
-        " EXAMPLE: ======> #{name} -r MalloZup/galaxy-botkins -c \"python-test\" " \
+        " EXAMPLE: ======> #{name} -r openSUSE/gitbot -c \"pysthon-test\" " \
         "-d \"pyflakes_linttest\" -g /tmp/pr-ruby01/ -t /tmp/tests-to-be-executed -f \".py\"\n\n"
       opt.separator 'MANDATORY Options'
 
@@ -51,7 +53,7 @@ module OptParser
              'script which contain test to be executed against pr') do |test_file|
         @options[:test_file] = test_file
       end
-      
+
       opt.on('-f', "--file \'.py\'", 'specify the file type of the pr which you want' \
                   'to run the test against ex .py, .java, .rb') do |file_type|
         @options[:file_type] = file_type
@@ -61,24 +63,22 @@ module OptParser
                   'EXAMPLE : /tmp/pr-test/ if the dir doesnt exists, gitbot will create one.') do |git_dir|
         @options[:git_dir] = git_dir
       end
-      
+
       opt.separator 'OPTIONAL Options'
-     
-      opt.on('-u', "--url TARGET_URL", 'specify the url to append to github review' \
+
+      opt.on('-u', '--url TARGET_URL', 'specify the url to append to github review' \
                   ' usually is the jenkins url of the job') do |target_url|
         @options[:target_url] = target_url
       end
 
-      opt.on('-s', "--secs TIMEOUT", 'specify the secs you want to wait/sleep if the' \
+      opt.on('-s', '--secs TIMEOUT', 'specify the secs you want to wait/sleep if the' \
                   ' gitbot is not finding any valid PRs to review. (usefull to spare jenkins jobs history)') do |timeout|
-  
+
         @options[:timeout] = Integer(timeout)
       end
 
-      opt.on('-P', "--PR NUMBER", 'specify the pr number for running the test.' \
-                  ' when using this option, you force gitbot to run tests against a specific PR NUMBER, even if the test was already run') do |pr_number|
-  
-        @options[:pr_number] = Integer(pr_number)
+      opt.on("--changelogtest", 'check if the PR include a changelog entry. Automatically set --file ".changes"') do |changelogtest|
+        @options[:changelog_test] = changelogtest
       end
 
       opt.on('-C', "--check", "check, if a PR requires test" \
@@ -93,7 +93,7 @@ module OptParser
         exit 0
       end
     end
-   OptParser.parse(@opt_parser)
-   return @options
+    OptParser.parse(@opt_parser)
+    @options
   end
 end
