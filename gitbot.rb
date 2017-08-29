@@ -7,15 +7,15 @@ require_relative 'lib/opt_parser'
 require_relative 'lib/git_op'
 require_relative 'lib/gitbot_backend'
 
-
 # fetch all open PRS
-prs = @client.pull_requests(repo, state: 'open')
+gb = GitbotBackend.new
+prs = gb.client.pull_requests(gb.repo, state: 'open')
 # exit if repo has no prs open
 puts 'no Pull request OPEN on the REPO!' if prs.any? == false
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # this check the last commit state, catch for review or not reviewd status.
-  commit_state = @client.status(repo, pr.head.sha)
+  commit_state = gb.client.status(gb.repo, pr.head.sha)
   begin
     # the first element of array a review-test. 
     # if the pr has travis test and one custom, we will have 2 elements.
