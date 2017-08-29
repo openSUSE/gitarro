@@ -32,8 +32,6 @@ end
 
 def check_if_changes_files_changed(repo, pr)
   if @changelog_test
-    @j_status = 'success'
-
     if @pr_files.any? == false
       @j_status = 'failure'
       pr_number = pr.number
@@ -46,6 +44,8 @@ def check_if_changes_files_changed(repo, pr)
           end
         end
       end
+    else
+      @j_status = 'success'
     end
     @client.create_status(repo, pr.head.sha, @j_status,
                           context: @context, description: @description,
