@@ -52,10 +52,6 @@ module OptParser
         @options[:test_file] = test_file
       end
 
-      opt.on("--changelogtest", 'check if the PR include a changelog entry') do |changelogtest|
-        @options[:changelog_test] = changelogtest
-      end
-
       opt.on('-f', "--file \'.py\'", 'specify the file type of the pr which you want' \
                   'to run the test against ex .py, .java, .rb') do |file_type|
         @options[:file_type] = file_type
@@ -83,6 +79,10 @@ module OptParser
                   ' when using this option, you force gitbot to run tests against a specific PR NUMBER, even if the test was already run') do |pr_number|
   
         @options[:pr_number] = Integer(pr_number)
+      end
+
+      opt.on("--changelogtest", 'check if the PR include a changelog entry') do |changelogtest|
+        @options[:changelog_test] = changelogtest
       end
 
       opt.on('-C', "--check", "check, if a PR requires test" \
