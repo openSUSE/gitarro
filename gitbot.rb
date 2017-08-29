@@ -30,6 +30,29 @@ def pr_test(upstream, pr_sha_com, repo, pr_branch)
   git.del_pr_branch(upstream, pr_branch)
 end
 
+def check_if_changes_files_changed(repo, pr)
+  if @changelog_test
+    if @pr_files.any? == false
+      @j_status = 'failure'
+      pr_number = pr.number
+      comments = @client.issue_comments(repo, pr_number)
+      if ! comments.nil?
+        comments.each do |com|
+          if com.body.include?("no changelog needed!")
+            @j_status = 'success'
+            break
+          end
+        end
+      end
+    else
+      @j_status = 'success'
+    end
+    @client.create_status(repo, pr.head.sha, @j_status,
+                          context: @context, description: @description,
+                          target_url: @target_url)
+  end
+end
+
 # check all files of a Prs Number if they are a specific type
 # EX: Pr 56, we check if files are '.rb'
 def check_for_all_files(repo, pr_number, type)
@@ -89,6 +112,7 @@ repo = @options[:repo]
 @context = @options[:context]
 @description = @options[:description]
 @test_file = @options[:test_file]
+@changelog_test = @options[:changelog_test]
 @timeout = @options[:timeout]
 # optional, this url will be appended on github page.(usually a jenkins)
 @target_url = @options[:target_url]
@@ -116,7 +140,10 @@ prs.each do |pr|
   rescue NoMethodError
     # in this situation we have no reviews-tests set at all.
     check_for_all_files(repo, pr.number, @file_type)
-    if @pr_files.any? == false
+    if @changelog_test
+      check_if_changes_files_changed(repo, pr)
+      next
+    elsif @pr_files.any? == false
       puts "no files of type #{@file_type} found! skipping"
       next
     else
@@ -151,12 +178,16 @@ prs.each do |pr|
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
     check_for_all_files(repo, pr.number, @file_type)
+    if @changelog_test
+      check_if_changes_files_changed(repo, pr)
+      next
+    end
     next if @pr_files.any? == false
     exit 1 if @check
     launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
     break
   end
-  # we want redo sometimes test on a specific PR number
+  # we want redo sometimes test
   next if magicword(repo, pr.number, @context) == false
   check_for_all_files(repo, pr.number, @file_type)
   next if @pr_files.any? == false
