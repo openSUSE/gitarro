@@ -22,8 +22,12 @@ module OptParser
     OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil? and @options[:changelog_test].nil?
     OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil? 
     OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil? 
+
+    if @options[:changelog_test]
+      @options[:file_type] = ".changes"
+    end
   end
- 
+
   def OptParser.get_options
   name = './gitbot.rb'
    @opt_parser = OptionParser.new do |opt|
@@ -81,7 +85,7 @@ module OptParser
         @options[:pr_number] = Integer(pr_number)
       end
 
-      opt.on("--changelogtest", 'check if the PR include a changelog entry') do |changelogtest|
+      opt.on("--changelogtest", 'check if the PR include a changelog entry. Automatically set --file ".changes"') do |changelogtest|
         @options[:changelog_test] = changelogtest
       end
 
