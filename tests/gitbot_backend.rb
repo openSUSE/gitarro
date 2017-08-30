@@ -5,7 +5,6 @@ require_relative '../lib/gitbot_backend.rb'
 
 # Test the option parser
 class GitbotBackendTest2 < Minitest::Test
-
   def test_full_option_import2
     @full_hash = { repo: 'gino/gitbot', context: 'python-t', description: 'functional', test_file: 'gino.sh', file_type: '.sh', git_dir: 'gitty' }
     OptParser.options = @full_hash
@@ -21,5 +20,4 @@ class GitbotBackendTest2 < Minitest::Test
     assert_equal('.sh', gitbot.file_type)
     assert_equal('gitty', gitbot.git_dir)
   end
-
 end

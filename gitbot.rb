@@ -82,8 +82,8 @@ prs.each do |pr|
     # if check is set, the comment in the trigger job will be del.
     # so setting it to pending, it will be remembered
     gb.client.create_status(gb.repo, pr.head.sha, 'pending',
-                          context: gb.context, description: gb.description,
-                          target_url: gb.target_url)
+                            context: gb.context, description: gb.description,
+                            target_url: gb.target_url)
     exit 1
   end
   gb.launch_test_and_setup_status(gb.repo, pr.head.sha, pr.head.ref, pr.base.ref)

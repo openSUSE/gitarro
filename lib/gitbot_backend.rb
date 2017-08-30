@@ -8,7 +8,7 @@ require_relative 'git_op'
 
 # this class is the backend of gitbot, were we execute the tests and so on
 class GitbotBackend
-  attr_accessor :j_status, :options , :client, :pr_files
+  attr_accessor :j_status, :options, :client, :pr_files
   def initialize
     Octokit.auto_paginate = true
     @client = Octokit::Client.new(netrc: true)
