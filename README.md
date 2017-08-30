@@ -13,10 +13,12 @@ Gitbot allow you to run tests on prs. It run on each Systems that support ruby a
 
 # Why gitbot?
 
-Gitbot was developed. to run jenkins job against a repo.
-It differs from travis because it's not limited on container or others limited env, it just run everywhere.
+Gitbot can execute test against Github prs.
+The tests is an external validation script that will be executed against your branch.
+In this way you can run all type of test on PRs and setting the status on github according to the test.
+Furthermore in this way, you can run test in all type of env. like custom docker container(openSUSE, fedora, debian), or vms.
 
-Like in custom jenkins server or vms(OS indipendent), or in custum containers.
+For gitbot the vms or script doesn't matter, since his focus is on scheduling the test and setting the status to you github project.
 
 
 ## 1) Installation:
