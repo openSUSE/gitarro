@@ -17,10 +17,10 @@ prs.each do |pr|
   # this check the last commit state, catch for review or not reviewd status.
   commit_state = gb.client.status(gb.repo, pr.head.sha)
   begin
-    # the first element of array a review-test. 
+    # the first element of array a review-test.
     # if the pr has travis test and one custom, we will have 2 elements.
     # in this case, if the 1st element doesn't have the state property
-    # state property is "pending", failure etc. 
+    # state property is "pending", failure etc.
     # if we don't have this, the PRs is "unreviewed"
     puts commit_state.statuses[0]['state']
   rescue NoMethodError

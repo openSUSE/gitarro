@@ -27,14 +27,14 @@ module OptParser
     OptParser.raise_verbose_help('CONTEXT') if @options[:context].nil?
     OptParser.raise_verbose_help('DESCRIPTION') if @options[:description].nil?
     OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil?
-    OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil? 
-    OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil? 
-    OptParser.default_gitbot     
+    OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil?
+    OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil?
+    OptParser.default_gitbot
   end
 
   def OptParser.gitbot_options
-  name = './gitbot.rb'
-   @opt_parser = OptionParser.new do |opt|
+    name = './gitbot.rb'
+    @opt_parser = OptionParser.new do |opt|
       opt.banner = "************************************************\n" \
         "Usage: gitbot [OPTIONS] \n" \
         " EXAMPLE: ======> #{name} -r openSUSE/gitbot -c \"pysthon-test\" " \

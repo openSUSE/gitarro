@@ -6,78 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: Include, TreatCommentsAsGroupSeparators.
-# Include: **/Gemfile, **/gems.rb
-Bundler/OrderedGems:
-  Exclude:
-    - 'Gemfile'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowAdjacentOneLineDefs, NumberOfEmptyLines.
-Layout/EmptyLineBetweenDefs:
-  Exclude:
-    - 'lib/git_op.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Layout/EmptyLines:
-  Exclude:
-    - 'gitbot.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: empty_lines, empty_lines_except_namespace, empty_lines_special, no_empty_lines
-Layout/EmptyLinesAroundClassBody:
-  Exclude:
-    - 'lib/git_op.rb'
-
-# Offense count: 3
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: normal, rails
-Layout/IndentationConsistency:
-  Exclude:
-    - 'lib/opt_parser.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: Width, IgnoredPatterns.
-Layout/IndentationWidth:
-  Exclude:
-    - 'lib/opt_parser.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-Layout/SpaceAfterNot:
-  Exclude:
-    - 'gitbot.rb'
-
-# Offense count: 12
-# Cop supports --auto-correct.
-Layout/TrailingWhitespace:
-  Exclude:
-    - 'gitbot.rb'
-    - 'lib/git_op.rb'
-    - 'lib/opt_parser.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleAlignWith, SupportedStylesAlignWith.
-# SupportedStylesAlignWith: either, start_of_block, start_of_line
-Lint/BlockAlignment:
-  Exclude:
-    - 'lib/opt_parser.rb'
-
-# Offense count: 2
-Lint/ScriptPermission:
-  Exclude:
-    - 'lib/git_op.rb'
-    - 'lib/opt_parser.rb'
-
 # Offense count: 2
 Metrics/AbcSize:
   Max: 27
@@ -148,28 +76,5 @@ Style/GuardClause:
 # Configuration parameters: EnforcedStyle, SupportedStyles.
 # SupportedStyles: both, prefix, postfix
 Style/NegatedIf:
-  Exclude:
-    - 'gitbot.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, MinBodyLength, SupportedStyles.
-# SupportedStyles: skip_modifier_ifs, always
-Style/Next:
-  Exclude:
-    - 'gitbot.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
-  Exclude:
-    - 'lib/opt_parser.rb'
-
-# Offense count: 2
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles.
-# SupportedStyles: use_perl_names, use_english_names
-Style/SpecialGlobalVars:
   Exclude:
     - 'gitbot.rb'
