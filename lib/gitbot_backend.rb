@@ -8,12 +8,13 @@ require_relative 'git_op'
 
 # this class is the backend of gitbot, were we execute the tests and so on
 class GitbotBackend
-  attr_accessor :j_status, :options , :client
+  attr_accessor :j_status, :options , :client, :pr_files
   def initialize
     Octokit.auto_paginate = true
     @client = Octokit::Client.new(netrc: true)
     @options = OptParser.gitbot_options
     @j_status = ''
+    @pr_files = []
     # each options will generate a object variable dinamically
     @options.each do |key, value|
       instance_variable_set("@#{key}", value)
@@ -48,7 +49,7 @@ class GitbotBackend
   def check_if_changes_files_changed(repo, pr)
     return unless @changelog_test
     @j_status = 'success'
-    # http://www.rubydoc.info/github/bbatsov/rubocop/Rubocop/Cop/Style/GuardClause
+    # GuardClause
     return if @pr_files.any?
     @j_status = 'failure'
     pr_number = pr.number

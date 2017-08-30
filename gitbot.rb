@@ -26,7 +26,7 @@ prs.each do |pr|
   rescue NoMethodError
     # in this situation we have no reviews-tests set at all.
     gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
-    if @changelog_test
+    if gb.changelog_test
       gb.check_if_changes_files_changed(gb.repo, pr)
       next
     elsif gb.pr_files.any? == false
@@ -56,37 +56,37 @@ prs.each do |pr|
   # 2) pending
   pending_on_context = false
   for pr_status in (0..commit_state.statuses.size - 1) do
-    if commit_state.statuses[pr_status]['context'] == @context &&
+    if commit_state.statuses[pr_status]['context'] == gb.context &&
        commit_state.statuses[pr_status]['state'] == 'pending'
       pending_on_context = true
     end
   end
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
-    check_for_all_files(repo, pr.number, @file_type)
-    if @changelog_test
-      check_if_changes_files_changed(repo, pr)
+    gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
+    if gb.changelog_test
+      gb.check_if_changes_files_changed(gb.repo, pr)
       next
     end
-    next if @pr_files.any? == false
-    exit 1 if @check
-    launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
+    next if gb.pr_files.any? == false
+    exit 1 if gb.check
+    gb.launch_test_and_setup_status(gb.repo, pr.head.sha, pr.head.ref, pr.base.ref)
     break
   end
   # we want redo sometimes tests
-  next if magicword(repo, pr.number, @context) == false
-  check_for_all_files(repo, pr.number, @file_type)
-  next if @pr_files.any? == false
+  next if gb.magicword(gb.repo, pr.number, gb.context) == false
+  gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
+  next if gb.pr_files.any? == false
   puts 'Got retriggered by magic word'
-  if @check
+  if gb.check
     # if check is set, the comment in the trigger job will be del.
     # so setting it to pending, it will be remembered
-    @client.create_status(repo, pr.head.sha, 'pending',
-                          context: @context, description: @description,
-                          target_url: @target_url)
+    gb.client.create_status(gb.repo, pr.head.sha, 'pending',
+                          context: gb.context, description: gb.description,
+                          target_url: gb.target_url)
     exit 1
   end
-  launch_test_and_setup_status(repo, pr.head.sha, pr.head.ref, pr.base.ref)
+  gb.launch_test_and_setup_status(gb.repo, pr.head.sha, pr.head.ref, pr.base.ref)
   break
 end
 
@@ -94,12 +94,12 @@ STDOUT.flush
 
 # sleep timeout minutes to spare time from jenkins jobs
 # if j_status is empty no code were executed.
-if @j_status.nil? || @j_status.empty?
-  unless @timeout.nil? || @timeout.zero?
-    puts "\nNO new PRs found! going to sleep for #{@timeout} secs"
+if gb.j_status.nil? || gb.j_status.empty?
+  unless gb.timeout.nil? || gb.timeout.zero?
+    puts "\nNO new PRs found! going to sleep for #{gb.timeout} secs"
     STDOUT.flush
-    sleep(@timeout)
+    sleep(gb.timeout)
   end
 end
 # jenkins
-exit 1 if @j_status == 'failure'
+exit 1 if gb.j_status == 'failure'
