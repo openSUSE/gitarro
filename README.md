@@ -22,8 +22,7 @@ Like in custom jenkins server or vms(OS indipendent), or in custum containers.
 ## 1) Installation:
 
 ```console
-gem install octokit
-gem install netrc
+bundler install
 ```
 
 ## 2) Configuration:
