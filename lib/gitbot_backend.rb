@@ -62,7 +62,7 @@ class GitbotBackend
     # GuardClause
     return if @pr_files.any?
     @j_status = 'failure'
-    ck_comments(repo, pr_num)
+    ck_comments(repo, pr.number)
     @client.create_status(repo, pr.head.sha, @j_status,
                           context: @context, description: @description,
                           target_url: @target_url)
