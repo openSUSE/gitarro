@@ -15,14 +15,14 @@ puts 'no Pull request OPEN on the REPO!' if prs.any? == false
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # this check the last commit state, catch for review or not reviewd status.
-  commit_state = gb.client.status(gb.repo, pr.head.sha)
+  comm_st = gb.client.status(gb.repo, pr.head.sha)
   begin
     # the first element of array a review-test.
     # if the pr has travis test and one custom, we will have 2 elements.
     # in this case, if the 1st element doesn't have the state property
     # state property is "pending", failure etc.
     # if we don't have this, the PRs is "unreviewed"
-    puts commit_state.statuses[0]['state']
+    puts comm_st.statuses[0]['state']
   rescue NoMethodError
     # in this situation we have no reviews-tests set at all.
     gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
@@ -34,7 +34,8 @@ prs.each do |pr|
       next
     else
       exit 1 if gb.check
-      gb.launch_test_and_setup_status(gb.repo, pr.head.sha, pr.head.ref, pr.base.ref)
+      gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
+                                      pr.head.ref, pr.base.ref)
       break
     end
   end
@@ -50,14 +51,14 @@ prs.each do |pr|
   # 1) context_present == false  triggers test. >
   # this means  the PR is not with context tagged
   context_present = false
-  for pr_status in (0..commit_state.statuses.size - 1) do
-    context_present = true if commit_state.statuses[pr_status]['context'] == @context
+  for pr_status in (0..comm_st.statuses.size - 1) do
+    context_present = true if comm_st.statuses[pr_status]['context'] == @context
   end
   # 2) pending
   pending_on_context = false
-  for pr_status in (0..commit_state.statuses.size - 1) do
-    if commit_state.statuses[pr_status]['context'] == gb.context &&
-       commit_state.statuses[pr_status]['state'] == 'pending'
+  for pr_status in (0..comm_st.statuses.size - 1) do
+    if comm_st.statuses[pr_status]['context'] == gb.context &&
+       comm_st.statuses[pr_status]['state'] == 'pending'
       pending_on_context = true
     end
   end
@@ -70,7 +71,8 @@ prs.each do |pr|
     end
     next if gb.pr_files.any? == false
     exit 1 if gb.check
-    gb.launch_test_and_setup_status(gb.repo, pr.head.sha, pr.head.ref, pr.base.ref)
+    gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
+                                    pr.head.ref, pr.base.ref)
     break
   end
   # we want redo sometimes tests
@@ -86,7 +88,8 @@ prs.each do |pr|
                             target_url: gb.target_url)
     exit 1
   end
-  gb.launch_test_and_setup_status(gb.repo, pr.head.sha, pr.head.ref, pr.base.ref)
+  gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
+                                  pr.head.ref, pr.base.ref)
   break
 end
 

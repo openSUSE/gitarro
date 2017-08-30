@@ -24,8 +24,8 @@ class GitbotBackend
 
   # run validation script for validating the PR.
   def run_script
-    f_not_exist_msg = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
-    raise f_not_exist_msg if File.file?(@test_file) == false
+    n_exist = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
+    raise n_exist if File.file?(@test_file) == false
 
     out = `#{@test_file}`
     @j_status = 'failure' if $CHILD_STATUS.exitstatus.nonzero?
@@ -46,20 +46,23 @@ class GitbotBackend
     git.del_pr_branch(upstream, pr_branch)
   end
 
-  def check_if_changes_files_changed(repo, pr)
-    return unless @changelog_test
-    @j_status = 'success'
-    # GuardClause
-    return if @pr_files.any?
-    @j_status = 'failure'
-    pr_number = pr.number
-    comments = @client.issue_comments(repo, pr_number)
+  def ck_comments(repo, pr_num)
+    comments = @client.issue_comments(repo, pr_num)
     comments.each do |com|
       if com.body.include?('no changelog needed!')
         @j_status = 'success'
         break
       end
     end
+  end
+
+  def check_if_changes_files_changed(repo, pr)
+    return unless @changelog_test
+    @j_status = 'success'
+    # GuardClause
+    return if @pr_files.any?
+    @j_status = 'failure'
+    ck_comments(repo, pr_num)
     @client.create_status(repo, pr.head.sha, @j_status,
                           context: @context, description: @description,
                           target_url: @target_url)

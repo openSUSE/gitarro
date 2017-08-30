@@ -1,7 +1,6 @@
 #! /usr/bin/ruby
 
 # Opt_parser module, is for getting needed options
-
 module OptParser
   # this is for testing
   class << self; attr_accessor :options; end
@@ -32,7 +31,7 @@ module OptParser
     OptParser.default_gitbot
   end
 
-  def OptParser.gitbot_options
+  def self.gitbot_options
     name = './gitbot.rb'
     @opt_parser = OptionParser.new do |opt|
       opt.banner = "************************************************\n" \

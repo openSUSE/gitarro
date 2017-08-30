@@ -26,6 +26,10 @@ class GitbotOptionTest < Minitest::Test
                   file_type: '.sh', git_dir: 'gitty' }
     OptParser.options = full_hash
     options = OptParser.gitbot_options
+    option_ass(options)
+  end
+
+  def option_ass(options)
     assert_equal('gino/gitbot', options[:repo])
     assert_equal('python-t', options[:context])
     assert_equal('functional', options[:description])
