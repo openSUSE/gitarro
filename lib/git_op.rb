@@ -1,5 +1,6 @@
 #! /usr/bin/ruby
 
+require 'English'
 require 'fileutils'
 require 'timeout'
 
@@ -7,6 +8,8 @@ class GitOp
   attr_reader :git_dir
   def initialize(git_dir)
     @git_dir = git_dir
+    # prefix for the test pr that gitbot tests.
+    @pr_fix = 'PR-'
   end
 
   # this function merge the pr branch  into target branch,
@@ -32,22 +35,30 @@ class GitOp
     raise 'gitbot is not working on a git directory' if File.directory?('.git') == false
   end
 
+  # this is for preventing that a test branch exists already
+  # and we have some internal error
+  def check_duplicata_pr_branch(pr)
+    puts `git branch --list #{pr}`
+    `git branch -D #{pr} 2>/dev/null` if $CHILD_STATUS.exitstatus.zero?
+  end
+
   # merge pr_branch into upstream targeted branch
   def merge_pr_totarget(upstream, pr_branch, repo)
     goto_prj_dir(repo)
     # check that we are in a git dir
     check_git_dir
     `git checkout #{upstream}`
+    check_duplicata_pr_branch("#{@pr_fix}#{pr_branch}")
     `git remote update`
     `git fetch`
     `git pull origin #{upstream}`
-    `git checkout -b PR-#{pr_branch} origin/#{pr_branch}`
+    `git checkout -b #{@pr_fix}#{pr_branch} origin/#{pr_branch}`
     puts `git branch`
   end
 
   # cleanup the pr_branch(delete it)
   def del_pr_branch(upstream, pr)
     `git checkout #{upstream}`
-    `git branch -D  PR-#{pr}`
+    `git branch -D  #{@pr_fix}#{pr}`
   end
 end
