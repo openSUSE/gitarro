@@ -24,12 +24,16 @@ end
 # in this case, if the 1st element doesn't have the state property
 # state property is "pending", failure etc.
 # if we don't have this, the PRs is "unreviewed"
-def unreviewed_pr_test(comm_st)
+def unreviewed_pr_ck(comm_st)
   puts comm_st.statuses[0]['state']
+  @unreviewed_pr = false
 rescue NoMethodError
+  @unreviewed_pr = true
   # in this situation we have no reviews-tests set at all.
+end
+
+def unreviewed_pr_test(pr)
   gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
-  check_for_changelog
   check_for_empty_files_changed_by_pr
   # gb.check is true when there is a job running as scheduler
   # which doesn't execute the test but trigger another job
@@ -39,13 +43,17 @@ rescue NoMethodError
   break
 end
 
-def ck_context_and_pending_pr
+def ck_context_pr
   # 1) context_present == false  triggers test. >
   # this means  the PR is not with context tagged
   context_present = false
   for pr_status in (0..comm_st.statuses.size - 1) do
     context_present = true if comm_st.statuses[pr_status]['context'] == gb.context
   end
+  [context_present]
+end
+
+def ck_pending_pr
   # 2) pending
   pending_on_context = false
   for pr_status in (0..comm_st.statuses.size - 1) do
@@ -54,7 +62,7 @@ def ck_context_and_pending_pr
       pending_on_context = true
     end
   end
-  [context_present, pending_on_context]
+  [pending_on_context]
 end
 
 def retrigger_test
@@ -72,11 +80,12 @@ def retrigger_test
   exit 1
 end
 
-def main
+def main(pr)
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = gb.client.status(gb.repo, pr.head.sha)
-  unreviewed_pr_test(comm_st)
+  check_for_changelog
+  unreviewed_pr_test(pr) if unreviewed_pr_ck(comm_st)
   puts '*' * 30 + "\nPR is already reviewed by bot \n" + '*' * 30 + "\n"
   # we run the test in 2 conditions:
   # 1) the context "pylint-test" is not set, so we are in a situation
@@ -85,7 +94,8 @@ def main
   # was set, but the bot exited or was buggy, we want to rerun the test.
   # pending status is not a good status, always have only ok or fail status.
   # and repeat the test for the pending
-  context_present, pending_on_context = ck_context_and_pending_pr
+  context_present = ck_context_pr
+  pending_on_context = ck_pending_pr
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
     gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
@@ -107,8 +117,8 @@ gb = GitbotBackend.new
 prs = gb.client.pull_requests(gb.repo, state: 'open')
 # exit if repo has no prs open
 puts 'no Pull request OPEN on the REPO!' if prs.any? == false
-prs.each do |_pr|
-  main
+prs.each do |pr|
+  main(pr)
 end
 
 STDOUT.flush
