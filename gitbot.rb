@@ -7,12 +7,15 @@ require_relative 'lib/opt_parser'
 require_relative 'lib/git_op'
 require_relative 'lib/gitbot_backend'
 
-def check_for_changelog(gb)
+# this function check if changelog specific test is active.
+def changelog_active(gb)
   return unless gb.changelog_test
   gb.check_if_changes_files_changed(gb.repo, pr)
   true
 end
 
+# control if the pr change add any files, specified
+# it can be also a dir
 def check_for_empty_files_changed_by_pr(gb)
   return if gb.pr_files.any?
   puts "no files of type #{gb.file_type} found! skipping"
@@ -44,12 +47,12 @@ def unreviewed_pr_test(pr, gb)
   true
 end
 
-def context_pr(comm_st, gb)
+def context_pr(cm_st, gb)
   # 1) context_present == false  triggers test. >
   # this means  the PR is not with context tagged
   context_present = false
-  for pr_status in (0..comm_st.statuses.size - 1) do
-    context_present = true if comm_st.statuses[pr_status]['context'] == gb.context
+  (0..cm_st.statuses.size - 1).each do |pr_status|
+    context_present = true if cm_st.statuses[pr_status]['context'] == gb.context
   end
   context_present
 end
@@ -57,7 +60,7 @@ end
 def pending_pr(comm_st, gb)
   # 2) pending
   pending_on_context = false
-  for pr_status in (0..comm_st.statuses.size - 1) do
+  (0..comm_st.statuses.size - 1).each do |pr_status|
     if comm_st.statuses[pr_status]['context'] == gb.context &&
        comm_st.statuses[pr_status]['state'] == 'pending'
       pending_on_context = true
@@ -71,13 +74,8 @@ def retrigger_test(pr, gb)
   return false unless gb.magicword(gb.repo, pr.number, gb.context)
   gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
   return false unless gb.pr_files.any?
-  puts 'Got retriggered by magic word'
   # if check is set, the comment in the trigger job will be del.
   # so setting it to pending, it will be remembered
-  gb.client.create_status(gb.repo, pr.head.sha, 'pending',
-                          context: gb.context, description: gb.description,
-                          target_url: gb.target_url)
-  exit 1 if gb.check
   true
 end
 
@@ -90,7 +88,7 @@ prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = gb.client.status(gb.repo, pr.head.sha)
-  next if check_for_changelog(gb)
+  next if changelog_active(gb)
   unreviewed_pr_ck(comm_st)
   next if unreviewed_pr_test(pr, gb)
   # skip iteration if we did the test for the pr
@@ -106,7 +104,7 @@ prs.each do |pr|
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
     gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
-    check_for_changelog(gb)
+    changelog_active(gb)
     next if gb.pr_files.any? == false
     exit 1 if gb.check
     gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
@@ -114,6 +112,10 @@ prs.each do |pr|
     break
   end
   next unless retrigger_test(pr, gb)
+  gb.client.create_status(gb.repo, pr.head.sha, 'pending',
+                          context: gb.context, description: gb.description,
+                          target_url: gb.target_url)
+  exit 1 if gb.check
   gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
                                   pr.head.ref, pr.base.ref)
 end
