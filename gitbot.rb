@@ -10,13 +10,13 @@ require_relative 'lib/gitbot_backend'
 def check_for_changelog(gb)
   return unless gb.changelog_test
   gb.check_if_changes_files_changed(gb.repo, pr)
-  return true
+  true
 end
 
 def check_for_empty_files_changed_by_pr(gb)
   return if gb.pr_files.any?
   puts "no files of type #{gb.file_type} found! skipping"
-  return true  
+  true
 end
 
 # the first element of array a review-test.
@@ -33,7 +33,6 @@ rescue NoMethodError
 end
 
 def unreviewed_pr_test(pr)
-  @unreviewed_pr
   return unless @unreviewed_pr
   gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
   return if check_for_empty_files_changed_by_pr(gb)
@@ -42,7 +41,7 @@ def unreviewed_pr_test(pr)
   return false if gb.check
   gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
                                   pr.head.ref, pr.base.ref)
-  return true
+  true
 end
 
 def context_pr(comm_st, gb)
@@ -52,7 +51,7 @@ def context_pr(comm_st, gb)
   for pr_status in (0..comm_st.statuses.size - 1) do
     context_present = true if comm_st.statuses[pr_status]['context'] == gb.context
   end
-  return context_present
+  context_present
 end
 
 def pending_pr(comm_st, gb)
@@ -64,24 +63,23 @@ def pending_pr(comm_st, gb)
       pending_on_context = true
     end
   end
-  return pending_on_context
+  pending_on_context
 end
 
 def retrigger_test(pr, gb)
   # we want redo sometimes tests
-  return false if gb.magicword(gb.repo, pr.number, gb.context) == false
+  return false unless gb.magicword(gb.repo, pr.number, gb.context)
   gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
-  return false if gb.pr_files.any? == false
+  return false unless gb.pr_files.any?
   puts 'Got retriggered by magic word'
-  return false unless gb.check
   # if check is set, the comment in the trigger job will be del.
   # so setting it to pending, it will be remembered
   gb.client.create_status(gb.repo, pr.head.sha, 'pending',
                           context: gb.context, description: gb.description,
                           target_url: gb.target_url)
-  exit 1
+  exit 1 if gb.check
+  true
 end
-
 
 ##### MAIN
 gb = GitbotBackend.new
@@ -103,11 +101,10 @@ prs.each do |pr|
   # was set, but the bot exited or was buggy, we want to rerun the test.
   # pending status is not a good status, always have only ok or fail status.
   # and repeat the test for the pending
-  #
-  puts context_present = context_pr(comm_st, gb)
-  puts pending_on_context = pending_pr(comm_st, gb)
+  context_present = context_pr(comm_st, gb)
+  pending_on_context = pending_pr(comm_st, gb)
   # check the conditions 1,2 and it they happens run_test
-  if context_present == false or pending_on_context == true
+  if context_present == false || pending_on_context == true
     gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
     check_for_changelog(gb)
     next if gb.pr_files.any? == false
@@ -118,7 +115,7 @@ prs.each do |pr|
   end
   next unless retrigger_test(pr, gb)
   gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
-                                 pr.head.ref, pr.base.ref)
+                                  pr.head.ref, pr.base.ref)
 end
 STDOUT.flush
 

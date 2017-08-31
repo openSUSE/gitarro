@@ -88,8 +88,9 @@ class GitbotBackend
     pr_comment = @client.issue_comments(repo, pr_number)
     # a pr contain always a comments, cannot be nil
     pr_comment.each do |com|
-      # if user in @org retrigger only
-      next unless @client.organization_member?(@org, com.user.login)
+      # FIXME: if user in @org retrigger only
+      # add org variable somewhere, maybe as option
+      # next unless @client.organization_member?(@org, com.user.login)
       # delete comment otherwise it will be retrigger infinetely
       if com.body.include? magic_word_trigger
         @client.delete_comment(repo, com.id)

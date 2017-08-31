@@ -18,6 +18,7 @@ module OptParser
     @options[:check] = false if @options[:check].nil?
     @options[:changelog_test] = false if @options[:changelog_test].nil?
     @options[:file_type] = '.changes' if @options[:changelog_test]
+    @options[:target_url] = '' if @options[:target_url].nil?
   end
 
   def self.parse(opt_parser)
