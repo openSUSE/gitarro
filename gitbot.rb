@@ -52,7 +52,7 @@ prs.each do |pr|
   # this means  the PR is not with context tagged
   context_present = false
   for pr_status in (0..comm_st.statuses.size - 1) do
-    context_present = true if comm_st.statuses[pr_status]['context'] == @context
+    context_present = true if comm_st.statuses[pr_status]['context'] == gb.context
   end
   # 2) pending
   pending_on_context = false
