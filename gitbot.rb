@@ -90,6 +90,7 @@ prs.each do |pr|
   comm_st = gb.client.status(gb.repo, pr.head.sha)
   next if changelog_active(gb)
   unreviewed_pr_ck(comm_st)
+  # do test for unreviewed pr
   next if unreviewed_pr_test(pr, gb)
   # skip iteration if we did the test for the pr
   # we run the test in 2 conditions:
