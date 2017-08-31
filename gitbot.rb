@@ -32,7 +32,7 @@ rescue NoMethodError
   # in this situation we have no reviews-tests set at all.
 end
 
-def unreviewed_pr_test(pr)
+def unreviewed_pr_test(pr, gb)
   return unless @unreviewed_pr
   gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
   return if check_for_empty_files_changed_by_pr(gb)
@@ -92,7 +92,7 @@ prs.each do |pr|
   comm_st = gb.client.status(gb.repo, pr.head.sha)
   next if check_for_changelog(gb)
   unreviewed_pr_ck(comm_st)
-  next if unreviewed_pr_test(pr)
+  next if unreviewed_pr_test(pr, gb)
   # skip iteration if we did the test for the pr
   # we run the test in 2 conditions:
   # 1) the context "pylint-test" is not set, so we are in a situation
