@@ -76,12 +76,6 @@ module OptParser
         @options[:target_url] = target_url
       end
 
-      opt.on('-s', '--secs TIMEOUT', 'specify the secs you want to wait/sleep if the' \
-                  ' gitbot is not finding any valid PRs to review. (usefull to spare jenkins jobs history)') do |timeout|
-
-        @options[:timeout] = Integer(timeout)
-      end
-
       opt.on('--changelogtest', 'check if the PR include a changelog entry. Automatically set --file ".changes"') do |changelogtest|
         @options[:changelog_test] = changelogtest
       end

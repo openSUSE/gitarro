@@ -13,8 +13,9 @@ class GitOp
     @pr_fix = 'PR-'
   end
 
-  def ck_or_clone_git
-    return if File.directory?(@git_dir) == true
+  def ck_or_clone_git(repo)
+    puts @git_dir
+    return if File.directory?(@git_dir) 
     FileUtils.mkdir_p(@git_dir)
     Dir.chdir @git_dir
     puts `git clone git@github.com:#{repo}.git`
@@ -25,7 +26,7 @@ class GitOp
   def goto_prj_dir(repo)
     git_repo_dir = @git_dir + '/' + repo.split('/')[1]
     # chech that dir exist, otherwise clone it
-    ck_or_clone_git
+    ck_or_clone_git(repo)
     begin
       # /tmp/gitbot, this is in case the dir already exists
       Dir.chdir git_repo_dir
