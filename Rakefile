@@ -2,12 +2,13 @@ require 'rake/testtask'
 
 task default: %i[lint test]
 
-Rake::TestTask.new do |t|
-  t.libs << 'test'
-  t.test_files = FileList['tests/*.rb']
-  t.verbose = true
+task :test do
+  Dir.chdir('tests') do
+    Dir.glob('*.rb') do |rb_f|
+      ruby rb_f
+    end
+  end
 end
-
 task :lint do
   sh 'rubocop **/*.rb'
   sh 'rubocop Rakefile'

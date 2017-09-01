@@ -3,6 +3,7 @@
 require_relative 'helper'
 require_relative '../lib/gitbot_backend.rb'
 
+Dir.chdir Dir.pwd
 # Test the option parser
 class GitbotBackendTest2 < Minitest::Test
   def test_full_option_import2
