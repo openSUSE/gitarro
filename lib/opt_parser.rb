@@ -18,6 +18,7 @@ module OptParser
     @options[:check] = false if @options[:check].nil?
     @options[:changelog_test] = false if @options[:changelog_test].nil?
     @options[:file_type] = '.changes' if @options[:changelog_test]
+
     @options[:target_url] = '' if @options[:target_url].nil?
   end
 
@@ -26,7 +27,7 @@ module OptParser
     OptParser.raise_verbose_help('REPO') if @options[:repo].nil?
     OptParser.raise_verbose_help('CONTEXT') if @options[:context].nil?
     OptParser.raise_verbose_help('DESCRIPTION') if @options[:description].nil?
-    OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil?
+    OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil? && @options[:changelog_test].nil?
     OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil?
     OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil?
     OptParser.default_gitbot
