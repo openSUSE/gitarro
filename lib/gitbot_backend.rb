@@ -116,5 +116,78 @@ class GitbotBackend
                           context: @context, description: @description,
                           target_url: @target_url)
   end
-  # *********************************************
+
+  def retrigger_test(pr)
+    # we want redo sometimes tests
+    return false unless magicword(@repo, pr.number, @context)
+    check_for_all_files(@repo, pr.number, @file_type)
+    return false unless @pr_files.any?
+    # if check is set, the comment in the trigger job will be del.
+    # so setting it to pending, it will be remembered
+    true
+  end
+
+  # check if the commit of a pr is on pending
+  def pending_pr(comm_st)
+    # 2) pending
+    pending_on_context = false
+    (0..comm_st.statuses.size - 1).each do |pr_status|
+      if comm_st.statuses[pr_status]['context'] == @context &&
+         comm_st.statuses[pr_status]['state'] == 'pending'
+        pending_on_context = true
+      end
+    end
+    pending_on_context
+  end
+
+  # check it the cm of pr contain the context from gitbot already
+  def context_pr(cm_st)
+    # 1) context_present == false  triggers test. >
+    # this means  the PR is not with context tagged
+    context_present = false
+    (0..cm_st.statuses.size - 1).each do |pr_status|
+      context_present = true if cm_st.statuses[pr_status]['context'] == @context
+    end
+    context_present
+  end
+
+  # this function check if changelog specific test is active.
+  def changelog_active(pr)
+    return unless changelog_test
+    check_if_changes_files_changed(@repo, pr)
+    true
+  end
+
+  # control if the pr change add any files, specified
+  # it can be also a dir
+  def empty_files_changed_by_pr
+    return if pr_files.any?
+    puts "no files of type #{@file_type} found! skipping"
+    true
+  end
+
+  # the first element of array a review-test.
+  # if the pr has travis test and one custom, we will have 2 elements.
+  # in this case, if the 1st element doesn't have the state property
+  # state property is "pending", failure etc.
+  # if we don't have this, the PRs is "unreviewed"
+  def unreviewed_pr_ck(comm_st)
+    puts comm_st.statuses[0]['state']
+    @unreviewed_pr = false
+  rescue NoMethodError
+    @unreviewed_pr = true
+    # in this situation we have no reviews-tests set at all.
+  end
+
+  def unreviewed_pr_test(pr)
+    return unless @unreviewed_pr
+    check_for_all_files(@repo, pr.number, @file_type)
+    return if empty_files_changed_by_pr
+    # gb.check is true when there is a job running as scheduler
+    # which doesn't execute the test but trigger another job
+    return false if @check
+    launch_test_and_setup_status(@repo, pr.head.sha,
+                                 pr.head.ref, pr.base.ref)
+    true
+  end
 end
