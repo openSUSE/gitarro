@@ -10,9 +10,8 @@ class GitbotBackendTest2 < Minitest::Test
                    'functional', test_file: 'gino.sh', file_type: '.sh',
                    git_dir: 'gitty' }
     OptParser.options = @full_hash
-    options = OptParser.gitbot_options
+    OptParser.gitbot_options
     gitbot = GitbotBackend.new
-    gitbot.options = options
     puts gitbot.j_status
     gitbot.j_status = 'foo'
     gitbot_assert(gitbot)
@@ -32,13 +31,18 @@ class GitbotBackendTest2 < Minitest::Test
                    'functional', test_file: 'test_data/script_ok.sh', file_type: '.sh',
                    git_dir: 'gitty' }
     OptParser.options = @full_hash
-    options = OptParser.gitbot_options
     gb = GitbotBackend.new
+    OptParser.gitbot_options
     gb.run_script
     assert_equal('success', gb.j_status)
-
     gb.test_file = 'test_data/script_fail.sh'
     gb.run_script
     assert_equal('failure', gb.j_status)
+    test_file = 'nofile.txt'
+    ex = assert_raises RuntimeError do
+      gb.test_file = test_file
+      gb.run_script
+    end
+    assert_equal("'#{test_file}\' doesn't exists.Enter valid file, -t option", ex.message)
   end
 end
