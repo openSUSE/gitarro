@@ -29,21 +29,30 @@ class GitbotBackendTest2 < Minitest::Test
 
   def test_run_script
     @full_hash = { repo: 'gino/gitbot', context: 'python-t', description:
-                   'functional', test_file: 'test_data/script_ok.sh', file_type: '.sh',
-                   git_dir: 'gitty' }
+                   'functional', test_file: 'test_data/script_ok.sh',
+                   file_type: '.sh', git_dir: 'gitty' }
     OptParser.options = @full_hash
     gb = GitbotBackend.new
     OptParser.gitbot_options
+    ck_files(gb)
+    test_file = 'nofile.txt'
+    assert_file_non_ex(gb, test_file)
+  end
+
+  def ck_files(gb)
     gb.run_script
     assert_equal('success', gb.j_status)
     gb.test_file = 'test_data/script_fail.sh'
     gb.run_script
     assert_equal('failure', gb.j_status)
-    test_file = 'nofile.txt'
+  end
+
+  def assert_file_non_ex(gb, test_file)
     ex = assert_raises RuntimeError do
       gb.test_file = test_file
       gb.run_script
     end
-    assert_equal("'#{test_file}\' doesn't exists.Enter valid file, -t option", ex.message)
+    assert_equal("'#{test_file}\' doesn't exists.Enter valid file, -t option",
+                 ex.message)
   end
 end

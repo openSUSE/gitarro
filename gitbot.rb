@@ -18,7 +18,7 @@ prs.each do |pr|
   comm_st = gb.client.status(gb.repo, pr.head.sha)
   next if gb.changelog_active(pr)
   gb.unreviewed_pr_ck(comm_st)
-  # do test for unreviewed pr
+  # 0) do test for unreviewed pr
   next if gb.unreviewed_pr_test(pr)
   # skip iteration if we did the test for the pr
   # we run the test in 2 conditions:
@@ -34,13 +34,13 @@ prs.each do |pr|
   if context_present == false || pending_on_context == true
     gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
     gb.changelog_active(pr)
-    next if gb.pr_files.any? == false
+    next unless gb.pr_files.any?
     exit 1 if gb.check
     gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
                                     pr.head.ref, pr.base.ref)
     break
   end
-
+  # retrigger if magic word found
   next unless gb.retrigger_test(pr)
   gb.client.create_status(gb.repo, pr.head.sha, 'pending',
                           context: gb.context, description: gb.description,
@@ -51,5 +51,5 @@ prs.each do |pr|
 end
 STDOUT.flush
 
-# jenkins
+# red balls for jenkins
 exit 1 if gb.j_status == 'failure'
