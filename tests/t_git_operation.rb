@@ -16,5 +16,4 @@ class GitbotGitop < Minitest::Test
     puts gb.git_dir
     gop.ck_or_clone_git(gb.repo)
   end
-
 end
