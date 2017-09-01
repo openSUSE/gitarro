@@ -15,11 +15,6 @@ class GitbotGitop < Minitest::Test
     gop = GitOp.new(gb.git_dir)
     puts gb.git_dir
     gop.ck_or_clone_git(gb.repo)
-    FileUtils.rm_rf('gitty')
   end
 
-  def test_cleanup
-    Dir.chdir Dir.pwd
-    FileUtils.rm_r('gitty') if File.directory?('gitty')
-  end
 end
