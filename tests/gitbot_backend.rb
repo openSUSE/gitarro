@@ -26,4 +26,19 @@ class GitbotBackendTest2 < Minitest::Test
     assert_equal('.sh', gitbot.file_type)
     assert_equal('gitty', gitbot.git_dir)
   end
+
+  def test_run_script
+    @full_hash = { repo: 'gino/gitbot', context: 'python-t', description:
+                   'functional', test_file: 'test_data/script_ok.sh', file_type: '.sh',
+                   git_dir: 'gitty' }
+    OptParser.options = @full_hash
+    options = OptParser.gitbot_options
+    gb = GitbotBackend.new
+    gb.run_script
+    assert_equal('success', gb.j_status)
+
+    gb.test_file = 'test_data/script_fail.sh'
+    gb.run_script
+    assert_equal('failure', gb.j_status)
+  end
 end

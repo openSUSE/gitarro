@@ -11,6 +11,7 @@ gb = GitbotBackend.new
 prs = gb.client.pull_requests(gb.repo, state: 'open')
 # exit if repo has no prs open
 puts 'no Pull request OPEN on the REPO!' if prs.any? == false
+
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # this check the last commit state, catch for review or not reviewd status.
@@ -27,8 +28,8 @@ prs.each do |pr|
   # was set, but the bot exited or was buggy, we want to rerun the test.
   # pending status is not a good status, always have only ok or fail status.
   # and repeat the test for the pending
-  puts  context_present = gb.context_pr(comm_st)
-  puts pending_on_context = gb.pending_pr(comm_st)
+  context_present = gb.context_pr(comm_st)
+  pending_on_context = gb.pending_pr(comm_st)
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
     gb.check_for_all_files(gb.repo, pr.number, gb.file_type)
@@ -39,6 +40,7 @@ prs.each do |pr|
                                     pr.head.ref, pr.base.ref)
     break
   end
+
   next unless gb.retrigger_test(pr)
   gb.client.create_status(gb.repo, pr.head.sha, 'pending',
                           context: gb.context, description: gb.description,
