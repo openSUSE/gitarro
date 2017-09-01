@@ -14,7 +14,6 @@ class GitOp
   end
 
   def ck_or_clone_git(repo)
-    puts @git_dir
     return if File.directory?(@git_dir)
     FileUtils.mkdir_p(@git_dir)
     Dir.chdir @git_dir
