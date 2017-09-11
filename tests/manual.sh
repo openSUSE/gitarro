@@ -23,19 +23,19 @@ ftype='.rb'
 echo '#! /bin/bash' > $valid_test
 chmod +x $valid_test
 
-# 0
-echo 'testing normal behaviour'
-ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url
-echo
-
-# 1 test with check option enabled.
-echo 'testing check option'
-
-ruby  ../gitbot.rb -r $repo  -c "$context-01" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url -C
-if [ $? == 0  ]; then 
-   echo "GIBOT TEST1 FAILED!!!!"
-   exit 1
-fi
+basic_tests() {
+  # 0
+  echo 'testing normal behaviour'
+  ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url
+  echo
+  # 1 test with check option enabled.
+  echo 'testing check option'
+  ruby  ../gitbot.rb -r $repo  -c "$context-01" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url -C
+  if [ $? == 0  ]; then 
+     echo "GIBOT TEST1 FAILED!!!!"
+     exit 1
+  fi
+}
 
 # RETRIGGERING
 # 2 test the retrigger with a word
@@ -44,15 +44,18 @@ fi
 
 # the retrigger with check should just put the pr on pending.
 
-echo "TESTING RETRIGGERING"
-
-ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url -C
-ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url
-
-echo "TESTING CHANGELOG TEST"
-# 3 test the changelog test
-ruby  ../gitbot.rb -r $repo  -c "changelog" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
-
-# 4 this, need a comment on pr no changelog needed!
-ruby  ../gitbot.rb -r $repo  -c "changelog2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
-
+retrigger_tests() {
+  echo "TESTING RETRIGGERING"
+  ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url -C
+  ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url
+}
+changelog_tests() {
+  echo "TESTING CHANGELOG TEST"
+  # 3 test the changelog test
+  ruby  ../gitbot.rb -r $repo  -c "changelog" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
+  # 4 this, need a comment on pr no changelog needed!
+  ruby  ../gitbot.rb -r $repo  -c "changelog2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
+}
+#basic_tests
+#retrigger_tests
+changelog_tests
