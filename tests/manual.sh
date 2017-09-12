@@ -16,7 +16,7 @@
 repo="openSUSE/gitbot"
 context="gitbot-dev"
 desc="dev-test"
-git_dir="/tmp/ruby0"
+git_dir="/tmp/ruby1"
 valid_test="/tmp/gitbot.sh"
 url="https://github.com/openSUSE/gitbot/pull/8"
 ftype='.rb'
@@ -56,6 +56,6 @@ changelog_tests() {
   # 4 this, need a comment on pr no changelog needed!
 #  ruby  ../gitbot.rb -r $repo  -c "changelog2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
 }
-#basic_tests
-#retrigger_tests
+basic_tests
+retrigger_tests
 changelog_tests

@@ -45,7 +45,7 @@ class GitbotBackend
     # del branch
     git.del_pr_branch(upstream, pr_branch)
   end
-  
+
   # if the Pr contains magic word, test changelog
   # is true
   def magic_comment(repo, pr_num)

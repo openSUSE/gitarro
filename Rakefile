@@ -10,6 +10,6 @@ task :test do
   end
 end
 task :lint do
-  sh 'rubocop **/*.rb'
+  sh 'rubocop '
   sh 'rubocop Rakefile'
 end
