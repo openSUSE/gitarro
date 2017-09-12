@@ -62,7 +62,7 @@ class GitbotBackend
   def changelog_changed(repo, pr)
     return unless @changelog_test
     @j_status = 'failure'
-    check_for_all_files(repo, pr.number, @file_type)
+    pr_all_files_type(repo, pr.number, @file_type)
     # if the pr contains changes on .changes file, test ok
     @j_status = 'success' if @pr_files.any?
     magic_comment(repo, pr.number)
@@ -73,7 +73,7 @@ class GitbotBackend
 
   # check all files of a Prs Number if they are a specific type
   # EX: Pr 56, we check if files are '.rb'
-  def check_for_all_files(repo, pr_number, type)
+  def pr_all_files_type(repo, pr_number, type)
     files = @client.pull_request_files(repo, pr_number)
     files.each do |file|
       @pr_files.push(file.filename) if file.filename.include? type
@@ -123,7 +123,7 @@ class GitbotBackend
   def retrigger_test(pr)
     # we want redo sometimes tests
     return false unless magicword(@repo, pr.number, @context)
-    check_for_all_files(@repo, pr.number, @file_type)
+    pr_all_files_type(@repo, pr.number, @file_type)
     return false unless @pr_files.any?
     # if check is set, the comment in the trigger job will be del.
     # so setting it to pending, it will be remembered
@@ -184,7 +184,7 @@ class GitbotBackend
 
   def unreviewed_pr_test(pr)
     return unless @unreviewed_pr
-    check_for_all_files(@repo, pr.number, @file_type)
+    pr_all_files_type(@repo, pr.number, @file_type)
     return if empty_files_changed_by_pr
     # gb.check is true when there is a job running as scheduler
     # which doesn't execute the test but trigger another job
