@@ -45,8 +45,10 @@ class GitbotBackend
     # del branch
     git.del_pr_branch(upstream, pr_branch)
   end
-
-  def ck_comments(repo, pr_num)
+  
+  # if the Pr contains magic word, test changelog
+  # is true
+  def magic_comment(repo, pr_num)
     comments = @client.issue_comments(repo, pr_num)
     comments.each do |com|
       if com.body.include?('no changelog needed!')
@@ -56,13 +58,14 @@ class GitbotBackend
     end
   end
 
-  def check_if_changes_files_changed(repo, pr)
+  # do the changelog test and set status
+  def changelog_changed(repo, pr)
     return unless @changelog_test
-    @j_status = 'success'
-    # GuardClause
-    return if @pr_files.any?
     @j_status = 'failure'
-    ck_comments(repo, pr.number)
+    check_for_all_files(repo, pr.number, @file_type)
+    # if the pr contains changes on .changes file, test ok
+    @j_status = 'success' if @pr_files.any?
+    magic_comment(repo, pr.number)
     @client.create_status(repo, pr.head.sha, @j_status,
                           context: @context, description: @description,
                           target_url: @target_url)
@@ -154,7 +157,7 @@ class GitbotBackend
   # this function check if changelog specific test is active.
   def changelog_active(pr)
     return unless changelog_test
-    check_if_changes_files_changed(@repo, pr)
+    changelog_changed(@repo, pr)
     true
   end
 
