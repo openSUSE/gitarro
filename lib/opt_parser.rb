@@ -1,7 +1,6 @@
 #! /usr/bin/ruby
 
 # Opt_parser module, is for getting needed options
-
 module OptParser
   # this is for testing
   class << self; attr_accessor :options; end
@@ -14,21 +13,28 @@ module OptParser
     raise OptionParser::MissingArgument, msg
   end
 
+  # set some default values
+  def self.default_gitbot
+    @options[:check] = false if @options[:check].nil?
+    @options[:changelog_test] = false if @options[:changelog_test].nil?
+    @options[:target_url] = '' if @options[:target_url].nil?
+    @options[:file_type] = '.changes' if @options[:changelog_test]
+  end
+
   def self.parse(opt_parser)
     opt_parser.parse!
     OptParser.raise_verbose_help('REPO') if @options[:repo].nil?
     OptParser.raise_verbose_help('CONTEXT') if @options[:context].nil?
     OptParser.raise_verbose_help('DESCRIPTION') if @options[:description].nil?
     OptParser.raise_verbose_help('SCRIPT FILE') if @options[:test_file].nil? && @options[:changelog_test].nil?
-    OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil? 
-    OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil? 
-
-    @options[:file_type] = ".changes" if @options[:changelog_test]
+    OptParser.raise_verbose_help('TYPE FILE') if @options[:file_type].nil?
+    OptParser.raise_verbose_help('GIT LOCAL DIR') if @options[:git_dir].nil?
+    OptParser.default_gitbot
   end
 
-  def OptParser.gitbot_options
-  name = './gitbot.rb'
-   @opt_parser = OptionParser.new do |opt|
+  def self.gitbot_options
+    name = './gitbot.rb'
+    @opt_parser = OptionParser.new do |opt|
       opt.banner = "************************************************\n" \
         "Usage: gitbot [OPTIONS] \n" \
         " EXAMPLE: ======> #{name} -r openSUSE/gitbot -c \"pysthon-test\" " \
@@ -71,17 +77,11 @@ module OptParser
         @options[:target_url] = target_url
       end
 
-      opt.on('-s', '--secs TIMEOUT', 'specify the secs you want to wait/sleep if the' \
-                  ' gitbot is not finding any valid PRs to review. (usefull to spare jenkins jobs history)') do |timeout|
-
-        @options[:timeout] = Integer(timeout)
-      end
-
-      opt.on("--changelogtest", 'check if the PR include a changelog entry. Automatically set --file ".changes"') do |changelogtest|
+      opt.on('--changelogtest', 'check if the PR include a changelog entry. Automatically set --file ".changes"') do |changelogtest|
         @options[:changelog_test] = changelogtest
       end
 
-      opt.on('-C', "--check", "check, if a PR requires test" \
+      opt.on('-C', '--check', 'check, if a PR requires test' \
              'Run in checkmode and test if there is a Pull Request which requires a test') do |check|
         @options[:check] = check
       end

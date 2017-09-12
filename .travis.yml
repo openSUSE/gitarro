@@ -8,6 +8,4 @@ gemfile:
 
 script:
 - bundler install
-- rubocop **/*.rb
-- ruby tests/opt_parser.rb   
-
+- rake 
