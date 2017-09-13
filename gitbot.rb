@@ -16,6 +16,7 @@ prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = gb.client.status(gb.repo, pr.head.sha)
+  # check if changelog test was enabled
   next if gb.changelog_active(pr)
   gb.unreviewed_pr_ck(comm_st)
   # 0) do test for unreviewed pr
