@@ -34,8 +34,8 @@ class GitbotBackend
     puts out
   end # main function for doing the test
 
-  def pr_test(upstream, pr_sha_com, repo, pr_branch)
-    git = GitOp.new(@git_dir)
+  def pr_test(upstream, pr_sha_com, repo, pr_branch, pr)
+    git = GitOp.new(@git_dir, pr)
     # get author:
     pr_com = @client.commit(repo, pr_sha_com)
     _author_pr = pr_com.author.login
@@ -108,13 +108,13 @@ class GitbotBackend
   # then set the status according to the results of script executed.
   # pr_head = is the PR branch
   # base = is a the upstream branch, where the pr targets
-  def launch_test_and_setup_status(repo, pr_head_sha, pr_head_ref, pr_base_ref)
+  def launch_test_and_setup_status(repo, pr_head_sha, pr_head_ref, pr_base_ref, pr)
     # pending
     @client.create_status(repo, pr_head_sha, 'pending',
                           context: @context, description: @description,
                           target_url: @target_url)
     # do tests
-    pr_test(pr_base_ref, pr_head_sha, repo, pr_head_ref)
+    pr_test(pr_base_ref, pr_head_sha, repo, pr_head_ref, pr)
     # set status
     @client.create_status(repo, pr_head_sha, @j_status,
                           context: @context, description: @description,
@@ -191,7 +191,7 @@ class GitbotBackend
     # which doesn't execute the test but trigger another job
     return false if @check
     launch_test_and_setup_status(@repo, pr.head.sha,
-                                 pr.head.ref, pr.base.ref)
+                                 pr.head.ref, pr.base.ref, pr)
     true
   end
   public :retrigger_test, :launch_test_and_setup_status, :changelog_active, :unreviewed_pr_test

@@ -1,5 +1,5 @@
 #! /usr/bin/ruby
 #
-#some test test
+# some test test
 
-puts "test"
+puts 'test'

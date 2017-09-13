@@ -14,7 +14,7 @@ def retrigger_check(gb, pr)
                           target_url: gb.target_url)
   exit 1 if gb.check
   gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
-                                  pr.head.ref, pr.base.ref)
+                                  pr.head.ref, pr.base.ref, pr)
   exit 0
 end
 
@@ -51,7 +51,7 @@ prs.each do |pr|
     next unless gb.pr_files.any?
     exit 1 if gb.check
     gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
-                                    pr.head.ref, pr.base.ref)
+                                    pr.head.ref, pr.base.ref, pr)
     break
   end
 end
