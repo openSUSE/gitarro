@@ -43,7 +43,10 @@ class GitOp
   end
 
   def external_forked_repo
+    puts 
+    puts "external repo"
     `git remote add #{@pr.head.repo.name} @pr.head.repo.git_url`
+    # FIXME: review this
     `git checkout -b #{@pr_fix}#{@pr.head.repo.name} #{@pr.head.repo.name}/#{@pr.head.repo.name}`
     `git remote remove #{@pr.head.repo.name}`
   end
