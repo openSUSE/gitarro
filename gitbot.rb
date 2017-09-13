@@ -18,7 +18,6 @@ def retrigger_check(gb, pr)
   exit 0
 end
 
-
 gb = GitbotBackend.new
 prs = gb.client.pull_requests(gb.repo, state: 'open')
 # exit if repo has no prs open
