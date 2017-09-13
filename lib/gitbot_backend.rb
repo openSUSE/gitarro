@@ -10,7 +10,6 @@ require_relative 'git_op'
 class GitbotBackend
   attr_accessor :j_status, :options, :client, :pr_files
   # public method of backend
-  public :retrigger_test, :launch_test_and_setup_status, :changelog_active, :unreviewed_pr_test
   def initialize
     Octokit.auto_paginate = true
     @client = Octokit::Client.new(netrc: true)
@@ -195,4 +194,5 @@ class GitbotBackend
                                  pr.head.ref, pr.base.ref)
     true
   end
+  public :retrigger_test, :launch_test_and_setup_status, :changelog_active, :unreviewed_pr_test
 end
