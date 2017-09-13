@@ -14,7 +14,7 @@
 # 2 you should write a comment '@gitbot rerun $context !!!' for test n3
 
 repo="openSUSE/gitbot"
-context="gitbot-dev"
+context="gitbot-deva2932i"
 desc="dev-test"
 git_dir="/tmp/ruby1"
 valid_test="/tmp/gitbot.sh"
@@ -57,5 +57,5 @@ changelog_tests() {
 #  ruby  ../gitbot.rb -r $repo  -c "changelog2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
 }
 basic_tests
-retrigger_tests
-changelog_tests
+# retrigger_tests
+# changelog_tests

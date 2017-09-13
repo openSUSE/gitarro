@@ -46,7 +46,7 @@ class GitOp
     puts `git branch --list #{pr}`
     `git branch -D #{pr} 2>/dev/null` if $CHILD_STATUS.exitstatus.zero?
   end
-
+  # here
   # merge pr_branch into upstream targeted branch
   def merge_pr_totarget(upstream, pr_branch, repo)
     goto_prj_dir(repo)
