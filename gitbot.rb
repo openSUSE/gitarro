@@ -13,8 +13,7 @@ def retrigger_check(gb, pr)
                           context: gb.context, description: gb.description,
                           target_url: gb.target_url)
   exit 1 if gb.check
-  gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
-                                  pr.head.ref, pr.base.ref, pr)
+  gb.launch_test_and_setup_status(gb.repo, pr)
   exit 0
 end
 
@@ -50,8 +49,7 @@ prs.each do |pr|
     gb.changelog_active(pr)
     next unless gb.pr_files.any?
     exit 1 if gb.check
-    gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
-                                    pr.head.ref, pr.base.ref, pr)
+    gb.launch_test_and_setup_status(gb.repo, pr)
     break
   end
 end
