@@ -190,7 +190,7 @@ class GitbotBackend
     # gb.check is true when there is a job running as scheduler
     # which doesn't execute the test but trigger another job
     return false if @check
-    launch_test_and_setup_status(@repo, pr) 
+    launch_test_and_setup_status(@repo, pr)
     true
   end
   public :retrigger_test, :launch_test_and_setup_status, :changelog_active, :unreviewed_pr_test
