@@ -13,14 +13,12 @@ def retrigger_check(gb, pr)
                           context: gb.context, description: gb.description,
                           target_url: gb.target_url)
   exit 1 if gb.check
-  gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
-                                  pr.head.ref, pr.base.ref)
+  gb.launch_test_and_setup_status(gb.repo, pr)
   exit 0
 end
 
 gb = GitbotBackend.new
 prs = gb.client.pull_requests(gb.repo, state: 'open')
-# exit if repo has no prs open
 puts 'no Pull request OPEN on the REPO!' if prs.any? == false
 
 prs.each do |pr|
@@ -34,14 +32,9 @@ prs.each do |pr|
   gb.unreviewed_pr_ck(comm_st)
   # 0) do test for unreviewed pr
   next if gb.unreviewed_pr_test(pr)
-  # skip iteration if we did the test for the pr
   # we run the test in 2 conditions:
-  # 1) the context "pylint-test" is not set, so we are in a situation
-  # like we have already 3 tests runned against a pr, but not the current one.
-  # 2) is like 1 but is when something went wrong and the pending status
-  # was set, but the bot exited or was buggy, we want to rerun the test.
-  # pending status is not a good status, always have only ok or fail status.
-  # and repeat the test for the pending
+  # 1) the context  is not set, test didnt run
+  # 2) the pending status is set on commit, repeat always when pending set
   context_present = gb.context_pr(comm_st)
   pending_on_context = gb.pending_pr(comm_st)
   # check the conditions 1,2 and it they happens run_test
@@ -50,8 +43,7 @@ prs.each do |pr|
     gb.changelog_active(pr)
     next unless gb.pr_files.any?
     exit 1 if gb.check
-    gb.launch_test_and_setup_status(gb.repo, pr.head.sha,
-                                    pr.head.ref, pr.base.ref)
+    gb.launch_test_and_setup_status(gb.repo, pr)
     break
   end
 end

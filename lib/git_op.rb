@@ -7,10 +7,12 @@ require 'timeout'
 # git operation for gitbot
 class GitOp
   attr_reader :git_dir
-  def initialize(git_dir)
+  def initialize(git_dir, pr)
     @git_dir = git_dir
     # prefix for the test pr that gitbot tests.
     @pr_fix = 'PR-'
+    # pr object for extract all relev. data.
+    @pr = pr
   end
 
   def ck_or_clone_git(repo)
@@ -40,6 +42,16 @@ class GitOp
     raise msg_err if File.directory?('.git') == false
   end
 
+  def external_forked_repo
+    rem_repo = 'rem' + @pr.head.ref
+    puts `git remote add #{rem_repo} #{@pr.head.repo.ssh_url}`
+    puts `git remote update`
+    puts `git fetch`
+    puts `git pull #{rem_repo} #{@pr.head.ref}`
+    puts `git checkout -b #{@pr_fix}#{@pr.head.ref} #{rem_repo}/#{@pr.head.ref}`
+    puts `git remote remove #{rem_repo}`
+  end
+
   # this is for preventing that a test branch exists already
   # and we have some internal error
   def check_duplicata_pr_branch(pr)
@@ -50,7 +62,6 @@ class GitOp
   # merge pr_branch into upstream targeted branch
   def merge_pr_totarget(upstream, pr_branch, repo)
     goto_prj_dir(repo)
-    # check that we are in a git dir
     check_git_dir
     `git checkout #{upstream}`
     check_duplicata_pr_branch("#{@pr_fix}#{pr_branch}")
@@ -58,6 +69,8 @@ class GitOp
     `git fetch`
     `git pull origin #{upstream}`
     `git checkout -b #{@pr_fix}#{pr_branch} origin/#{pr_branch}`
+    # if it fails the PR contain a forked external repo
+    external_forked_repo if $CHILD_STATUS.exitstatus.nonzero?
     puts `git branch`
   end
 
