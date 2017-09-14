@@ -45,6 +45,8 @@ class GitOp
   def external_forked_repo
     rem_repo = 'rem' + @pr.head.ref
     puts `git remote add #{rem_repo} #{@pr.head.repo.ssh_url}`
+    puts `git remote update`
+    puts `git fetch`
     puts `git pull #{rem_repo} #{@pr.head.ref}`
     puts `git checkout -b #{@pr_fix}#{@pr.head.ref} #{rem_repo}/#{@pr.head.ref}`
     puts `git remote remove #{rem_repo}`
