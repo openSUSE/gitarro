@@ -43,10 +43,8 @@ class GitOp
   end
 
   def external_forked_repo
-    puts "PR come from external repo"
-    # branch of remote repo
     rem_repo = 'rem' + @pr.head.ref
-    puts `git remote add #{rem_repo} #{@pr.head.repo.git_url}`
+    puts `git remote add #{rem_repo} #{@pr.head.repo.ssh_url}`
     puts `git pull #{rem_repo} #{@pr.head.ref}`
     puts `git checkout -b #{@pr_fix}#{@pr.head.ref} #{rem_repo}/#{@pr.head.ref}`
     puts `git remote remove #{rem_repo}`
@@ -59,7 +57,6 @@ class GitOp
     `git branch -D #{pr} 2>/dev/null` if $CHILD_STATUS.exitstatus.zero?
   end
 
-  # here
   # merge pr_branch into upstream targeted branch
   def merge_pr_totarget(upstream, pr_branch, repo)
     goto_prj_dir(repo)
