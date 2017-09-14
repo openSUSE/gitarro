@@ -12,7 +12,8 @@ class GitbotGitop < Minitest::Test
     OptParser.options = @full_hash
     OptParser.gitbot_options
     gb = GitbotBackend.new
-    gop = GitOp.new(gb.git_dir)
+    pr = 'fake'
+    gop = GitOp.new(gb.git_dir, pr)
     puts gb.git_dir
     gop.ck_or_clone_git(gb.repo)
   end
