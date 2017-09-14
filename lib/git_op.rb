@@ -43,12 +43,13 @@ class GitOp
   end
 
   def external_forked_repo
-    puts 
-    puts "external repo"
-    `git remote add #{@pr.head.repo.name} @pr.head.repo.git_url`
-    `git pull #{@pr.head.repo.name}`
-    `git checkout -b #{@pr_fix}#{@pr.head.repo.name} #{@pr.head.repo.name}/#{@pr.head.repo.name}`
-    `git remote remove #{@pr.head.repo.name}`
+    puts "PR come from external repo"
+    # branch of remote repo
+    rem_repo = 'rem' + @pr.head.ref
+    puts `git remote add #{rem_repo} #{@pr.head.repo.git_url}`
+    puts `git pull #{rem_repo} #{@pr.head.ref}`
+    puts `git checkout -b #{@pr_fix}#{@pr.head.ref} #{rem_repo}/#{@pr.head.ref}`
+    puts `git remote remove #{rem_repo}`
   end
 
   # this is for preventing that a test branch exists already
