@@ -6,7 +6,7 @@ require 'timeout'
 
 # git operation for gitbot
 class GitOp
-  attr_reader :git_dir, :pr, :pr_fix
+  attr_reader :git_dir, :pr, :pr_fix, :repo_external
   def initialize(git_dir, pr)
     @git_dir = git_dir
     # prefix for the test pr that gitbot tests.
