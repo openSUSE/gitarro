@@ -73,7 +73,7 @@ class GitOp
   end
 end
 
-# This class handle the case the repo from PR
+# This private class handle the case the repo from PR
 # comes from a user external repo
 # PR open against: openSUSE/gitbot
 # PR repo:  MyUSER/gitbot
@@ -83,19 +83,19 @@ class ExternalRepoGit
     # pr object for extract all relev. data.
     @pr = pr
     @pr_fix = 'PR-'
-    @rem_repo = 'rem' + pr.head.ref
   end
 
   def checkout_into
+    rem_repo = 'rem' + pr.head.ref
     add_remote(rem_repo)
     fetch_remote(rem_repo)
-    checkout_to_rem_branch
+    checkout_to_rem_branch(rem_repo)
     remove_repo(rem_repo)
   end
 
   private
 
-  def checkot_to_rem_branch
+  def checkot_to_rem_branch(rem_repo)
     puts `git checkout -b #{pr_fix}#{branch_rem} #{rem_repo}/#{branch_rem}`
   end
 
