@@ -78,7 +78,7 @@ end
 # PR open against: openSUSE/gitbot
 # PR repo:  MyUSER/gitbot
 class ExternalRepoGit
-  attr_reader :pr, :rem_repo
+  attr_reader :pr, :rem_repo, :pr_fix
   def initialize(pr)
     # pr object for extract all relev. data.
     @pr = pr
@@ -95,7 +95,7 @@ class ExternalRepoGit
 
   private
 
-  def checkot_to_rem_branch(rem_repo)
+  def checkout_to_rem_branch(rem_repo)
     puts `git checkout -b #{pr_fix}#{branch_rem} #{rem_repo}/#{branch_rem}`
   end
 
