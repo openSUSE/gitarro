@@ -33,7 +33,7 @@ class GitOp
     begin
       # /tmp/gitbot, this is in case the dir already exists
       Dir.chdir git_repo_dir
-    rescue
+    rescue Errno::ENOENT
       # this is in case we clone the repo
       Dir.chdir repo.split('/')[1]
     end

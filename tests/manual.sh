@@ -16,7 +16,7 @@
 repo="openSUSE/gitbot"
 context="gitbot-dev2a"
 desc="dev-test"
-git_dir="/tmp/ruby31"
+git_dir="/tmp/ruby312"
 valid_test="/tmp/gitbot.sh"
 url="https://github.com/openSUSE/gitbot/pull/8"
 ftype='.rb'
