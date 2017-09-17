@@ -40,6 +40,7 @@ class OptParserInternal
     url_opt(opt)
   end
 
+  # primary
   def context_opt(opt)
     opt.on('-c', "--context 'CONTEXT'", 'context to set on comment' \
                                  ' EXAMPLE: CONTEXT: python-test') do |context|
@@ -123,15 +124,6 @@ class OptParserInternal
     default_gitbot
   end
 
-  # option banner gitbot
-  def option_banner(opt)
-    name = './gitbot.rb'
-    opt.banner = "************************************************\n" \
-        "Usage: gitbot [OPTIONS] \n" \
-        " EXAMPLE: ======> #{name} -r openSUSE/gitbot -c \"pysthon-test\" " \
-        "-d \"someCoolTest\" -g /tmp/pr-ruby01/ -t /tmp/test.sh -f \".py\"\n\n"
-  end
-
   # option help
   def option_help(opt)
     opt.separator 'HELP'
@@ -146,6 +138,19 @@ end
 # Opt_parser class, is for getting needed options
 #  this is the public class used by backend
 class OptParser < OptParserInternal
+  private
+
+  # option banner gitbot
+  def option_banner(opt)
+    name = './gitbot.rb'
+    opt.banner = "************************************************\n" \
+        "Usage: gitbot [OPTIONS] \n" \
+        " EXAMPLE: ======> #{name} -r openSUSE/gitbot -c \"pysthon-test\" " \
+        "-d \"someCoolTest\" -g /tmp/pr-ruby01/ -t /tmp/test.sh -f \".py\"\n\n"
+  end
+
+  public
+
   def gitbot_options
     @opt_parser = OptionParser.new do |opt|
       option_banner(opt)
