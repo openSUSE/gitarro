@@ -9,10 +9,9 @@ class GitbotGitop < Minitest::Test
     @full_hash = { repo: 'openSUSE/gitbot', context: 'python-t', description:
                    'functional', test_file: 'gino.sh', file_type: '.sh',
                    git_dir: 'gitty' }
-    OptParser.options = @full_hash
-    OptParser.gitbot_options
-    gb = GitbotBackend.new
+    gb = GitbotBackend.new(@full_hash)
     # crate fake object for internal class external repo
+    # FIXME: this could improved creating a full mock obj
     pr = 'fake'
     gop = GitOp.new(gb.git_dir, pr)
     puts gb.git_dir

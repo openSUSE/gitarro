@@ -10,10 +10,11 @@ require_relative 'git_op'
 class GitbotBackend
   attr_accessor :j_status, :options, :client, :pr_files
   # public method of backend
-  def initialize
+  def initialize(option = nil)
     Octokit.auto_paginate = true
     @client = Octokit::Client.new(netrc: true)
-    @options = OptParser.gitbot_options
+    @options = option unless option.nil?
+    @options = OptParser.new.gitbot_options if option.nil?
     @j_status = ''
     @pr_files = []
     # each options will generate a object variable dinamically
@@ -193,5 +194,6 @@ class GitbotBackend
     launch_test_and_setup_status(@repo, pr)
     true
   end
-  public :retrigger_test, :launch_test_and_setup_status, :changelog_active, :unreviewed_pr_test
+  public :retrigger_test, :launch_test_and_setup_status,
+         :changelog_active, :unreviewed_pr_test
 end

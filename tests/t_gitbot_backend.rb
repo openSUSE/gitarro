@@ -10,9 +10,7 @@ class GitbotBackendTest2 < Minitest::Test
     @full_hash = { repo: 'gino/gitbot', context: 'python-t', description:
                    'functional', test_file: 'gino.sh', file_type: '.sh',
                    git_dir: 'gitty' }
-    OptParser.options = @full_hash
-    OptParser.gitbot_options
-    gitbot = GitbotBackend.new
+    gitbot = GitbotBackend.new(@full_hash)
     puts gitbot.j_status
     gitbot.j_status = 'foo'
     gitbot_assert(gitbot)
@@ -31,9 +29,7 @@ class GitbotBackendTest2 < Minitest::Test
     @full_hash = { repo: 'gino/gitbot', context: 'python-t', description:
                    'functional', test_file: 'test_data/script_ok.sh',
                    file_type: '.sh', git_dir: 'gitty' }
-    OptParser.options = @full_hash
-    gb = GitbotBackend.new
-    OptParser.gitbot_options
+    gb = GitbotBackend.new(@full_hash)
     ck_files(gb)
     test_file = 'nofile.txt'
     assert_file_non_ex(gb, test_file)
