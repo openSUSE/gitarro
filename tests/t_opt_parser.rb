@@ -5,9 +5,10 @@ require_relative 'helper'
 # Test the option parser
 class GitbotOptionTest < Minitest::Test
   def set_option(hash, s)
-    OptParser.options = hash
+    opp = OptParser.new
+    opp.options = hash
     ex = assert_raises OptionParser::MissingArgument do
-      OptParser.gitbot_options
+      opp.gitbot_options
     end
     assert_equal("missing argument: #{s}", ex.message)
   end
@@ -16,16 +17,17 @@ class GitbotOptionTest < Minitest::Test
     hash =  { repo: 'gino/gitbot' }
     hash1 = { repo: 'gino/gitbot', context: 'python-t',
               description: 'functional', test: 'gino.sh' }
-    set_option(hash, 'CONTEXT')
-    set_option(hash1, 'SCRIPT FILE')
+    set_option(hash, 'context')
+    set_option(hash1, 'file_type')
   end
 
   def test_full_option_import
+    opp2 = OptParser.new
     full_hash = { repo: 'gino/gitbot', context: 'python-t',
                   description: 'functional', test_file: 'gino.sh',
                   file_type: '.sh', git_dir: 'gitty' }
-    OptParser.options = full_hash
-    options = OptParser.gitbot_options
+    opp2.options = full_hash
+    options = opp2.gitbot_options
     option_ass(options)
   end
 
