@@ -19,8 +19,7 @@ At the beginning, gitbot will download the repo in /tmp/gitbot_java_lint
  -t "/home/jenkins/bin/valid-scripts/java-checkstyle.sh" \
  -u $BUILD_URL  \
  -f ".java" \
- -g "/tmp/gitbot_java_lint" \
- -s 2000 
+ -g "/tmp/gitbot_java_lint"
 
 ```
 
