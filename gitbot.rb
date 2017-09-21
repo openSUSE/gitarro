@@ -23,20 +23,23 @@ puts 'no Pull request OPEN on the REPO!' if prs.any? == false
 
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
-  # this check the last commit state, catch for review or not reviewd status.
+ # this check the last commit state, catch for review or not reviewd status.
   comm_st = gb.client.status(gb.repo, pr.head.sha)
-  # retrigger if magic word found
-  retrigger_check(gb, pr)
-  # check if changelog test was enabled
-  next if gb.changelog_active(pr)
-  gb.unreviewed_pr_ck(comm_st)
-  # 0) do test for unreviewed pr
-  next if gb.unreviewed_pr_test(pr)
   # we run the test in 2 conditions:
   # 1) the context  is not set, test didnt run
   # 2) the pending status is set on commit, repeat always when pending set
   context_present = gb.context_pr(comm_st)
   pending_on_context = gb.pending_pr(comm_st)
+  # retrigger if magic word found
+  retrigger_check(gb, pr)
+  # check if changelog test was enabled, 1 time only
+  unless context_present
+    gb.changelog_active(pr)
+    break
+  end
+  # 0) do test for unreviewed pr
+  gb.unreviewed_pr_ck(comm_st)
+  break if gb.unreviewed_pr_test(pr)
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
     gb.pr_all_files_type(gb.repo, pr.number, gb.file_type)
