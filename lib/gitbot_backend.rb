@@ -159,8 +159,10 @@ class GitbotBackend
   # this function check if changelog specific test is active.
   def changelog_active(pr)
     return unless @changelog_test
-    changelog_changed(@repo, pr) unless @context.include? 'changelog'
-    true
+    unless @context.include? 'changelog'
+      changelog_changed(@repo, pr)
+      true
+    end
   end
 
   # control if the pr change add any files, specified
