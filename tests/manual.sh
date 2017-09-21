@@ -14,12 +14,12 @@
 # 2 you should write a comment '@gitbot rerun $context !!!' for test n3
 
 repo="openSUSE/gitbot"
-context="gitbot-dev2a"
+context="gitbot-dev23"
 desc="dev-test"
 git_dir="/tmp/ruby312"
 valid_test="/tmp/gitbot.sh"
 url="https://github.com/openSUSE/gitbot/pull/8"
-ftype='.rb'
+ftype='.'
 echo '#! /bin/bash' > $valid_test
 chmod +x $valid_test
 
@@ -52,10 +52,10 @@ retrigger_tests() {
 changelog_tests() {
   echo "TESTING CHANGELOG TEST"
   # 3 test the changelog test
-  ruby  ../gitbot.rb -r $repo  -c "changelog23" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
+  ruby  ../gitbot.rb -r $repo  -c "changelog21i2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
   # 4 this, need a comment on pr no changelog needed!
 #  ruby  ../gitbot.rb -r $repo  -c "changelog2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
 }
-basic_tests
-retrigger_tests
+#basic_tests
+#retrigger_tests
 changelog_tests
