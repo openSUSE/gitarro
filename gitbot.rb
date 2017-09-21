@@ -40,7 +40,7 @@ prs.each do |pr|
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
     gb.pr_all_files_type(gb.repo, pr.number, gb.file_type)
-    gb.changelog_active(pr)
+    break if gb.changelog_active(pr)
     next unless gb.pr_files.any?
     exit 1 if gb.check
     gb.launch_test_and_setup_status(gb.repo, pr)
