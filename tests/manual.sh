@@ -52,7 +52,7 @@ retrigger_tests() {
 changelog_tests() {
   echo "TESTING CHANGELOG TEST"
   # 3 test the changelog test
-  ruby  ../gitbot.rb -r $repo  -c "changelog23" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
+  ruby  ../gitbot.rb -r $repo  -c "changeloglast2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
   # 4 this, need a comment on pr no changelog needed!
 #  ruby  ../gitbot.rb -r $repo  -c "changelog2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
 }
