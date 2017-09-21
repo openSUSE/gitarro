@@ -61,8 +61,10 @@ class GitbotBackend
   end
 
   # do the changelog test and set status
-  def changelog_changed(repo, pr)
-    return unless @changelog_test
+  def changelog_changed(repo, pr, comm_st)
+    return false unless @changelog_test
+    return false if failed_status?(comm_st)
+    return false if success_status?(comm_st)
     @j_status = 'failure'
     pr_all_files_type(repo, pr.number, @file_type)
     # if the pr contains changes on .changes file, test ok
@@ -145,6 +147,28 @@ class GitbotBackend
     pending_on_context
   end
 
+  def failed_status?(comm_st)
+    status = false
+    (0..comm_st.statuses.size - 1).each do |pr_status|
+      if comm_st.statuses[pr_status]['context'] == @context &&
+         comm_st.statuses[pr_status]['state'] == 'failure'
+        status = true
+      end
+    end
+    status
+  end
+
+  def success_status?(comm_st)
+    status = false
+    (0..comm_st.statuses.size - 1).each do |pr_status|
+      if comm_st.statuses[pr_status]['context'] == @context &&
+         comm_st.statuses[pr_status]['state'] == 'success'
+        status = true
+      end
+    end
+    status
+  end
+
   # check it the cm of pr contain the context from gitbot already
   def context_pr(cm_st)
     # 1) context_present == false  triggers test. >
@@ -157,12 +181,10 @@ class GitbotBackend
   end
 
   # this function check if changelog specific test is active.
-  def changelog_active(pr)
-    return unless @changelog_test
-    unless @context.include? 'changelog'
-      changelog_changed(@repo, pr)
-      true
-    end
+  def changelog_active(pr, comm_st)
+    return false unless @changelog_test
+    return false unless changelog_changed(@repo, pr, comm_st)
+    true
   end
 
   # control if the pr change add any files, specified

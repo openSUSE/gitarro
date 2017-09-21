@@ -28,7 +28,7 @@ prs.each do |pr|
   # retrigger if magic word found
   retrigger_check(gb, pr)
   # check if changelog test was enabled
-  break if gb.changelog_active(pr)
+  break if gb.changelog_active(pr, comm_st)
   gb.unreviewed_pr_ck(comm_st)
   # 0) do test for unreviewed pr
   break if gb.unreviewed_pr_test(pr)
@@ -40,7 +40,7 @@ prs.each do |pr|
   # check the conditions 1,2 and it they happens run_test
   if context_present == false || pending_on_context == true
     gb.pr_all_files_type(gb.repo, pr.number, gb.file_type)
-    break if gb.changelog_active(pr)
+    break if gb.changelog_active(pr, comm_st)
     next unless gb.pr_files.any?
     exit 1 if gb.check
     gb.launch_test_and_setup_status(gb.repo, pr)
