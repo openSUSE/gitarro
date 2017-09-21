@@ -158,7 +158,7 @@ class GitbotBackend
 
   # this function check if changelog specific test is active.
   def changelog_active(pr)
-    return unless changelog_test
+    return unless @changelog_test
     changelog_changed(@repo, pr)
     true
   end
