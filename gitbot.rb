@@ -29,7 +29,7 @@ prs.each do |pr|
   retrigger_check(gb, pr)
   gb.unreviewed_pr_ck(comm_st)
   # 0) do test for unreviewed pr
-  next if gb.unreviewed_pr_test(pr)
+  break if gb.unreviewed_pr_test(pr)
   # we run the test in 2 conditions:
   # 1) the context  is not set, test didnt run
   # 2) the pending status is set on commit, repeat always when pending set
