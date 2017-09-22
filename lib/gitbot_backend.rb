@@ -25,13 +25,13 @@ class GitbotBackend
   end
 
   def retrigger_check(pr)
-    return unless retrigger_test(pr)
+    return unless retrigger_needed?(pr)
     client.create_status(@repo, pr.head.sha, 'pending',
-                          context: @context, description: @description,
-                          target_url: @target_url)
+                         context: @context, description: @description,
+                         target_url: @target_url)
     return false if @check
     launch_test_and_setup_status(@repo, pr)
-    return true
+    true
   end
 
   # run validation script for validating the PR.
@@ -69,22 +69,6 @@ class GitbotBackend
       end
     end
   end
-
-  # do the changelog test and set status
-  def changelog_changed(repo, pr, comm_st)
-    return false unless @changelog_test
-    return false if failed_status?(comm_st)
-    return false if success_status?(comm_st)
-    @j_status = 'failure'
-    pr_all_files_type(repo, pr.number, @file_type)
-    # if the pr contains changes on .changes file, test ok
-    @j_status = 'success' if @pr_files.any?
-    magic_comment(repo, pr.number)
-    @client.create_status(repo, pr.head.sha, @j_status,
-                          context: @context, description: @description,
-                          target_url: @target_url)
-  end
-
   # check all files of a Prs Number if they are a specific type
   # EX: Pr 56, we check if files are '.rb'
   def pr_all_files_type(repo, pr_number, type)
@@ -132,16 +116,6 @@ class GitbotBackend
     @client.create_status(repo, pr.head.sha, @j_status,
                           context: @context, description: @description,
                           target_url: @target_url)
-  end
-
-  def retrigger_test(pr)
-    # we want redo sometimes tests
-    return false unless magicword(@repo, pr.number, @context)
-    pr_all_files_type(@repo, pr.number, @file_type)
-    return false unless @pr_files.any?
-    # if check is set, the comment in the trigger job will be del.
-    # so setting it to pending, it will be remembered
-    true
   end
 
   # check if the commit of a pr is on pending
@@ -197,14 +171,6 @@ class GitbotBackend
     true
   end
 
-  # control if the pr change add any files, specified
-  # it can be also a dir
-  def empty_files_changed_by_pr
-    return if pr_files.any?
-    puts "no files of type #{@file_type} found! skipping"
-    true
-  end
-
   # the first element of array a review-test.
   # if the pr has travis test and one custom, we will have 2 elements.
   # in this case, if the 1st element doesn't have the state property
@@ -228,6 +194,42 @@ class GitbotBackend
     launch_test_and_setup_status(@repo, pr)
     true
   end
-  public :retrigger_test, :launch_test_and_setup_status,
+  public :launch_test_and_setup_status,
          :changelog_active, :unreviewed_pr_test
+
+  private
+
+  # control if the pr change add any files, specified
+  # it can be also a dir
+  def empty_files_changed_by_pr
+    return if pr_files.any?
+    puts "no files of type #{@file_type} found! skipping"
+    true
+  end
+
+  # do the changelog test and set status
+  def changelog_changed(repo, pr, comm_st)
+    return false unless @changelog_test
+    return false if failed_status?(comm_st)
+    return false if success_status?(comm_st)
+    @j_status = 'failure'
+    pr_all_files_type(repo, pr.number, @file_type)
+    # if the pr contains changes on .changes file, test ok
+    @j_status = 'success' if @pr_files.any?
+    magic_comment(repo, pr.number)
+    @client.create_status(repo, pr.head.sha, @j_status,
+                          context: @context, description: @description,
+                          target_url: @target_url)
+  end
+
+  def retrigger_needed?(pr)
+    # we want redo sometimes tests
+    return false unless magicword(@repo, pr.number, @context)
+    pr_all_files_type(@repo, pr.number, @file_type)
+    return false unless @pr_files.any?
+    # if check is set, the comment in the trigger job will be del.
+    # so setting it to pending, it will be remembered
+    true
+  end
+
 end
