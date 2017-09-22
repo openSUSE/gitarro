@@ -6,6 +6,10 @@ require 'English'
 require_relative 'opt_parser'
 require_relative 'git_op'
 
+# internal class for changelog tests
+class ChangeLog
+end
+
 # this class is the backend of gitbot, were we execute the tests and so on
 class GitbotBackend
   attr_accessor :j_status, :options, :client, :pr_files
@@ -167,6 +171,16 @@ class GitbotBackend
       end
     end
     status
+  end
+
+  def retrigger_check(pr)
+    return true unless retrigger_test(pr)
+    @client.create_status(@repo, pr.head.sha, 'pending',
+                          context: @context, description: @description,
+                          target_url: @target_url)
+    exit 1 if @check
+    launch_test_and_setup_status(@repo, pr)
+    exit 0
   end
 
   # check it the cm of pr contain the context from gitbot already
