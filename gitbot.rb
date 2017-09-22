@@ -16,7 +16,9 @@ prs.each do |pr|
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = gb.client.status(gb.repo, pr.head.sha)
   # retrigger if magic word found
-  gb.retrigger_check(pr) ? exit(0) : exit(1)
+  st = gb.retrigger_check(pr)
+  break if st
+  exit 1 if gb.check && (st == false)
   # check if changelog test was enabled
   break if gb.changelog_active(pr, comm_st)
   gb.unreviewed_pr_ck(comm_st)

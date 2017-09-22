@@ -25,7 +25,7 @@ class GitbotBackend
   end
 
   def retrigger_check(pr)
-    return unless retrigger_needed?(pr)
+    return false unless retrigger_needed?(pr)
     client.create_status(@repo, pr.head.sha, 'pending',
                          context: @context, description: @description,
                          target_url: @target_url)
