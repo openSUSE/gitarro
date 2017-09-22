@@ -69,6 +69,7 @@ class GitbotBackend
       end
     end
   end
+
   # check all files of a Prs Number if they are a specific type
   # EX: Pr 56, we check if files are '.rb'
   def pr_all_files_type(repo, pr_number, type)
@@ -231,5 +232,4 @@ class GitbotBackend
     # so setting it to pending, it will be remembered
     true
   end
-
 end
