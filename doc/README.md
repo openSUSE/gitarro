@@ -14,7 +14,6 @@ MANDATORY Options
     -g, --git_dir 'GIT_LOCAL_DIR'    specify a location where gitbot will clone the github projectEXAMPLE : /tmp/pr-test/ if the dir doesnt exists, gitbot will create one.
 OPTIONAL Options
     -u, --url TARGET_URL             specify the url to append to github review usually is the jenkins url of the job
-    -s, --secs TIMEOUT               specify the secs you want to wait/sleep if the gitbot is not finding any valid PRs to review. (usefull to spare jenkins jobs history)
         --changelogtest              check if the PR include a changelog entry. Automatically set --file ".changes"
     -C, --check                      check, if a PR requires testRun in checkmode and test if there is a Pull Request which requires a test
 HELP
