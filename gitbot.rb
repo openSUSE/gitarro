@@ -12,11 +12,7 @@ prs = gb.client.pull_requests(gb.repo, state: 'open')
 puts 'no Pull request OPEN on the REPO!' if prs.any? == false
 
 prs.each do |pr|
-  puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
-  # this check the last commit state, catch for review or not reviewd status.
-  comm_st = gb.client.status(gb.repo, pr.head.sha)
-  # retrigger if magic word found, otherwise don't retrigger tests
-  gb.retrigger_test_already_run(pr)
+  pu====
   # check if changelog test was enabled
   break if gb.changelog_active(pr, comm_st)
   # 0) do test for unreviewed pr
