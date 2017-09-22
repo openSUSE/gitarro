@@ -24,7 +24,7 @@ HELP
 
 
 ## Basic design
-Basically gitbot run a validation script/commands (-t) (could be bash, python, ruby, etc) against each open PR of your XXX Branch.
+Basically gitbot run a validation script/commands (-t) (could be bash, python, ruby, etc) against each open PR of the GitHub repository you specify.
 
 All open Pull-request will be then scanned for modifications on specific file type modified (-f ".py" as example). 
 If the pr doesn't modify a python file( -f '.py') gitbot doesn't run a test against the pr.
