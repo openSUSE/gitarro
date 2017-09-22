@@ -24,6 +24,16 @@ class GitbotBackend
     end
   end
 
+  def retrigger_check(pr)
+    return unless retrigger_test(pr)
+    client.create_status(@repo, pr.head.sha, 'pending',
+                          context: @context, description: @description,
+                          target_url: @target_url)
+    return false if @check
+    launch_test_and_setup_status(@repo, pr)
+    return true
+  end
+
   # run validation script for validating the PR.
   def run_script
     n_exist = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
