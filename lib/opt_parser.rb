@@ -25,6 +25,12 @@ class OptParserInternal
     end
   end
 
+  def https_opt(opt)
+    @options[:https] = false
+    https_desc = 'If present, use https instead of ssh for git operations'
+    opt.on('--https', https_desc) { |https| @options[:https] = https }
+  end
+
   def changelog_opt(opt)
     changelog_desc = 'check if the PR include a changelog entry' \
     ' Automatically set --file \".changes\"'
@@ -48,6 +54,7 @@ class OptParserInternal
     changelog_opt(opt)
     url_opt(opt)
     pr_number(opt)
+    https_opt(opt)
   end
 
   # primary

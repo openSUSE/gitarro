@@ -7,6 +7,7 @@ require 'English'
 class GitRemoteOperations
   attr_reader :repo, :client
   def initialize(repo)
+    @script = '../../gitbot.rb'
     @repo = repo
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
@@ -57,8 +58,22 @@ class GitbotTesting
     num = 30
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
-    puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}`
+    puts `ruby #{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}`
     raise 'BASIC TEST FAILED' if $CHILD_STATUS.exitstatus.nonzero?
+  end
+
+  def basic_https
+    context = 'changelog'
+    desc = 'dev-test'
+    git_dir = '/tmp/ruby312'
+    valid_test = '/tmp/gitbot.sh'
+    url = 'https://github.com/openSUSE/gitbot/pull/8'
+    ftype = '.rb'
+    num = 30
+    `echo '#! /bin/bash' > #{valid_test}`
+    `chmod +x #{valid_test}`
+    puts `ruby #{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num} --https`
+    raise 'BASIC HTTPS TEST FAILED' if $CHILD_STATUS.exitstatus.nonzero?
   end
 
   def basic_check_test
@@ -72,11 +87,11 @@ class GitbotTesting
     ftype = '.rb'
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
-    puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -C`
+    puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -C`
     # with check we have -1 has value ( used for retrigger)
     raise 'BASIC TEST CHECK FAILED' if $CHILD_STATUS.exitstatus.zero?
     # FIXME: we should check that the given context contain a pending status
-    puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype}`
+    puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype}`
   end
 
   def changelog_should_fail(com_st)
@@ -88,8 +103,8 @@ class GitbotTesting
     ftype = '.rb'
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
-    puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
-    raise 'chanelog test should fail!' unless  failed_status(com_st, context)
+    puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
+    raise 'chanelog test should fail!' unless failed_status(com_st, context)
   end
 
   def changelog_should_pass(com_st)
@@ -101,7 +116,7 @@ class GitbotTesting
     ftype = '.rb'
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
-    puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
+    puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
     raise 'chanelog test should pass!' if failed_status(com_st, context)
   end
 

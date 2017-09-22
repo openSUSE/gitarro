@@ -44,24 +44,20 @@ class GitbotBackend
     puts out
   end # main function for doing the test
 
-  def pr_test(upstream, pr_sha_com, repo, pr_branch, pr)
-    git = GitOp.new(@git_dir, pr)
-    # get author:
-    pr_com = @client.commit(repo, pr_sha_com)
-    _author_pr = pr_com.author.login
+  def pr_test(pr)
+    git = GitOp.new(@git_dir, pr, @options)
     # merge PR-branch to upstream branch
-    git.merge_pr_totarget(upstream, pr_branch, repo)
+    git.merge_pr_totarget(pr.base.ref, pr.head.ref)
     # do valid tests
     run_script
     # del branch
-    git.del_pr_branch(upstream, pr_branch)
+    git.del_pr_branch(pr.base.ref, pr.head.ref)
   end
 
   # if the Pr contains magic word, test changelog
   # is true
   def magic_comment(repo, pr_num)
-    comments = @client.issue_comments(repo, pr_num)
-    comments.each do |com|
+    @client.issue_comments(repo, pr_num).each do |com|
       if com.body.include?('no changelog needed!')
         @j_status = 'success'
         break
@@ -107,7 +103,7 @@ class GitbotBackend
                           context: @context, description: @description,
                           target_url: @target_url)
     # do tests
-    pr_test(pr.base.ref, pr.head.sha, repo, pr.head.ref, pr)
+    pr_test(pr)
     # set status
     @client.create_status(repo, pr.head.sha, @j_status,
                           context: @context, description: @description,
