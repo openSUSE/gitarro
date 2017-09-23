@@ -93,10 +93,6 @@ class GitbotBackend
     end
   end
 
-  def create_comment(repo, pr, comment)
-    @client.create_commit_comment(repo, pr, comment)
-  end
-
   # this function will check if the PR contains in comment the magic word
   # # for retrigger all the tests.
   def magicword(repo, pr_number, context)
