@@ -25,6 +25,8 @@ prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = gb.client.status(gb.repo, pr.head.sha)
+  # pr number trigger.
+  break if gb.trigger_by_pr_number(pr)
   # retrigger if magic word found
   retrigger_check(gb, pr)
   # check if changelog test was enabled

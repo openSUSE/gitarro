@@ -24,6 +24,15 @@ class GitbotBackend
     end
   end
 
+  # we always rerun tests against the pr number if this exists
+  def trigger_by_pr_number(pr)
+    return false if @pr_number.nil?
+    return false if @pr_number != pr.number
+    puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
+    launch_test_and_setup_status(@repo, pr)
+    true
+  end
+
   # run validation script for validating the PR.
   def run_script
     n_exist = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"

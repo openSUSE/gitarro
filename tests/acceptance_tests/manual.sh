@@ -13,6 +13,10 @@
 # 1 you should have at least on PR open for using this
 # 2 you should write a comment '@gitbot rerun $context !!!' for test n3
 
+# Warning
+# this should be replaced by the ruby test in future
+
+
 repo="openSUSE/gitbot"
 context="gitbot-dev2a"
 desc="dev-test"

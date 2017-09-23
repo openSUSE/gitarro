@@ -3,64 +3,60 @@
 require 'octokit'
 require 'English'
 
-# Prerequisites: Have a netrc file
-# git local operation
-class GitLocalOperations
-  def create_branch(branch_pr)
-    `git branch #{branch_pr}`
-  end
-
-  def push_branch(branch_pr)
-    `git push origin #{branch_pr}`
-  end
-
-  def make_commit(branch_pr)
-   `git checkout #{branch_pr}`
-   `touch fake.rb`
-   `git commit -a -m "fake commit"`
-  end
- 
-  def del_branch(branch_pr)
-    `git branch -D #{branch_pr}`
-  end
-end
-
 # github octokit operation
 class GitRemoteOperations
-  attr_reader :repo
+  attr_reader :repo, :client
   def initialize(repo)
     @repo = repo
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
   end
 
-  def create_fake_pr(target_branch, branch_pr)
-    @client.create_pull_request(repo, target_branch, branch_pr,
-        'Fake PR title', 'Fake Request body')
-  end
-
-  def remove_fake_pr(pr_number)
-    @client.close_pull_request(repo, pr_number)
+  def pr_by_number(num)
+    client.pull_request(repo, num)
   end
 end
 
-# gitbot tests
-class GitbotTests
+# gitbot functional tests
+# this class will remove the bash.sh manual stuff
+class GitbotTesting
+  attr_reader :repo, :client
+  def initialize(repo)
+    @repo = repo
+    @client = Octokit::Client.new(netrc: true)
+    Octokit.auto_paginate = true
+  end
+
+  def basic
+    context = 'gitbot-dev2a'
+    desc = 'dev-test'
+    git_dir = '/tmp/ruby312'
+    valid_test = '/tmp/gitbot.sh'
+    url = 'https://github.com/openSUSE/gitbot/pull/8'
+    ftype = '.rb'
+    num = 30
+    `echo '#! /bin/bash' > #{valid_test}`
+    `chmod +x #{valid_test}`
+    puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}`
+  end
+
+  # Optional do we need to check the status during basic?
+  # FIXME: add option -C
 end
 
+# MAIN TESTS
 
-def main
-  fake_br = 'fake_branch'
-  gitbotrepo = 'openSUSE/gitbot'
-  localgit = GitLocalOperations.new
-  rgit = GitRemoteOperations.new(gitbotrepo)
-  localgit.create_branch(fake_br)
-  localgit.make_commit(fake_br)
-  localgit.push_branch(fake_br)
-  puts 'create fake PR'
-  pr = rgit.create_fake_pr('master', fake_br)
-  rgit.remove_fake_pr(pr.number)
-  localgit.del_branch(fake_br)
-end
+# Replace this with your repo
+gitbotrepo = 'openSUSE/gitbot'
 
-main
+rgit = GitRemoteOperations.new(gitbotrepo)
+test = GitbotTesting.new(gitbotrepo)
+
+# assume that a PR Called FAKE-PR always exists.
+# The implicit prereq. is the number 30 of PR
+
+# get fake pr for testing
+rgit.pr_by_number(30)
+
+# 0 do a normal test
+test.basic

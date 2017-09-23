@@ -33,11 +33,21 @@ class OptParserInternal
     end
   end
 
+  def pr_number(opt)
+    pr_desc = 'specify the pr number for running the test.' \
+              'force gitbot to run tests against a specific PR NUMBER,' \
+              'even if the test was already run'
+    opt.on('-P', '--PR NUMBER', pr_desc) do |pr_number|
+      @options[:pr_number] = Integer(pr_number)
+    end
+  end
+
   def secondary_options(opt)
     opt.separator 'OPTIONAL Options'
     check_opt(opt)
     changelog_opt(opt)
     url_opt(opt)
+    pr_number(opt)
   end
 
   # primary
