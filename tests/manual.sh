@@ -14,7 +14,7 @@
 # 2 you should write a comment '@gitbot rerun $context !!!' for test n3
 
 repo="openSUSE/gitbot"
-context="gitbot-dev2a"
+context="gitbot-dev"
 desc="dev-test"
 git_dir="/tmp/ruby312"
 valid_test="/tmp/gitbot.sh"
