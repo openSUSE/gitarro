@@ -1,7 +1,6 @@
 #! /usr/bin/ruby
 
 require_relative 'helper'
-require_relative '../lib/gitbot_backend.rb'
 require 'ostruct'
 # Test the option parser
 class GitbotGitop < Minitest::Test
