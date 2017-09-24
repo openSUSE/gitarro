@@ -26,7 +26,7 @@ class GitRemoteOperations
   end
 
   def create_comment(pr, comment)
-    client.create_commit_comment(repo, pr.head.sha, comment)
+    client.add_comment(repo, pr.number, comment)
   end
 
   def delete_c(comment_id)
@@ -131,6 +131,7 @@ puts '--- CHANGELOG SHOULD FAIL TEST ---'
 test.changelog_should_fail(comm_st)
 
 # 2 create comment "no changelog needed!", for making the changelog test passing
+puts '--- CHANGELOG SHOULD PASS TEST ---'
 comment = rgit.create_comment(pr, 'no changelog needed!')
 cont = 'changelog_shouldpass'
 # in this way we are always sure that we can rerun the tests
@@ -145,5 +146,5 @@ rescue
 ensure
   # remove always the comment if something went wrong
   rgit.delete_c(comment.id)
-  #  rgit.delete_c(rcomment.id)
+  rgit.delete_c(rcomment.id)
 end
