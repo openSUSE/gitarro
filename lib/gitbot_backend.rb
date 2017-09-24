@@ -69,21 +69,6 @@ class GitbotBackend
     end
   end
 
-  # do the changelog test and set status
-  def changelog_changed(repo, pr, comm_st)
-    return false unless @changelog_test
-    return false if failed_status?(comm_st)
-    return false if success_status?(comm_st)
-    @j_status = 'failure'
-    pr_all_files_type(repo, pr.number, @file_type)
-    # if the pr contains changes on .changes file, test ok
-    @j_status = 'success' if @pr_files.any?
-    magic_comment(repo, pr.number)
-    @client.create_status(repo, pr.head.sha, @j_status,
-                          context: @context, description: @description,
-                          target_url: @target_url)
-  end
-
   # check all files of a Prs Number if they are a specific type
   # EX: Pr 56, we check if files are '.rb'
   def pr_all_files_type(repo, pr_number, type)
@@ -132,6 +117,11 @@ class GitbotBackend
   def retrigger_test(pr)
     # we want redo sometimes tests
     return false unless magicword(@repo, pr.number, @context)
+    # changelog trigger
+    if @changelog_test
+      do_changelog_test(@repo, pr)
+      return false
+    end
     pr_all_files_type(@repo, pr.number, @file_type)
     return false unless @pr_files.any?
     # if check is set, the comment in the trigger job will be del.
@@ -225,4 +215,27 @@ class GitbotBackend
   end
   public :retrigger_test, :launch_test_and_setup_status,
          :changelog_active, :unreviewed_pr_test
+
+  private
+
+  def do_changelog_test(repo, pr)
+    @j_status = 'failure'
+    pr_all_files_type(repo, pr.number, @file_type)
+    # if the pr contains changes on .changes file, test ok
+    @j_status = 'success' if @pr_files.any?
+    magic_comment(repo, pr.number)
+    @client.create_status(repo, pr.head.sha, @j_status,
+                          context: @context, description: @description,
+                          target_url: @target_url)
+    true
+  end
+
+  # do the changelog test and set status
+  def changelog_changed(repo, pr, comm_st)
+    return false unless @changelog_test
+    # only execute 1 time, don"t run if test is failed, or ok
+    return false if failed_status?(comm_st)
+    return false if success_status?(comm_st)
+    do_changelog_test(repo, pr)
+  end
 end

@@ -8,7 +8,7 @@ require_relative 'lib/git_op'
 require_relative 'lib/gitbot_backend'
 
 def retrigger_check(gb, pr)
-  return true unless gb.retrigger_test(pr)
+  return unless gb.retrigger_test(pr)
   gb.client.create_status(gb.repo, pr.head.sha, 'pending',
                           context: gb.context, description: gb.description,
                           target_url: gb.target_url)

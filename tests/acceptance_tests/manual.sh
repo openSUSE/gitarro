@@ -30,11 +30,11 @@ chmod +x $valid_test
 basic_tests() {
   # 0
   echo 'testing normal behaviour'
-  ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url
+  ruby  ../../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url
   echo
   # 1 test with check option enabled.
   echo 'testing check option'
-  ruby  ../gitbot.rb -r $repo  -c "$context-01" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url -C
+  ruby  ../../gitbot.rb -r $repo  -c "$context-01" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url -C
   if [ $? == 0  ]; then 
      echo "GIBOT TEST1 FAILED!!!!"
      exit 1
@@ -50,16 +50,16 @@ basic_tests() {
 
 retrigger_tests() {
   echo "TESTING RETRIGGERING"
-  ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url -C
-  ruby  ../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url
+  ruby  ../../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url -C
+  ruby  ../../gitbot.rb -r $repo  -c $context -d $desc -g $git_dir -t $valid_test -f $ftype -u $url
 }
 changelog_tests() {
   echo "TESTING CHANGELOG TEST"
   # 3 test the changelog test
-  ruby  ../gitbot.rb -r $repo  -c "changeloglast2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
+  ruby ../../gitbot.rb -r $repo  -c "changelog_shouldpass"  -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
   # 4 this, need a comment on pr no changelog needed!
 #  ruby  ../gitbot.rb -r $repo  -c "changelog2" -d $desc -g $git_dir -t $valid_test -f $ftype -u $url --changelogtest
 }
-basic_tests
-retrigger_tests
+#basic_tests
+#retrigger_tests
 changelog_tests

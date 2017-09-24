@@ -71,7 +71,7 @@ class GitbotTesting
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
     puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
-    raise 'chanelog test should fail!' unless failed_status(com_st, context)
+    raise 'chanelog test should fail!' unless  failed_status(com_st, context)
   end
 
   def changelog_should_pass(com_st)
@@ -126,7 +126,6 @@ test.basic
 comm_st = rgit.commit_status(pr)
 
 # FIXME: add option -C tests (check)
-
 # 1 We assume that no PRs on gitbot have a file .changes (99% is the case)
 puts '--- CHANGELOG SHOULD FAIL TEST ---'
 test.changelog_should_fail(comm_st)
@@ -146,5 +145,5 @@ rescue
 ensure
   # remove always the comment if something went wrong
   rgit.delete_c(comment.id)
-  rgit.delete_c(rcomment.id)
+  #  rgit.delete_c(rcomment.id)
 end
