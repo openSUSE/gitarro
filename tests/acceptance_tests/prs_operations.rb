@@ -30,18 +30,19 @@ class GitRemoteOperations
   end
 
   def delete_c(comment_id)
-    client.delete_commit_comment(repo, comment_id)
+    client.delete_comment(repo, comment_id)
   end
 end
 
 # gitbot functional tests
 # this class will remove the bash.sh manual stuff
 class GitbotTesting
-  attr_reader :repo, :client
+  attr_reader :repo, :client, :gitrem
   def initialize(repo)
     @repo = repo
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
+    @gitrem = GitRemoteOperations.new(repo)
   end
 
   public
@@ -60,6 +61,24 @@ class GitbotTesting
     raise 'BASIC TEST FAILED' if $CHILD_STATUS.exitstatus.nonzero?
   end
 
+  def basic_check_test
+    # we want always to make the retrigger word,
+    # so we have idempotency
+    context = 'check-option-test'
+    desc = 'dev-test'
+    git_dir = '/tmp/ruby312'
+    valid_test = '/tmp/gitbot.sh'
+    url = 'https://github.com/openSUSE/gitbot/pull/8'
+    ftype = '.rb'
+    `echo '#! /bin/bash' > #{valid_test}`
+    `chmod +x #{valid_test}`
+    puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -C`
+    # with check we have -1 has value ( used for retrigger)
+    raise 'BASIC TEST CHECK FAILED' if $CHILD_STATUS.exitstatus.zero?
+    # FIXME: we should check that the given context contain a pending status
+    puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype}`
+  end
+
   def changelog_should_fail(com_st)
     context = 'changelog_shouldfail'
     desc = 'changelog_fail'
@@ -67,7 +86,6 @@ class GitbotTesting
     valid_test = '/tmp/gitbot.sh'
     url = 'https://github.com/openSUSE/gitbot/pull/8'
     ftype = '.rb'
-    num = 30
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
     puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
@@ -81,7 +99,6 @@ class GitbotTesting
     valid_test = '/tmp/gitbot.sh'
     url = 'https://github.com/openSUSE/gitbot/pull/8'
     ftype = '.rb'
-    num = 30
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
     puts `ruby  ../../gitbot.rb -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
@@ -119,13 +136,23 @@ rgit.pr_by_number(30)
 pr = rgit.get_first_pr_open
 
 # ********** TESTS *************
-# 0 do a normal test
+# 0 do a normal test (trigger by pr 30)
 
 puts '--- BASIC TEST ---'
+puts ''
 test.basic
 comm_st = rgit.commit_status(pr)
 
-# FIXME: add option -C tests (check)
+# 0--B: add option -C tests (check)
+ck_c = rgit.create_comment(pr, '@gitbot rerun check-option-test !!!')
+begin
+  test.basic_check_test
+rescue
+  raise
+ensure
+  rgit.delete_c(ck_c)
+end
+
 # 1 We assume that no PRs on gitbot have a file .changes (99% is the case)
 puts '--- CHANGELOG SHOULD FAIL TEST ---'
 test.changelog_should_fail(comm_st)
