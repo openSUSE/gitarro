@@ -29,6 +29,7 @@ class GitRemoteOperations
     client.add_comment(repo, pr.number, comment)
   end
 
+  # FXIME: test if it works really
   def delete_c(comment_id)
     client.delete_comment(repo, comment_id)
   end
@@ -47,8 +48,7 @@ class GitbotTestingCmdLine
     @git_dir = '/tmp/ruby312'
     @url = 'https://github.com/openSUSE/gitbot/pull/8'
     @valid_test = '/tmp/gitbot.sh'
-    `echo '#! /bin/bash' > #{@valid_test}`
-    `chmod +x #{@valid_test}`
+    create_test_script(@valid_test)
   end
 
   def basic
@@ -105,6 +105,11 @@ class GitbotTestingCmdLine
   end
 
   private
+
+  def create_test_script(script)
+    `echo '#! /bin/bash' > #{script}`
+    `chmod +x #{script}`
+  end
 
   def failed_status(comm_st, context)
     status = false
