@@ -49,7 +49,7 @@ class GitbotTesting
   public
 
   def basic
-    context = 'changelog'
+    context = 'basic'
     desc = 'dev-test'
     git_dir = '/tmp/ruby312'
     valid_test = '/tmp/gitbot.sh'
@@ -63,7 +63,7 @@ class GitbotTesting
   end
 
   def basic_https
-    context = 'changelog'
+    context = 'basic-https'
     desc = 'dev-test'
     git_dir = '/tmp/ruby312'
     valid_test = '/tmp/gitbot.sh'
