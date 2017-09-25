@@ -7,7 +7,6 @@ require 'English'
 class GitRemoteOperations
   attr_reader :repo, :client
   def initialize(repo)
-    @script = '../../gitbot.rb'
     @repo = repo
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
@@ -38,9 +37,10 @@ end
 # gitbot functional tests
 # this class will remove the bash.sh manual stuff
 class GitbotTesting
-  attr_reader :repo, :client, :gitrem
+  attr_reader :repo, :client, :gitrem, :script
   def initialize(repo)
     @repo = repo
+    @script = '../../gitbot.rb'
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
     @gitrem = GitRemoteOperations.new(repo)
