@@ -37,13 +37,19 @@ end
 # gitbot functional tests
 # this class will remove the bash.sh manual stuff
 class GitbotTesting
-  attr_reader :repo, :client, :gitrem, :script
+  attr_reader :repo, :client, :gitrem, :script, :ftype, :url, :git_dir, :valid_test
   def initialize(repo)
     @repo = repo
     @script = '../../gitbot.rb'
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
     @gitrem = GitRemoteOperations.new(repo)
+    @ftype = '.'
+    @git_dir = '/tmp/ruby312'
+    @url = 'https://github.com/openSUSE/gitbot/pull/8'
+    @valid_test = '/tmp/gitbot.sh'
+    `echo '#! /bin/bash' > #{@valid_test}`
+    `chmod +x #{@valid_test}`
   end
 
   public
@@ -51,13 +57,7 @@ class GitbotTesting
   def basic
     context = 'basic'
     desc = 'dev-test'
-    git_dir = '/tmp/ruby312'
-    valid_test = '/tmp/gitbot.sh'
-    url = 'https://github.com/openSUSE/gitbot/pull/8'
-    ftype = '.rb'
     num = 30
-    `echo '#! /bin/bash' > #{valid_test}`
-    `chmod +x #{valid_test}`
     puts `ruby #{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}`
     raise 'BASIC TEST FAILED' if $CHILD_STATUS.exitstatus.nonzero?
   end
@@ -65,44 +65,30 @@ class GitbotTesting
   def basic_https
     context = 'basic-https'
     desc = 'dev-test'
-    git_dir = '/tmp/ruby312'
-    valid_test = '/tmp/gitbot.sh'
-    url = 'https://github.com/openSUSE/gitbot/pull/8'
-    ftype = '.rb'
     num = 30
-    `echo '#! /bin/bash' > #{valid_test}`
-    `chmod +x #{valid_test}`
     puts `ruby #{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num} --https`
     raise 'BASIC HTTPS TEST FAILED' if $CHILD_STATUS.exitstatus.nonzero?
   end
 
-  def basic_check_test
+  def basic_check_test(comm_st)
     # we want always to make the retrigger word,
     # so we have idempotency
     context = 'check-option-test'
-    desc = 'dev-test'
-    git_dir = '/tmp/ruby312'
-    valid_test = '/tmp/gitbot.sh'
-    url = 'https://github.com/openSUSE/gitbot/pull/8'
-    ftype = '.rb'
-    `echo '#! /bin/bash' > #{valid_test}`
-    `chmod +x #{valid_test}`
+    desc = 'dev-test-checkOption'
+    # If it new, we need to add first the context
+    unless context_present(comm_st, context)
+      puts 'CONTEXT NOT FOUND for CHECK TEST'
+      puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url}`
+    end
     puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -C`
     # with check we have -1 has value ( used for retrigger)
     raise 'BASIC TEST CHECK FAILED' if $CHILD_STATUS.exitstatus.zero?
-    # FIXME: we should check that the given context contain a pending status
     puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype}`
   end
 
   def changelog_should_fail(com_st)
     context = 'changelog_shouldfail'
     desc = 'changelog_fail'
-    git_dir = '/tmp/ruby312'
-    valid_test = '/tmp/gitbot.sh'
-    url = 'https://github.com/openSUSE/gitbot/pull/8'
-    ftype = '.rb'
-    `echo '#! /bin/bash' > #{valid_test}`
-    `chmod +x #{valid_test}`
     puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
     raise 'chanelog test should fail!' unless failed_status(com_st, context)
   end
@@ -110,10 +96,6 @@ class GitbotTesting
   def changelog_should_pass(com_st)
     context = 'changelog_shouldpass'
     desc = 'changelog_pass'
-    git_dir = '/tmp/ruby312'
-    valid_test = '/tmp/gitbot.sh'
-    url = 'https://github.com/openSUSE/gitbot/pull/8'
-    ftype = '.rb'
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
     puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
@@ -129,6 +111,25 @@ class GitbotTesting
          comm_st.statuses[pr_status]['state'] == 'failure'
         status = true
       end
+    end
+    status
+  end
+
+  def pending_status(comm_st, context)
+    status = false
+    (0..comm_st.statuses.size - 1).each do |pr_status|
+      if comm_st.statuses[pr_status]['context'] == context &&
+         comm_st.statuses[pr_status]['state'] == 'pending'
+        status = true
+      end
+    end
+    status
+  end
+
+  def context_present(comm_st, context)
+    status = false
+    (0..comm_st.statuses.size - 1).each do |pr_status|
+      status = true if comm_st.statuses[pr_status]['context'] == context
     end
     status
   end
@@ -158,14 +159,17 @@ puts ''
 test.basic
 comm_st = rgit.commit_status(pr)
 
-# 0--B: add option -C tests (check)
+puts '--- BASIC TEST HTTP OPTION ---'
+test.basic_https
+
+puts '--- BASIC TEST CHECK OPTION TEST ---'
 ck_c = rgit.create_comment(pr, '@gitbot rerun check-option-test !!!')
 begin
-  test.basic_check_test
+  test.basic_check_test(comm_st)
 rescue
   raise
 ensure
-  rgit.delete_c(ck_c)
+  #  rgit.delete_c(ck_c)
 end
 
 # 1 We assume that no PRs on gitbot have a file .changes (99% is the case)
