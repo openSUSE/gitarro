@@ -7,16 +7,6 @@ require_relative 'lib/opt_parser'
 require_relative 'lib/git_op'
 require_relative 'lib/gitbot_backend'
 
-def retrigger_check(gb, pr)
-  return unless gb.retrigger_test(pr)
-  gb.client.create_status(gb.repo, pr.head.sha, 'pending',
-                          context: gb.context, description: gb.description,
-                          target_url: gb.target_url)
-  exit 1 if gb.check
-  gb.launch_test_and_setup_status(gb.repo, pr)
-  exit 0
-end
-
 gb = GitbotBackend.new
 prs = gb.client.pull_requests(gb.repo, state: 'open')
 puts 'no Pull request OPEN on the REPO!' if prs.any? == false
@@ -28,7 +18,7 @@ prs.each do |pr|
   # pr number trigger.
   break if gb.trigger_by_pr_number(pr)
   # retrigger if magic word found
-  retrigger_check(gb, pr)
+  gb.retrigger_check(pr)
   # check if changelog test was enabled
   break if gb.changelog_active(pr, comm_st)
   gb.unreviewed_pr_ck(comm_st)

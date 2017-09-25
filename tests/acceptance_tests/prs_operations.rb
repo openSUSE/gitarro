@@ -169,7 +169,7 @@ begin
 rescue
   raise
 ensure
-  #  rgit.delete_c(ck_c)
+  rgit.delete_c(ck_c)
 end
 
 # 1 We assume that no PRs on gitbot have a file .changes (99% is the case)

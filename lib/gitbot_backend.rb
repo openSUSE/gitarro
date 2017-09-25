@@ -24,6 +24,19 @@ class GitbotBackend
     end
   end
 
+  public
+
+  # this function will retrigger the test
+  def retrigger_check(pr)
+    return unless retrigger_needed?(pr)
+    client.create_status(@repo, pr.head.sha, 'pending',
+                         context: @context, description: @description,
+                         target_url: @target_url)
+    exit 1 if @check
+    gb.launch_test_and_setup_status(@repo, pr)
+    exit 0
+  end
+
   # we always rerun tests against the pr number if this exists
   def trigger_by_pr_number(pr)
     return false if @pr_number.nil?
@@ -110,21 +123,6 @@ class GitbotBackend
                           target_url: @target_url)
   end
 
-  def retrigger_test(pr)
-    # we want redo sometimes tests
-    return false unless magicword(@repo, pr.number, @context)
-    # changelog trigger
-    if @changelog_test
-      do_changelog_test(@repo, pr)
-      return false
-    end
-    pr_all_files_type(@repo, pr.number, @file_type)
-    return false unless @pr_files.any?
-    # if check is set, the comment in the trigger job will be del.
-    # so setting it to pending, it will be remembered
-    true
-  end
-
   # check if the commit of a pr is on pending
   def pending_pr(comm_st)
     # 2) pending
@@ -209,8 +207,6 @@ class GitbotBackend
     launch_test_and_setup_status(@repo, pr)
     true
   end
-  public :retrigger_test, :launch_test_and_setup_status,
-         :changelog_active, :unreviewed_pr_test
 
   private
 
@@ -233,5 +229,20 @@ class GitbotBackend
     return false if failed_status?(comm_st)
     return false if success_status?(comm_st)
     do_changelog_test(repo, pr)
+  end
+
+  def retrigger_needed?(pr)
+    # we want redo sometimes tests
+    return false unless magicword(@repo, pr.number, @context)
+    # changelog trigger
+    if @changelog_test
+      do_changelog_test(@repo, pr)
+      return false
+    end
+    pr_all_files_type(@repo, pr.number, @file_type)
+    return false unless @pr_files.any?
+    # if check is set, the comment in the trigger job will be del.
+    # so setting it to pending, it will be remembered
+    true
   end
 end
