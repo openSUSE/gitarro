@@ -6,9 +6,31 @@ require 'English'
 require_relative 'opt_parser'
 require_relative 'git_op'
 
-# this class is the backend of gitbot, were we execute the tests and so on
+
+class GitbotTestExecutor
+
+  def initialize(options)
+    @options = options
+    @options.each do |key, value|
+      instance_variable_set("@#{key}", value)
+      self.class.send(:attr_accessor, key)
+    end
+  end
+
+  # run validation script for validating the PR.
+  def run_script
+    n_exist = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
+    raise n_exist if File.file?(@test_file) == false
+    puts out = `#{@test_file}`
+    $CHILD_STATUS.exitstatus.nonzero? ? st = 'failure' : st = 'success'
+    return st
+  end 
+end
+
+
+# this the public class is the backend of gitbot, were we execute the tests and so on
 class GitbotBackend
-  attr_accessor :j_status, :options, :client, :pr_files
+  attr_accessor :j_status, :options, :client, :pr_files, :gbexec
   # public method of backend
   def initialize(option = nil)
     Octokit.auto_paginate = true
@@ -21,6 +43,7 @@ class GitbotBackend
       instance_variable_set("@#{key}", value)
       self.class.send(:attr_accessor, key)
     end
+    @gbexec = GitbotTestExecutor.new(@options)
   end
 
   # this function will retrigger the test
@@ -43,23 +66,12 @@ class GitbotBackend
     true
   end
 
-  # run validation script for validating the PR.
-  def run_script
-    n_exist = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
-    raise n_exist if File.file?(@test_file) == false
-
-    out = `#{@test_file}`
-    @j_status = 'failure' if $CHILD_STATUS.exitstatus.nonzero?
-    @j_status = 'success' if $CHILD_STATUS.exitstatus.zero?
-    puts out
-  end # main function for doing the test
-
   def pr_test(pr)
     git = GitOp.new(@git_dir, pr, @options)
     # merge PR-branch to upstream branch
     git.merge_pr_totarget(pr.base.ref, pr.head.ref)
     # do valid tests
-    run_script
+    @j_status = gbexec.run_script
     # del branch
     git.del_pr_branch(pr.base.ref, pr.head.ref)
   end
