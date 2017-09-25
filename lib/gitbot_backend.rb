@@ -13,8 +13,7 @@ class GitbotBackend
   def initialize(option = nil)
     Octokit.auto_paginate = true
     @client = Octokit::Client.new(netrc: true)
-    @options = option unless option.nil?
-    @options = OptParser.new.gitbot_options if option.nil?
+    @options = option.nil? ? OptParser.new.gitbot_options : option
     @j_status = ''
     @pr_files = []
     # each options will generate a object variable dinamically
