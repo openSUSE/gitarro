@@ -24,8 +24,6 @@ class GitbotBackend
     end
   end
 
-  public
-
   # this function will retrigger the test
   def retrigger_check(pr)
     return unless retrigger_needed?(pr)
