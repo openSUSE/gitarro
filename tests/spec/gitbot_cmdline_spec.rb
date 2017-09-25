@@ -19,7 +19,7 @@ describe GitbotTestingCmdLine do
   end
 
   describe '.basic-https' do
-    it 'gitbot run on pr number 30 with basic options, https protocol enabled' do
+    it 'run on pr number 30 with basic options, https protocol enabled' do
       expect(@test.basic_https).to be true
     end
   end

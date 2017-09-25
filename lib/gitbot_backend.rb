@@ -6,9 +6,9 @@ require 'English'
 require_relative 'opt_parser'
 require_relative 'git_op'
 
-
+# This is a private class, which has the task to execute/run tests
+# called by GitbotBackend
 class GitbotTestExecutor
-
   def initialize(options)
     @options = options
     @options.each do |key, value|
@@ -17,18 +17,35 @@ class GitbotTestExecutor
     end
   end
 
+  # this will clone the repo and execute the tests
+  def pr_test(pr)
+    git = GitOp.new(@git_dir, pr, @options)
+    # merge PR-branch to upstream branch
+    git.merge_pr_totarget(pr.base.ref, pr.head.ref)
+    # do valid tests and store the result
+    test_status = run_script
+    # del branch
+    git.del_pr_branch(pr.base.ref, pr.head.ref)
+    test_status
+  end
+
   # run validation script for validating the PR.
   def run_script
-    n_exist = "\'#{@test_file}\' doesn't exists.Enter valid file, -t option"
-    raise n_exist if File.file?(@test_file) == false
-    puts out = `#{@test_file}`
-    $CHILD_STATUS.exitstatus.nonzero? ? st = 'failure' : st = 'success'
-    return st
-  end 
+    script_exists?(@test_file)
+    puts `#{@test_file}`
+    $CHILD_STATUS.exitstatus.nonzero? ? 'failure' : 'success'
+  end
+
+  private
+
+  def script_exists?(script)
+    n_exist = "\'#{script}\' doesn't exists.Enter valid file, -t option"
+    raise n_exist if File.file?(script) == false
+  end
 end
 
-
-# this the public class is the backend of gitbot, were we execute the tests and so on
+# this the public class is the backend of gitbot,
+# were we execute the tests and so on
 class GitbotBackend
   attr_accessor :j_status, :options, :client, :pr_files, :gbexec
   # public method of backend
@@ -64,16 +81,6 @@ class GitbotBackend
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     launch_test_and_setup_status(@repo, pr)
     true
-  end
-
-  def pr_test(pr)
-    git = GitOp.new(@git_dir, pr, @options)
-    # merge PR-branch to upstream branch
-    git.merge_pr_totarget(pr.base.ref, pr.head.ref)
-    # do valid tests
-    @j_status = gbexec.run_script
-    # del branch
-    git.del_pr_branch(pr.base.ref, pr.head.ref)
   end
 
   # if the Pr contains magic word, test changelog
@@ -125,7 +132,7 @@ class GitbotBackend
                           context: @context, description: @description,
                           target_url: @target_url)
     # do tests
-    pr_test(pr)
+    @j_status = gbexec.pr_test(pr)
     # set status
     @client.create_status(repo, pr.head.sha, @j_status,
                           context: @context, description: @description,
@@ -145,28 +152,6 @@ class GitbotBackend
     pending_on_context
   end
 
-  def failed_status?(comm_st)
-    status = false
-    (0..comm_st.statuses.size - 1).each do |pr_status|
-      if comm_st.statuses[pr_status]['context'] == @context &&
-         comm_st.statuses[pr_status]['state'] == 'failure'
-        status = true
-      end
-    end
-    status
-  end
-
-  def success_status?(comm_st)
-    status = false
-    (0..comm_st.statuses.size - 1).each do |pr_status|
-      if comm_st.statuses[pr_status]['context'] == @context &&
-         comm_st.statuses[pr_status]['state'] == 'success'
-        status = true
-      end
-    end
-    status
-  end
-
   # check it the cm of pr contain the context from gitbot already
   def context_pr(cm_st)
     # 1) context_present == false  triggers test. >
@@ -182,14 +167,6 @@ class GitbotBackend
   def changelog_active(pr, comm_st)
     return false unless @changelog_test
     return false unless changelog_changed(@repo, pr, comm_st)
-    true
-  end
-
-  # control if the pr change add any files, specified
-  # it can be also a dir
-  def empty_files_changed_by_pr
-    return if pr_files.any?
-    puts "no files of type #{@file_type} found! skipping"
     true
   end
 
@@ -218,6 +195,36 @@ class GitbotBackend
   end
 
   private
+
+  def success_status?(comm_st)
+    status = false
+    (0..comm_st.statuses.size - 1).each do |pr_status|
+      if comm_st.statuses[pr_status]['context'] == @context &&
+         comm_st.statuses[pr_status]['state'] == 'success'
+        status = true
+      end
+    end
+    status
+  end
+
+  def failed_status?(comm_st)
+    status = false
+    (0..comm_st.statuses.size - 1).each do |pr_status|
+      if comm_st.statuses[pr_status]['context'] == @context &&
+         comm_st.statuses[pr_status]['state'] == 'failure'
+        status = true
+      end
+    end
+    status
+  end
+
+  # control if the pr change add any files, specified
+  # it can be also a dir
+  def empty_files_changed_by_pr
+    return if pr_files.any?
+    puts "no files of type #{@file_type} found! skipping"
+    true
+  end
 
   def do_changelog_test(repo, pr)
     @j_status = 'failure'
