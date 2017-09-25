@@ -46,6 +46,9 @@ Furthermore in this way, you can run test in all type of env. like custom docker
 
 For gitbot the vms or script doesn't matter, since his focus is on scheduling the test and setting the status to you github project.
 
+## How To Contribute
+
+[HowTo](doc/howto.md)
 
 ## Documentation
 For more documentation refer to [Documentation](doc/README.md)
