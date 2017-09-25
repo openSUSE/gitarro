@@ -17,7 +17,7 @@ class GitOp
     @options = options
     # object to handle external repos
     @repo_external = ExternalRepoGit.new(pr, options)
-    puts @options[:https]
+    @options[:https]
   end
 
   def ck_or_clone_git
