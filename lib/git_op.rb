@@ -82,13 +82,12 @@ end
 # PR open against: openSUSE/gitbot
 # PR repo:  MyUSER/gitbot
 class ExternalRepoGit
-  attr_reader :pr, :rem_repo, :pr_fix, :repo_url
+  attr_reader :pr, :rem_repo, :pr_fix
   def initialize(pr, options)
     # pr object for extract all relev. data.
     @pr = pr
     @pr_fix = 'PR-'
     @options = options
-    @repo_url = @options[:https] ? pr.head.repo.html_url : pr.head.repo.ssh_url
   end
 
   def checkout_into
@@ -110,6 +109,7 @@ class ExternalRepoGit
   end
 
   def add_remote(rem_repo)
+    repo_url = @options[:https] ? pr.head.repo.html_url : pr.head.repo.ssh_url
     puts `git remote add #{rem_repo} #{repo_url}`
   end
 
