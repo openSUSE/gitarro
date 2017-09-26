@@ -71,7 +71,7 @@ class GitbotBackend
     prs
   end
 
-  # this function will retrigger the test
+  # public for etrigger the test
   def retrigger_check(pr)
     return unless retrigger_needed?(pr)
     client.create_status(@repo, pr.head.sha, 'pending',
@@ -82,22 +82,13 @@ class GitbotBackend
     j_status == 'success' ? exit(0) : exit(1)
   end
 
-  # we always rerun tests against the pr number if this exists
+  # public always rerun tests against the pr number if this exists
   def trigger_by_pr_number(pr)
     return false if @pr_number.nil?
     return false if @pr_number != pr.number
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     launch_test_and_setup_status(@repo, pr)
     true
-  end
-
-  # check all files of a Prs Number if they are a specific type
-  # EX: Pr 56, we check if files are '.rb'
-  def pr_all_files_type(repo, pr_number, type)
-    files = @client.pull_request_files(repo, pr_number)
-    files.each do |file|
-      @pr_files.push(file.filename) if file.filename.include? type
-    end
   end
 
   # this function will check if the PR contains in comment the magic word
@@ -168,6 +159,15 @@ class GitbotBackend
   end
 
   private
+
+  # check all files of a Prs Number if they are a specific type
+  # EX: Pr 56, we check if files are '.rb'
+  def pr_all_files_type(repo, pr_number, type)
+    files = @client.pull_request_files(repo, pr_number)
+    files.each do |file|
+      @pr_files.push(file.filename) if file.filename.include? type
+    end
+  end
 
   # check if the commit of a pr is on pending
   def pending_pr(comm_st)
