@@ -91,42 +91,6 @@ class GitbotBackend
     true
   end
 
-  # this function will check if the PR contains in comment the magic word
-  # # for retrigger all the tests.
-  def magicword(repo, pr_number, context)
-    magic_word_trigger = "@gitbot rerun #{context} !!!"
-    pr_comment = @client.issue_comments(repo, pr_number)
-    # a pr contain always a comments, cannot be nil
-    pr_comment.each do |com|
-      # FIXME: if user in @org retrigger only
-      # add org variable somewhere, maybe as option
-      # next unless @client.organization_member?(@org, com.user.login)
-      # delete comment otherwise it will be retrigger infinetely
-      if com.body.include? magic_word_trigger
-        @client.delete_comment(repo, com.id)
-        return true
-      end
-    end
-    false
-  end
-
-  # this function setup first pending to PR, then execute the tests
-  # then set the status according to the results of script executed.
-  # pr_head = is the PR branch
-  # base = is a the upstream branch, where the pr targets
-  def launch_test_and_setup_status(repo, pr)
-    # pending
-    @client.create_status(repo, pr.head.sha, 'pending',
-                          context: @context, description: @description,
-                          target_url: @target_url)
-    # do tests
-    @j_status = gbexec.pr_test(pr)
-    # set status
-    @client.create_status(repo, pr.head.sha, @j_status,
-                          context: @context, description: @description,
-                          target_url: @target_url)
-  end
-
   # this function check if changelog specific test is active.
   def changelog_active(pr, comm_st)
     return false unless @changelog_test
@@ -159,6 +123,42 @@ class GitbotBackend
   end
 
   private
+
+  # this function setup first pending to PR, then execute the tests
+  # then set the status according to the results of script executed.
+  # pr_head = is the PR branch
+  # base = is a the upstream branch, where the pr targets
+  def launch_test_and_setup_status(repo, pr)
+    # pending
+    @client.create_status(repo, pr.head.sha, 'pending',
+                          context: @context, description: @description,
+                          target_url: @target_url)
+    # do tests
+    @j_status = gbexec.pr_test(pr)
+    # set status
+    @client.create_status(repo, pr.head.sha, @j_status,
+                          context: @context, description: @description,
+                          target_url: @target_url)
+  end
+
+  # this function will check if the PR contains in comment the magic word
+  # # for retrigger all the tests.
+  def magicword(repo, pr_number, context)
+    magic_word_trigger = "@gitbot rerun #{context} !!!"
+    pr_comment = @client.issue_comments(repo, pr_number)
+    # a pr contain always a comments, cannot be nil
+    pr_comment.each do |com|
+      # FIXME: if user in @org retrigger only
+      # add org variable somewhere, maybe as option
+      # next unless @client.organization_member?(@org, com.user.login)
+      # delete comment otherwise it will be retrigger infinetely
+      if com.body.include? magic_word_trigger
+        @client.delete_comment(repo, com.id)
+        return true
+      end
+    end
+    false
+  end
 
   # check all files of a Prs Number if they are a specific type
   # EX: Pr 56, we check if files are '.rb'
