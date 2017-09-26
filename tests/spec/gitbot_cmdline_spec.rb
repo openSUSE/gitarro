@@ -27,7 +27,9 @@ describe GitbotTestingCmdLine do
   describe '.basic-check-option' do
     it 'gitbot run on first Pr open, with the check option, enabled' do
       ck_c = @rgit.create_comment(@pr, '@gitbot rerun check-option-test !!!')
-      result = @test.basic_check_test(@comm_st)
+      context = 'check-option-test'
+      desc = 'dev-test-checkOption'
+      result = @test.basic_check_test(@comm_st, context, desc)
       @rgit.delete_c(ck_c)
       expect(result).to be true
     end

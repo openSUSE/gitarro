@@ -17,7 +17,9 @@ class GitOp
     @options = options
     # object to handle external repos
     @repo_external = ExternalRepoGit.new(pr, options)
-    @repo_protocol = @options[:https] ? 'https://github.com/' : 'git@github.com:'
+    gh = 'https://github.com/'
+    gg = 'git@github.com:'
+    @repo_protocol = @options[:https] ? gh : gg
   end
 
   def ck_or_clone_git

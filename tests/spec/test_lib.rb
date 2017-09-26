@@ -37,7 +37,8 @@ end
 
 # gitbot functional tests
 class GitbotTestingCmdLine
-  attr_reader :repo, :client, :gitrem, :script, :ftype, :url, :git_dir, :valid_test
+  attr_reader :repo, :client, :gitrem, :script,
+              :ftype, :url, :git_dir, :valid_test
   def initialize(repo)
     @repo = repo
     @script = '../../gitbot.rb'
@@ -55,7 +56,9 @@ class GitbotTestingCmdLine
     context = 'basic'
     desc = 'dev-test'
     num = 30
-    puts `ruby #{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}`
+    gitbot_fixpr = "#{script} -r #{repo} -c #{context} -d #{desc}" \
+               " -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}"
+    puts `ruby #{gitbot_fixpr}`
     return false if $CHILD_STATUS.exitstatus.nonzero?
     true
   end
@@ -64,32 +67,36 @@ class GitbotTestingCmdLine
     context = 'basic-https'
     desc = 'dev-test'
     num = 30
-    puts `ruby #{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num} --https`
+    gb_http = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
+              " -t #{valid_test} -f #{ftype} -u #{url} -P #{num} --https"
+    puts `ruby #{gb_http}`
     return false if $CHILD_STATUS.exitstatus.nonzero?
     true
   end
 
-  def basic_check_test(comm_st)
+  def basic_check_test(_comm_stm, context, desc)
     # we want always to make the retrigger word,
     # so we have idempotency
-    context = 'check-option-test'
-    desc = 'dev-test-checkOption'
+    gitbot = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
+                    " -t #{valid_test} -f #{ftype} -u #{url} "
     # If it new, we need to add first the context
     unless context_present(comm_st, context)
       puts 'CONTEXT NOT FOUND for CHECK TEST'
-      puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url}`
+      puts `ruby #{gitbot}`
     end
-    puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -C`
+    puts `ruby #{gitbot} -C`
     # with check we have -1 has value ( used for retrigger)
     return false if $CHILD_STATUS.exitstatus.zero?
-    puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype}`
+    puts `ruby #{gitbot}`
     true
   end
 
   def changelog_should_fail(com_st)
     context = 'changelog_shouldfail'
     desc = 'changelog_fail'
-    puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
+    gitbot = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
+                   " -t #{valid_test} -f #{ftype} -u #{url} "
+    puts `ruby #{gitbot} --changelogtest`
     return false unless failed_status(com_st, context)
     true
   end
@@ -99,7 +106,9 @@ class GitbotTestingCmdLine
     desc = 'changelog_pass'
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
-    puts `ruby #{script} -r #{repo}  -c #{context} -d #{desc} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} --changelogtest`
+    gitbot = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
+                   " -t #{valid_test} -f #{ftype} -u #{url} "
+    puts `ruby #{gitbot} --changelogtest`
     return false if failed_status(com_st, context)
     true
   end

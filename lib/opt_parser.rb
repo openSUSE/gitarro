@@ -53,7 +53,6 @@ module MandatoryOptions
     file_opt(opt)
     git_opt(opt)
   end
-
 end
 
 # this are the optional options for gitbot
@@ -108,7 +107,8 @@ end
 
 # this class is only private and helper for main class OptParser
 class OptParserInternal
-  include OptionalOptions, MandatoryOptions
+  include MandatoryOptions
+  include OptionalOptions
   attr_accessor :options
   def initialize
     @options = {}
@@ -131,7 +131,8 @@ class OptParserInternal
   end
 
   def ck_mandatory_option(option)
-    raise_incorrect_syntax("option --#{option} not found") if @options[option.to_sym].nil?
+    return unless @options[option.to_sym].nil?
+    raise_incorrect_syntax("option --#{option} not found")
   end
 
   def parse(opt_parser)
