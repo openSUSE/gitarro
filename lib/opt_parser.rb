@@ -12,15 +12,14 @@ class OptParserInternal
   # this is for testing
 
   def check_opt(opt)
-    ck_desc = 'check, if a PR requires test' \
-   'Run in checkmode and test if there is a Pull Request which requires a test'
-    opt.on('-C', '--check', ck_desc) { |check| @options[:check] = check }
+    desc = 'Check if there is any PR requiring a test, but do not run it.'
+    opt.on('-C', '--check', desc) { |check| @options[:check] = check }
   end
 
   def url_opt(opt)
-    url_desc = 'specify the url to append to github review' \
-                ' usually is the jenkins url of the job'
-    opt.on('-u', '--url TARGET_URL', url_desc) do |target_url|
+    desc = 'Specify the URL to append to add to the GitHub review. ' \
+           'Usually you will use an URL to the Jenkins build log.'
+    opt.on('-u', "--url 'TARGET_URL'", desc) do |target_url|
       @options[:target_url] = target_url
     end
   end
@@ -32,24 +31,26 @@ class OptParserInternal
   end
 
   def changelog_opt(opt)
-    changelog_desc = 'check if the PR include a changelog entry' \
-    ' Automatically set --file \".changes\"'
-    opt.on('--changelogtest', changelog_desc) do |changelogtest|
+    desc = 'Check if the PR includes a changelog entry ' \
+           '(Automatically sets --file ".changes").'
+    opt.on('--changelogtest', desc) do |changelogtest|
       @options[:changelog_test] = changelogtest
     end
   end
 
   def pr_number(opt)
-    pr_desc = 'specify the pr number for running the test.' \
-              'force gitbot to run tests against a specific PR NUMBER,' \
-              'even if the test was already run'
-    opt.on('-P', '--PR NUMBER', pr_desc) do |pr_number|
+    desc = 'Specify the PR number instead of checking all of them. ' \
+           'This will force gitbot to run the against a specific PR number,' \
+           'even if it is not needed (useful to use Jenkins with GitHub '\
+           'webhooks).'
+    opt.on('-P', "--PR 'NUMBER'", desc) do |pr_number|
       @options[:pr_number] = Integer(pr_number)
     end
   end
 
-  def secondary_options(opt)
-    opt.separator 'OPTIONAL Options'
+  def optional_options(opt)
+    opt.separator ''
+    opt.separator 'Optional options:'
     check_opt(opt)
     changelog_opt(opt)
     url_opt(opt)
@@ -59,28 +60,26 @@ class OptParserInternal
 
   # primary
   def context_opt(opt)
-    opt.on('-c', "--context 'CONTEXT'", 'context to set on comment' \
-                                 ' EXAMPLE: CONTEXT: python-test') do |context|
+    desc = 'Context to set on comment (test name). For example: python-test.'
+    opt.on('-c', "--context 'CONTEXT'", desc) do |context|
       @options[:context] = context
     end
   end
 
   def repo_opt(opt)
-    opt.on('-r', "--repo 'REPO'", 'github repo you want to run test against' \
-                            ' EXAMPLE: USER/REPO  MalloZup/gitbot') do |repo|
-      @options[:repo] = repo
-    end
+    desc = 'GitHub repository to look for PRs. For example: openSUSE/gitbot.'
+    opt.on('-r', "--repo 'REPO'", desc) { |repo| @options[:repo] = repo }
   end
 
   def desc_opt(opt)
-    opt.on('-d', "--description 'DESCRIPTION'", 'description for test') do |d|
+    opt.on('-d', "--description 'DESCRIPTION'", 'Test decription') do |d|
       @options[:description] = d
     end
   end
 
   def test_opt(opt)
-    opt.on('-t', "--test 'TEST.SH'", 'fullpath to the' \
-           'script which contain test to be executed against pr') do |test_file|
+    desc = 'Command, or full path to script/binary to be used to run the test.'
+    opt.on('-t', "--test 'TEST.SH'", desc) do |test_file|
       @options[:test_file] = test_file
     end
   end
@@ -93,15 +92,16 @@ class OptParserInternal
   end
 
   def git_opt(opt)
-    git_d = 'specify a location where gitbot will clone the github project' \
-    'EXAMPLE : /tmp/pr-test/ if the dir doesnt exists, gitbot will create one.'
-    opt.on('-g', "--git_dir 'GIT_LOCAL_DIR'", git_d) do |git_dir|
+    desc = 'Specify a location where gitbot will clone the GitHub project. '\
+           'If the dir does not exists, gitbot will create one. '\
+           'For example: /tmp/'
+    opt.on('-g', "--git_dir 'GIT_LOCAL_DIR'", desc) do |git_dir|
       @options[:git_dir] = git_dir
     end
   end
 
   def mandatory_options(opt)
-    opt.separator 'MANDATORY Options'
+    opt.separator 'Mandatory options:'
     repo_opt(opt)
     context_opt(opt)
     desc_opt(opt)
@@ -111,10 +111,10 @@ class OptParserInternal
   end
 
   # all this methods are private
-  def raise_verbose_help(msg)
-    puts @opt_parser
-    puts "************************************************\n"
-    raise OptionParser::MissingArgument, msg
+  def raise_incorrect_syntax(msg)
+    puts "Incorrect syntax: #{msg}\n\n"
+    puts 'Use option -h for help'
+    exit 1
   end
 
   # set some default values
@@ -126,27 +126,33 @@ class OptParserInternal
   end
 
   def ck_mandatory_option(option)
-    raise_verbose_help(option) if @options[option.to_sym].nil?
+    raise_incorrect_syntax("option --#{option} not found") if @options[option.to_sym].nil?
   end
 
   def parse(opt_parser)
-    opt_parser.parse!
-    mandatory_options = %w[repo context description file_type git_dir]
-    mandatory_options.each do |opt|
-      ck_mandatory_option(opt)
+    begin
+      opt_parser.parse!
+    rescue OptionParser::ParseError
+      raise_incorrect_syntax($ERROR_INFO.to_s)
     end
+    mandatory_options = %w[repo context description file_type git_dir]
+    mandatory_options.each { |opt| ck_mandatory_option(opt) }
     if @options[:test_file].nil? && @options[:changelog_test].nil?
-      raise_verbose_help('SCRIPT FILE')
+      raise_incorrect_syntax('Incorrect syntax (use -h for help)')
     end
     default_gitbot
   end
 
   # option help
   def option_help(opt)
-    opt.separator 'HELP'
+    opt.separator ''
+    opt.separator 'Help:'
     opt.on('-h', '--help', 'help') do
+      opt.separator ''
+      opt.separator "Example: gitbot.rb -r openSUSE/gitbot -c 'python-test' "\
+                    "-d 'someCoolTest' -g /tmp/pr-ruby01/ -t /tmp/test.sh "\
+                    "-f '.py'"
       puts @opt_parser
-      puts "***************************************************************\n"
       exit 0
     end
   end
@@ -157,13 +163,8 @@ end
 class OptParser < OptParserInternal
   private
 
-  # option banner gitbot
   def option_banner(opt)
-    name = './gitbot.rb'
-    opt.banner = "************************************************\n" \
-        "Usage: gitbot [OPTIONS] \n" \
-        " EXAMPLE: ======> #{name} -r openSUSE/gitbot -c \"pysthon-test\" " \
-        "-d \"someCoolTest\" -g /tmp/pr-ruby01/ -t /tmp/test.sh -f \".py\"\n\n"
+    opt.banner = "Usage: gitbot.rb [options]\n\n" \
   end
 
   public
@@ -172,7 +173,7 @@ class OptParser < OptParserInternal
     @opt_parser = OptionParser.new do |opt|
       option_banner(opt)
       mandatory_options(opt)
-      secondary_options(opt)
+      optional_options(opt)
       option_help(opt)
     end
     parse(@opt_parser)

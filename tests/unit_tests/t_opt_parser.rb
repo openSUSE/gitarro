@@ -4,13 +4,13 @@ require_relative 'helper'
 
 # Test the option parser
 class GitbotOptionTest < Minitest::Test
-  def set_option(hash, s)
+  def set_option(hash, _s)
     opp = OptParser.new
     opp.options = hash
-    ex = assert_raises OptionParser::MissingArgument do
+    ex = assert_raises SystemExit do
       opp.gitbot_options
     end
-    assert_equal("missing argument: #{s}", ex.message)
+    assert_equal 1, ex.status
   end
 
   def test_partial_import
