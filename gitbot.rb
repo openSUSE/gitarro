@@ -26,14 +26,7 @@ prs.each do |pr|
   # 1) the context  is not set, test didnt run
   # 2) the pending status is set on commit, repeat always when pending set
   # check the conditions 1,2 and it they happens run_test
-  if gb.context_pr(comm_st) == false || gb.pending_pr(comm_st) == true
-    gb.pr_all_files_type(gb.repo, pr.number, gb.file_type)
-    break if gb.changelog_active(pr, comm_st)
-    next unless gb.pr_files.any?
-    exit 1 if gb.check
-    gb.launch_test_and_setup_status(gb.repo, pr)
-    break
-  end
+  break if gb.reviewed_pr_test(comm_st, pr)
 end
 STDOUT.flush
 

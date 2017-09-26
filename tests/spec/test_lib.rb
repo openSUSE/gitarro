@@ -74,7 +74,7 @@ class GitbotTestingCmdLine
     true
   end
 
-  def basic_check_test(_comm_stm, context, desc)
+  def basic_check_test(comm_st, context, desc)
     # we want always to make the retrigger word,
     # so we have idempotency
     gitbot = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
