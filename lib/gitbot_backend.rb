@@ -63,6 +63,14 @@ class GitbotBackend
     @gbexec = GitbotTestExecutor.new(@options)
   end
 
+  # public method for get prs opens
+  # given a repo
+  def open_prs
+    prs = @client.pull_requests(@repo, state: 'open')
+    puts 'no Pull request OPEN on the REPO!' unless prs.any?
+    prs
+  end
+
   # this function will retrigger the test
   def retrigger_check(pr)
     return unless retrigger_needed?(pr)

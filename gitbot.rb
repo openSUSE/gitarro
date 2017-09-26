@@ -8,8 +8,7 @@ require_relative 'lib/git_op'
 require_relative 'lib/gitbot_backend'
 
 gb = GitbotBackend.new
-prs = gb.client.pull_requests(gb.repo, state: 'open')
-puts 'no Pull request OPEN on the REPO!' if prs.any? == false
+prs = gb.open_prs
 
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
