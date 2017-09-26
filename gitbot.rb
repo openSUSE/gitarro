@@ -21,9 +21,8 @@ prs.each do |pr|
   gb.retrigger_check(pr)
   # check if changelog test was enabled
   break if gb.changelog_active(pr, comm_st)
-  gb.unreviewed_pr_ck(comm_st)
   # 0) do test for unreviewed pr
-  break if gb.unreviewed_pr_test(pr)
+  break if gb.unreviewed_pr_test(pr, comm_st)
   # we run the test in 2 conditions:
   # 1) the context  is not set, test didnt run
   # 2) the pending status is set on commit, repeat always when pending set

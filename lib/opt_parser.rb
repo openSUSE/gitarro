@@ -130,11 +130,7 @@ class OptParserInternal
   end
 
   def parse(opt_parser)
-    begin
-      opt_parser.parse!
-    rescue OptionParser::ParseError
-      raise_incorrect_syntax($ERROR_INFO.to_s)
-    end
+    parse_options(opt_parser)
     mandatory_options = %w[repo context description file_type git_dir]
     mandatory_options.each { |opt| ck_mandatory_option(opt) }
     if @options[:test_file].nil? && @options[:changelog_test].nil?
@@ -155,6 +151,14 @@ class OptParserInternal
       puts @opt_parser
       exit 0
     end
+  end
+
+  private
+
+  def parse_options(opt_parser)
+    opt_parser.parse!
+  rescue OptionParser::ParseError
+    raise_incorrect_syntax($ERROR_INFO.to_s)
   end
 end
 

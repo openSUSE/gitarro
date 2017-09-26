@@ -70,7 +70,7 @@ class GitbotBackend
                          context: @context, description: @description,
                          target_url: @target_url)
     exit 1 if @check
-    gb.launch_test_and_setup_status(@repo, pr)
+    launch_test_and_setup_status(@repo, pr)
     exit 0
   end
 
@@ -81,17 +81,6 @@ class GitbotBackend
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     launch_test_and_setup_status(@repo, pr)
     true
-  end
-
-  # if the Pr contains magic word, test changelog
-  # is true
-  def magic_comment(repo, pr_num)
-    @client.issue_comments(repo, pr_num).each do |com|
-      if com.body.include?('no changelog needed!')
-        @j_status = 'success'
-        break
-      end
-    end
   end
 
   # check all files of a Prs Number if they are a specific type
@@ -170,21 +159,8 @@ class GitbotBackend
     true
   end
 
-  # the first element of array a review-test.
-  # if the pr has travis test and one custom, we will have 2 elements.
-  # in this case, if the 1st element doesn't have the state property
-  # state property is "pending", failure etc.
-  # if we don't have this, the PRs is "unreviewed"
-  def unreviewed_pr_ck(comm_st)
-    puts comm_st.statuses[0]['state']
-    @unreviewed_pr = false
-  rescue NoMethodError
-    @unreviewed_pr = true
-    # in this situation we have no reviews-tests set at all.
-  end
-
-  def unreviewed_pr_test(pr)
-    return unless @unreviewed_pr
+  def unreviewed_pr_test(pr, comm_st)
+    return unless unreviewed_pr_ck(comm_st)
     pr_all_files_type(@repo, pr.number, @file_type)
     return if empty_files_changed_by_pr
     # gb.check is true when there is a job running as scheduler
@@ -195,6 +171,29 @@ class GitbotBackend
   end
 
   private
+
+  # if the Pr contains magic word, test changelog
+  # is true
+  def magic_comment(repo, pr_num)
+    @client.issue_comments(repo, pr_num).each do |com|
+      if com.body.include?('no changelog needed!')
+        @j_status = 'success'
+        break
+      end
+    end
+  end
+
+  # if the pr has travis test and one custom, we will have 2 elements.
+  # in this case, if the 1st element doesn't have the state property
+  # state property is "pending", failure etc.
+  # if we don't have this, so we have 0 status
+  # the PRs is "unreviewed"
+  def unreviewed_pr_ck(comm_st)
+    puts comm_st.statuses[0]['state']
+    return false
+  rescue NoMethodError
+    return true
+  end
 
   def success_status?(comm_st)
     status = false
