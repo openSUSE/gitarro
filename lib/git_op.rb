@@ -6,7 +6,7 @@ require 'timeout'
 
 # git operation for gitbot
 class GitOp
-  attr_reader :git_dir, :pr, :pr_fix, :repo_external
+  attr_reader :git_dir, :pr, :pr_fix, :repo_external, :repo_protocol
   def initialize(git_dir, pr, options)
     @git_dir = git_dir
     # prefix for the test pr that gitbot tests.
@@ -17,15 +17,14 @@ class GitOp
     @options = options
     # object to handle external repos
     @repo_external = ExternalRepoGit.new(pr, options)
-    @options[:https]
+    @repo_protocol = @options[:https] ? 'https://github.com/' : 'git@github.com:'
   end
 
   def ck_or_clone_git
     return if File.directory?(git_dir)
     FileUtils.mkdir_p(git_dir)
     Dir.chdir git_dir
-    repo_url = @options[:https] ? 'https://github.com/' : 'git@github.com:'
-    repo_url = "#{repo_url}#{@options[:repo]}.git"
+    repo_url = "#{repo_protocol}#{@options[:repo]}.git"
     puts `git clone #{repo_url}`
   end
 
@@ -83,12 +82,13 @@ end
 # PR open against: openSUSE/gitbot
 # PR repo:  MyUSER/gitbot
 class ExternalRepoGit
-  attr_reader :pr, :rem_repo, :pr_fix
+  attr_reader :pr, :rem_repo, :pr_fix, :repo_url
   def initialize(pr, options)
     # pr object for extract all relev. data.
     @pr = pr
     @pr_fix = 'PR-'
     @options = options
+    @repo_url = @options[:https] ? pr.head.repo.html_url : pr.head.repo.ssh_url
   end
 
   def checkout_into
@@ -110,7 +110,6 @@ class ExternalRepoGit
   end
 
   def add_remote(rem_repo)
-    repo_url = @options[:https] ? pr.head.repo.html_url : pr.head.repo.ssh_url
     puts `git remote add #{rem_repo} #{repo_url}`
   end
 
