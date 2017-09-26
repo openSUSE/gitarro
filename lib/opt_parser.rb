@@ -1,7 +1,5 @@
 #! /usr/bin/ruby
 
-# Class for gathering mandatory options via cmdline
-
 # this class is only private and helper for main class OptParser
 class OptParserInternal
   attr_accessor :options
