@@ -26,10 +26,8 @@ prs.each do |pr|
   # we run the test in 2 conditions:
   # 1) the context  is not set, test didnt run
   # 2) the pending status is set on commit, repeat always when pending set
-  context_present = gb.context_pr(comm_st)
-  pending_on_context = gb.pending_pr(comm_st)
   # check the conditions 1,2 and it they happens run_test
-  if context_present == false || pending_on_context == true
+  if gb.context_pr(comm_st) == false || gb.pending_pr(comm_st) == true
     gb.pr_all_files_type(gb.repo, pr.number, gb.file_type)
     break if gb.changelog_active(pr, comm_st)
     next unless gb.pr_files.any?
