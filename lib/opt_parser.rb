@@ -1,61 +1,7 @@
 #! /usr/bin/ruby
 
-# this class is only private and helper for main class OptParser
-class OptParserInternal
-  attr_accessor :options
-  def initialize
-    @options = {}
-    @options = options.clone if options.any?
-  end
-  # this is for testing
-
-  def check_opt(opt)
-    desc = 'Check if there is any PR requiring a test, but do not run it.'
-    opt.on('-C', '--check', desc) { |check| @options[:check] = check }
-  end
-
-  def url_opt(opt)
-    desc = 'Specify the URL to append to add to the GitHub review. ' \
-           'Usually you will use an URL to the Jenkins build log.'
-    opt.on('-u', "--url 'TARGET_URL'", desc) do |target_url|
-      @options[:target_url] = target_url
-    end
-  end
-
-  def https_opt(opt)
-    @options[:https] = false
-    https_desc = 'If present, use https instead of ssh for git operations'
-    opt.on('--https', https_desc) { |https| @options[:https] = https }
-  end
-
-  def changelog_opt(opt)
-    desc = 'Check if the PR includes a changelog entry ' \
-           '(Automatically sets --file ".changes").'
-    opt.on('--changelogtest', desc) do |changelogtest|
-      @options[:changelog_test] = changelogtest
-    end
-  end
-
-  def pr_number(opt)
-    desc = 'Specify the PR number instead of checking all of them. ' \
-           'This will force gitbot to run the against a specific PR number,' \
-           'even if it is not needed (useful to use Jenkins with GitHub '\
-           'webhooks).'
-    opt.on('-P', "--PR 'NUMBER'", desc) do |pr_number|
-      @options[:pr_number] = Integer(pr_number)
-    end
-  end
-
-  def optional_options(opt)
-    opt.separator ''
-    opt.separator 'Optional options:'
-    check_opt(opt)
-    changelog_opt(opt)
-    url_opt(opt)
-    pr_number(opt)
-    https_opt(opt)
-  end
-
+# this are the mandatory options for gitbot
+module MandatoryOptions
   # primary
   def context_opt(opt)
     desc = 'Context to set on comment (test name). For example: python-test.'
@@ -106,6 +52,67 @@ class OptParserInternal
     test_opt(opt)
     file_opt(opt)
     git_opt(opt)
+  end
+
+end
+
+# this are the optional options for gitbot
+module OptionalOptions
+  def check_opt(opt)
+    desc = 'Check if there is any PR requiring a test, but do not run it.'
+    opt.on('-C', '--check', desc) { |check| @options[:check] = check }
+  end
+
+  def url_opt(opt)
+    desc = 'Specify the URL to append to add to the GitHub review. ' \
+           'Usually you will use an URL to the Jenkins build log.'
+    opt.on('-u', "--url 'TARGET_URL'", desc) do |target_url|
+      @options[:target_url] = target_url
+    end
+  end
+
+  def https_opt(opt)
+    @options[:https] = false
+    https_desc = 'If present, use https instead of ssh for git operations'
+    opt.on('--https', https_desc) { |https| @options[:https] = https }
+  end
+
+  def changelog_opt(opt)
+    desc = 'Check if the PR includes a changelog entry ' \
+           '(Automatically sets --file ".changes").'
+    opt.on('--changelogtest', desc) do |changelogtest|
+      @options[:changelog_test] = changelogtest
+    end
+  end
+
+  def pr_number(opt)
+    desc = 'Specify the PR number instead of checking all of them. ' \
+           'This will force gitbot to run the against a specific PR number,' \
+           'even if it is not needed (useful to use Jenkins with GitHub '\
+           'webhooks).'
+    opt.on('-P', "--PR 'NUMBER'", desc) do |pr_number|
+      @options[:pr_number] = Integer(pr_number)
+    end
+  end
+
+  def optional_options(opt)
+    opt.separator ''
+    opt.separator 'Optional options:'
+    check_opt(opt)
+    changelog_opt(opt)
+    url_opt(opt)
+    pr_number(opt)
+    https_opt(opt)
+  end
+end
+
+# this class is only private and helper for main class OptParser
+class OptParserInternal
+  include OptionalOptions, MandatoryOptions
+  attr_accessor :options
+  def initialize
+    @options = {}
+    @options = options.clone if options.any?
   end
 
   # all this methods are private
