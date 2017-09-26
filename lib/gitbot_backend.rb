@@ -79,7 +79,7 @@ class GitbotBackend
                          target_url: @target_url)
     exit 1 if @check
     launch_test_and_setup_status(@repo, pr)
-    exit 0
+    j_status == 'success' ? exit(0) : exit(1)
   end
 
   # we always rerun tests against the pr number if this exists
