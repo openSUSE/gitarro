@@ -21,6 +21,17 @@ class GitbotOptionTest < Minitest::Test
     set_option(hash1, 'file_type')
   end
 
+  def test_partial_import_descripition
+    opp2 = OptParser.new
+    full_hash = { repo: 'gino/gitbot', context: 'python-t',
+                  test_file: 'gino.sh',
+                  file_type: '.sh', git_dir: 'gitty' }
+    opp2.options = full_hash
+    options = opp2.gitbot_options
+    optional_desc = 'use option -d to set a custom test description.'
+    assert_equal(optional_desc, options[:description])
+  end
+
   def test_full_option_import
     opp2 = OptParser.new
     full_hash = { repo: 'gino/gitbot', context: 'python-t',
