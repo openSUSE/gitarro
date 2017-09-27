@@ -104,6 +104,7 @@ class ExternalRepoGit
 
   def checkout_to_rem_branch(rem_repo)
     puts `git checkout -b #{pr_fix}#{branch_rem} #{rem_repo}/#{branch_rem}`
+    exit 1 if $CHILD_STATUS.exitstatus.nonzero?
   end
 
   def branch_rem
