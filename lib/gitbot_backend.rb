@@ -7,7 +7,7 @@ require_relative 'opt_parser'
 require_relative 'git_op'
 
 # This is a private class, which has the task to execute/run tests
-# called by GitbotBackend
+# called by Backend
 class TestExecutor
   def initialize(options)
     @options = options
@@ -46,7 +46,7 @@ end
 
 # this the public class is the backend of gitbot,
 # were we execute the tests and so on
-class GitbotBackend
+class Backend
   attr_accessor :j_status, :options, :client, :pr_files, :gbexec
   # public method of backend
   def initialize(option = nil)

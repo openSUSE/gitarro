@@ -7,7 +7,7 @@ require 'gitbot/opt_parser'
 require 'gitbot/git_op'
 require 'gitbot/gitbot_backend'
 require 'gitbot/version.rb'
-gb = GitbotBackend.new
+gb = Backend.new
 prs = gb.open_prs
 
 prs.each do |pr|
