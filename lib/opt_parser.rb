@@ -15,12 +15,6 @@ module MandatoryOptions
     opt.on('-r', "--repo 'REPO'", desc) { |repo| @options[:repo] = repo }
   end
 
-  def desc_opt(opt)
-    opt.on('-d', "--description 'DESCRIPTION'", 'Test decription') do |d|
-      @options[:description] = d
-    end
-  end
-
   def test_opt(opt)
     desc = 'Command, or full path to script/binary to be used to run the test.'
     opt.on('-t', "--test 'TEST.SH'", desc) do |test_file|
@@ -48,7 +42,6 @@ module MandatoryOptions
     opt.separator 'Mandatory options:'
     repo_opt(opt)
     context_opt(opt)
-    desc_opt(opt)
     test_opt(opt)
     file_opt(opt)
     git_opt(opt)
@@ -62,6 +55,12 @@ module OptionalOptions
     opt.on('-C', '--check', desc) { |check| @options[:check] = check }
   end
 
+  def desc_opt(opt)
+    opt.on('-d', "--description 'DESCRIPTION'", 'Test decription') do |d|
+      @options[:description] = d
+    end
+  end
+
   def url_opt(opt)
     desc = 'Specify the URL to append to add to the GitHub review. ' \
            'Usually you will use an URL to the Jenkins build log.'
@@ -71,7 +70,6 @@ module OptionalOptions
   end
 
   def https_opt(opt)
-    @options[:https] = false
     https_desc = 'If present, use https instead of ssh for git operations'
     opt.on('--https', https_desc) { |https| @options[:https] = https }
   end
@@ -97,6 +95,7 @@ module OptionalOptions
   def optional_options(opt)
     opt.separator ''
     opt.separator 'Optional options:'
+    desc_opt(opt)
     check_opt(opt)
     changelog_opt(opt)
     url_opt(opt)
@@ -122,14 +121,6 @@ class OptParserInternal
     exit 1
   end
 
-  # set some default values
-  def default_gitbot
-    @options[:check] = false if @options[:check].nil?
-    @options[:changelog_test] = false if @options[:changelog_test].nil?
-    @options[:target_url] = '' if @options[:target_url].nil?
-    @options[:file_type] = '.changes' if @options[:changelog_test]
-  end
-
   def ck_mandatory_option(option)
     return unless @options[option.to_sym].nil?
     raise_incorrect_syntax("option --#{option} not found")
@@ -137,12 +128,12 @@ class OptParserInternal
 
   def parse(opt_parser)
     parse_options(opt_parser)
-    mandatory_options = %w[repo context description file_type git_dir]
+    mandatory_options = %w[repo context test_file file_type git_dir]
     mandatory_options.each { |opt| ck_mandatory_option(opt) }
     if @options[:test_file].nil? && @options[:changelog_test].nil?
       raise_incorrect_syntax('Incorrect syntax (use -h for help)')
     end
-    default_gitbot
+    defaults_gitbot
   end
 
   # option help
@@ -166,6 +157,18 @@ class OptParserInternal
   rescue OptionParser::ParseError
     raise_incorrect_syntax($ERROR_INFO.to_s)
   end
+
+  # set some default values
+  def defaults_gitbot
+    @options[:check] = false if @options[:check].nil?
+    @options[:changelog_test] = false if @options[:changelog_test].nil?
+    @options[:target_url] = '' if @options[:target_url].nil?
+    @options[:file_type] = '.changes' if @options[:changelog_test]
+    @options[:https] = false if @options[:https].nil?
+    @options[:description] = 'use -d to set custum description' if @options[:description].nil?
+  end
+
+
 end
 
 # Opt_parser class, is for getting needed options
