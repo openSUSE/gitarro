@@ -28,7 +28,7 @@ class GitbotBackendTest2 < Minitest::Test
     @full_hash = { repo: 'gino/gitbot', context: 'python-t', description:
                    'functional', test_file: 'test_data/script_ok.sh',
                    file_type: '.sh', git_dir: 'gitty' }
-    gbex = GitbotTestExecutor.new(@full_hash)
+    gbex = TestExecutor.new(@full_hash)
     ck_files(gbex)
     test_file = 'nofile.txt'
     assert_file_non_ex(gbex, test_file)

@@ -8,7 +8,7 @@ require_relative 'git_op'
 
 # This is a private class, which has the task to execute/run tests
 # called by GitbotBackend
-class GitbotTestExecutor
+class TestExecutor
   def initialize(options)
     @options = options
     @options.each do |key, value|
@@ -60,7 +60,7 @@ class GitbotBackend
       instance_variable_set("@#{key}", value)
       self.class.send(:attr_accessor, key)
     end
-    @gbexec = GitbotTestExecutor.new(@options)
+    @gbexec = TestExecutor.new(@options)
   end
 
   # public method for get prs opens
