@@ -52,7 +52,7 @@ class Backend
   def initialize(option = nil)
     Octokit.auto_paginate = true
     @client = Octokit::Client.new(netrc: true)
-    @options = option.nil? ? OptParser.new.gitbot_options : option
+    @options = option.nil? ? OptParser.new.cmdline_options : option
     @j_status = ''
     @pr_files = []
     # each options will generate a object variable dinamically

@@ -8,7 +8,7 @@ class GitbotOptionTest < Minitest::Test
     opp = OptParser.new
     opp.options = hash
     ex = assert_raises SystemExit do
-      opp.gitbot_options
+      opp.cmdline_options
     end
     assert_equal 1, ex.status
   end
@@ -27,7 +27,7 @@ class GitbotOptionTest < Minitest::Test
                   test_file: 'gino.sh',
                   file_type: '.sh', git_dir: 'gitty' }
     opp2.options = full_hash
-    options = opp2.gitbot_options
+    options = opp2.cmdline_options
     optional_desc = 'use option -d to set a custom test description.'
     assert_equal(optional_desc, options[:description])
   end
@@ -38,7 +38,7 @@ class GitbotOptionTest < Minitest::Test
                   description: 'functional', test_file: 'gino.sh',
                   file_type: '.sh', git_dir: 'gitty' }
     opp2.options = full_hash
-    options = opp2.gitbot_options
+    options = opp2.cmdline_options
     option_ass(options)
   end
 

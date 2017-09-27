@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 
-# this are the mandatory options for gitbot
+# this are the mandatory options
 module MandatoryOptions
   # primary
   def context_opt(opt)
@@ -48,7 +48,7 @@ module MandatoryOptions
   end
 end
 
-# this are the optional options for gitbot
+# this are the optional options
 module OptionalOptions
   def check_opt(opt)
     desc = 'Check if there is any PR requiring a test, but do not run it.'
@@ -84,7 +84,7 @@ module OptionalOptions
 
   def pr_number(opt)
     desc = 'Specify the PR number instead of checking all of them. ' \
-           'This will force gitbot to run the against a specific PR number,' \
+           'This will force to re/run the against a specific PR number,' \
            'even if it is not needed (useful to use Jenkins with GitHub '\
            'webhooks).'
     opt.on('-P', "--PR 'NUMBER'", desc) do |pr_number|
@@ -185,7 +185,7 @@ class OptParser < OptParserInternal
 
   public
 
-  def gitbot_options
+  def cmdline_options
     @opt_parser = OptionParser.new do |opt|
       option_banner(opt)
       mandatory_options(opt)
