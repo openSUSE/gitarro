@@ -24,12 +24,12 @@ Usage: gitbot.rb [options]
 Mandatory options:
     -r, --repo 'REPO'                GitHub repository to look for PRs. For example: openSUSE/gitbot.
     -c, --context 'CONTEXT'          Context to set on comment (test name). For example: python-test.
-    -d, --description 'DESCRIPTION'  Test decription
     -t, --test 'TEST.SH'             Command, or full path to script/binary to be used to run the test.
     -f, --file '.py'                 pr_file type to run the test against: .py, .rb
     -g, --git_dir 'GIT_LOCAL_DIR'    Specify a location where gitbot will clone the GitHub project. If the dir does not exists, gitbot will create one. For example: /tmp/
 
 Optional options:
+    -d, --description 'DESCRIPTION'  Test decription
     -C, --check                      Check if there is any PR requiring a test, but do not run it.
         --changelogtest              Check if the PR includes a changelog entry (Automatically sets --file ".changes").
     -u, --url 'TARGET_URL'           Specify the URL to append to add to the GitHub review. Usually you will use an URL to the Jenkins build log.
