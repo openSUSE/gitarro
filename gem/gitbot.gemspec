@@ -1,10 +1,10 @@
 
+# CREATE A rubygem only when we find a unique name :)
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'gitbot/version'
 
 Gem::Specification.new do |s|
-  s.name        = 'gitbot'
+  s.name        = 'FIXME'
   s.version     = Gitbot::VERSION
   s.date        = '2017-09-26'
   s.summary     = 'gitbot gem'

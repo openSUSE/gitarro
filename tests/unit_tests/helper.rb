@@ -3,7 +3,7 @@ require 'minitest/autorun'
 require 'minitest/reporters'
 require 'minitest/mock'
 
-require_relative '../../lib/gitbot_backend.rb'
+require_relative '../../lib/backend.rb'
 require_relative '../../lib/opt_parser.rb'
 require_relative '../../lib/git_op.rb'
 

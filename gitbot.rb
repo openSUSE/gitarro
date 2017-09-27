@@ -5,7 +5,7 @@ require 'octokit'
 require 'optparse'
 require_relative 'lib/opt_parser'
 require_relative 'lib/git_op'
-require_relative 'lib/gitbot_backend'
+require_relative 'lib/backend'
 
 b = Backend.new
 prs = b.open_prs
