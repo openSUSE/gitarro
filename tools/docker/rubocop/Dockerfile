@@ -18,10 +18,10 @@ RUN if [ "${ROBOCOP_VER}" == "latest" ]; then\
     cd rubocop &&\
     bundler.ruby2.4 install
 
-RUN git clone --branch master --depth 1 https://github.com/openSUSE/gitbot.git &&\
-    cd gitbot &&\
+RUN git clone --branch master --depth 1 https://github.com/openSUSE/gitarro.git &&\
+    cd gitarro &&\
     bundler.ruby2.4 install &&\
-    ln -s /opt/gitbot/gitbot.rb /usr/local/bin/gitbot.rb
+    ln -s /opt/gitarro/gitarro.rb /usr/local/bin/gitarro.rb
 
 RUN zypper -n remove --clean-deps curl gcc make ruby2.4-devel &&\
     zypper -q clean -a

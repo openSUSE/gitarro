@@ -1,6 +1,6 @@
 #! /usr/bin/ruby
 
-# this are the mandatory options for gitbot
+# this are the mandatory options
 module MandatoryOptions
   # primary
   def context_opt(opt)
@@ -11,7 +11,7 @@ module MandatoryOptions
   end
 
   def repo_opt(opt)
-    desc = 'GitHub repository to look for PRs. For example: openSUSE/gitbot.'
+    desc = 'GitHub repository to look for PRs. For example: openSUSE/gitarro.'
     opt.on('-r', "--repo 'REPO'", desc) { |repo| @options[:repo] = repo }
   end
 
@@ -30,8 +30,8 @@ module MandatoryOptions
   end
 
   def git_opt(opt)
-    desc = 'Specify a location where gitbot will clone the GitHub project. '\
-           'If the dir does not exists, gitbot will create one. '\
+    desc = 'Specify a location where gitarro will clone the GitHub project. '\
+           'If the dir does not exists, gitarro will create one. '\
            'For example: /tmp/'
     opt.on('-g', "--git_dir 'GIT_LOCAL_DIR'", desc) do |git_dir|
       @options[:git_dir] = git_dir
@@ -48,7 +48,7 @@ module MandatoryOptions
   end
 end
 
-# this are the optional options for gitbot
+# this are the optional options
 module OptionalOptions
   def check_opt(opt)
     desc = 'Check if there is any PR requiring a test, but do not run it.'
@@ -84,9 +84,8 @@ module OptionalOptions
 
   def pr_number(opt)
     desc = 'Specify the PR number instead of checking all of them. ' \
-           'This will force gitbot to run the against a specific PR number,' \
-           'even if it is not needed (useful to use Jenkins with GitHub '\
-           'webhooks).'
+           'Force to rerun against a specific PR number,' \
+           'even if it is not needed.'
     opt.on('-P', "--PR 'NUMBER'", desc) do |pr_number|
       @options[:pr_number] = Integer(pr_number)
     end
@@ -143,7 +142,7 @@ class OptParserInternal
     opt.separator 'Help:'
     opt.on('-h', '--help', 'help') do
       opt.separator ''
-      opt.separator "Example: gitbot.rb -r openSUSE/gitbot -c 'python-test' "\
+      opt.separator "Example: gitarro.rb -r openSUSE/gitarro -c 'python-test' "\
                     "-d 'someCoolTest' -g /tmp/pr-ruby01/ -t /tmp/test.sh "\
                     "-f '.py'"
       puts @opt_parser
@@ -180,12 +179,12 @@ class OptParser < OptParserInternal
   private
 
   def option_banner(opt)
-    opt.banner = "Usage: gitbot.rb [options]\n\n" \
+    opt.banner = "Usage: gitarro.rb [options]\n\n" \
   end
 
   public
 
-  def gitbot_options
+  def cmdline_options
     @opt_parser = OptionParser.new do |opt|
       option_banner(opt)
       mandatory_options(opt)

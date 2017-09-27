@@ -3,19 +3,19 @@
 require_relative 'helper'
 
 # Test the option parser
-class GitbotOptionTest < Minitest::Test
+class GitarroOptionTest < Minitest::Test
   def set_option(hash, _s)
     opp = OptParser.new
     opp.options = hash
     ex = assert_raises SystemExit do
-      opp.gitbot_options
+      opp.cmdline_options
     end
     assert_equal 1, ex.status
   end
 
   def test_partial_import
-    hash =  { repo: 'gino/gitbot' }
-    hash1 = { repo: 'gino/gitbot', context: 'python-t',
+    hash =  { repo: 'gino/gitarro' }
+    hash1 = { repo: 'gino/gitarro', context: 'python-t',
               description: 'functional', test: 'gino.sh' }
     set_option(hash, 'context')
     set_option(hash1, 'file_type')
@@ -23,27 +23,27 @@ class GitbotOptionTest < Minitest::Test
 
   def test_partial_import_descripition
     opp2 = OptParser.new
-    full_hash = { repo: 'gino/gitbot', context: 'python-t',
+    full_hash = { repo: 'gino/gitarro', context: 'python-t',
                   test_file: 'gino.sh',
                   file_type: '.sh', git_dir: 'gitty' }
     opp2.options = full_hash
-    options = opp2.gitbot_options
+    options = opp2.cmdline_options
     optional_desc = 'use option -d to set a custom test description.'
     assert_equal(optional_desc, options[:description])
   end
 
   def test_full_option_import
     opp2 = OptParser.new
-    full_hash = { repo: 'gino/gitbot', context: 'python-t',
+    full_hash = { repo: 'gino/gitarro', context: 'python-t',
                   description: 'functional', test_file: 'gino.sh',
                   file_type: '.sh', git_dir: 'gitty' }
     opp2.options = full_hash
-    options = opp2.gitbot_options
+    options = opp2.cmdline_options
     option_ass(options)
   end
 
   def option_ass(options)
-    assert_equal('gino/gitbot', options[:repo])
+    assert_equal('gino/gitarro', options[:repo])
     assert_equal('python-t', options[:context])
     assert_equal('functional', options[:description])
     assert_equal('gino.sh', options[:test_file])

@@ -3,8 +3,8 @@
 if [ -z ${OPERATION} ]; then
   echo "ERROR: The variable OPERATION is not defined! Make sure you are starting the container with -e OPERATION=PR or -e OPERATION=NON-PR"
   exit 1
-elif [ "${OPERATION}" == "PR" -a "${GITBOT_PARAMS}" = "" ]; then
-  echo "ERROR: OPERATION=PR but the variable with the GitBot parameters does not exist! Make sure you are starting the container with -e GITBOT_PARAMS='<parameters>'"
+elif [ "${OPERATION}" == "PR" -a "${gitarro_PARAMS}" = "" ]; then
+  echo "ERROR: OPERATION=PR but the variable with the gitarro parameters does not exist! Make sure you are starting the container with -e gitarro_PARAMS='<parameters>'"
   exit 1
 elif [ "${OPERATION}" == "NON-PR" ]; then
   if [ "${GITHUB_REPO_URL}" = "" ]; then
@@ -36,13 +36,13 @@ if [ "$(echo ${TEST_SCRIPT})" != "" ]; then
   chmod 755 /tmp/test.sh
 fi
 
-# PRs: Use gitbot with the parameters
+# PRs: Use gitarro with the parameters
 if [ "${OPERATION}" == "PR" ]; then
   echo "INFO: Configuring ~/.netrc..."
   echo "machine api.github.com login ${GITHUB_USER} password ${GITHUB_PASSWORD}" > ~/.netrc && chmod 600 ~/.netrc
-  echo "INFO: Running gitbot..."
-  eval "ruby.ruby2.4 /opt/gitbot/gitbot.rb ${GITBOT_PARAMS}"
-  echo "Return code of GitBot was ${?}"
+  echo "INFO: Running gitarro..."
+  eval "ruby.ruby2.4 /opt/gitarro/gitarro.rb ${gitarro_PARAMS}"
+  echo "Return code of gitarro was ${?}"
   exit ${?}
 # NON-PRs: Clone the repo, and run rubocop on its own
 elif [ "${OPERATION}" == "NON-PR" ]; then

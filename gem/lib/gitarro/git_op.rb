@@ -4,57 +4,23 @@ require 'English'
 require 'fileutils'
 require 'timeout'
 
-# git operation for gitbot
+# This class is used by lib/backend.rb
+# git operation for gitarro
 class GitOp
   attr_reader :git_dir, :pr, :pr_fix, :repo_external, :repo_protocol
   def initialize(git_dir, pr, options)
     @git_dir = git_dir
-    # prefix for the test pr that gitbot tests.
+    # prefix for the test pr that gitarro tests.
     @pr_fix = 'PR-'
     # pr object for extract all relev. data.
     @pr = pr
-    # All GitBot options
+    # All gitarro options
     @options = options
     # object to handle external repos
     @repo_external = ExternalRepoGit.new(pr, options)
     gh = 'https://github.com/'
     gg = 'git@github.com:'
     @repo_protocol = @options[:https] ? gh : gg
-  end
-
-  def ck_or_clone_git
-    return if File.directory?(git_dir)
-    FileUtils.mkdir_p(git_dir)
-    Dir.chdir git_dir
-    repo_url = "#{repo_protocol}#{@options[:repo]}.git"
-    puts `git clone #{repo_url}`
-  end
-
-  # this function merge the pr branch  into target branch,
-  # where the author of pr wanted to submit
-  def goto_prj_dir
-    git_repo_dir = git_dir + '/' + @options[:repo].split('/')[1]
-    # chech that dir exist, otherwise clone it
-    ck_or_clone_git
-    begin
-      # /tmp/gitbot, this is in case the dir already exists
-      Dir.chdir git_repo_dir
-    rescue Errno::ENOENT
-      # this is in case we clone the repo
-      Dir.chdir @options[:repo].split('/')[1]
-    end
-  end
-
-  def check_git_dir
-    msg_err = 'gitbot is not working on a git directory'
-    raise msg_err if File.directory?('.git') == false
-  end
-
-  # this is for preventing that a test branch exists already
-  # and we have some internal error
-  def check_duplicata_pr_branch(pr)
-    puts `git branch --list #{pr}`
-    `git branch -D #{pr} 2>/dev/null` if $CHILD_STATUS.exitstatus.zero?
   end
 
   # merge pr_branch into upstream targeted branch
@@ -77,12 +43,49 @@ class GitOp
     `git checkout #{upstream}`
     `git branch -D  #{pr_fix}#{pr}`
   end
+
+  private
+
+  def ck_or_clone_git
+    return if File.directory?(git_dir)
+    FileUtils.mkdir_p(git_dir)
+    Dir.chdir git_dir
+    repo_url = "#{repo_protocol}#{@options[:repo]}.git"
+    puts `git clone #{repo_url}`
+  end
+
+  # this function merge the pr branch  into target branch,
+  # where the author of pr wanted to submit
+  def goto_prj_dir
+    git_repo_dir = git_dir + '/' + @options[:repo].split('/')[1]
+    # chech that dir exist, otherwise clone it
+    ck_or_clone_git
+    begin
+      # /tmp/gitarro, this is in case the dir already exists
+      Dir.chdir git_repo_dir
+    rescue Errno::ENOENT
+      # this is in case we clone the repo
+      Dir.chdir @options[:repo].split('/')[1]
+    end
+  end
+
+  def check_git_dir
+    msg_err = 'gitarro is not working on a git directory'
+    raise msg_err if File.directory?('.git') == false
+  end
+
+  # this is for preventing that a test branch exists already
+  # and we have some internal error
+  def check_duplicata_pr_branch(pr)
+    puts `git branch --list #{pr}`
+    `git branch -D #{pr} 2>/dev/null` if $CHILD_STATUS.exitstatus.zero?
+  end
 end
 
 # This private class handle the case the repo from PR
 # comes from a user external repo
-# PR open against: openSUSE/gitbot
-# PR repo:  MyUSER/gitbot
+# PR open against: openSUSE/gitarro
+# PR repo:  MyUSER/gitarro
 class ExternalRepoGit
   attr_reader :pr, :rem_repo, :pr_fix
   def initialize(pr, options)
@@ -104,6 +107,7 @@ class ExternalRepoGit
 
   def checkout_to_rem_branch(rem_repo)
     puts `git checkout -b #{pr_fix}#{branch_rem} #{rem_repo}/#{branch_rem}`
+    exit 1 if $CHILD_STATUS.exitstatus.nonzero?
   end
 
   def branch_rem

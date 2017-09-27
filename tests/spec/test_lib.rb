@@ -35,20 +35,20 @@ class GitRemoteOperations
   end
 end
 
-# gitbot functional tests
-class GitbotTestingCmdLine
+# gitarro functional tests
+class GitarroTestingCmdLine
   attr_reader :repo, :client, :gitrem, :script,
               :ftype, :url, :git_dir, :valid_test
   def initialize(repo)
     @repo = repo
-    @script = '../../gitbot.rb'
+    @script = '../../gitarro.rb'
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
     @gitrem = GitRemoteOperations.new(repo)
     @ftype = '.'
     @git_dir = '/tmp/ruby312'
-    @url = 'https://github.com/openSUSE/gitbot/pull/8'
-    @valid_test = '/tmp/gitbot.sh'
+    @url = 'https://github.com/openSUSE/gitarro/pull/8'
+    @valid_test = '/tmp/gitarro.sh'
     create_test_script(@valid_test)
   end
 
@@ -56,9 +56,9 @@ class GitbotTestingCmdLine
     context = 'basic'
     desc = 'dev-test'
     num = 30
-    gitbot_fixpr = "#{script} -r #{repo} -c #{context} -d #{desc}" \
+    gitarro_fixpr = "#{script} -r #{repo} -c #{context} -d #{desc}" \
                " -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}"
-    puts `ruby #{gitbot_fixpr}`
+    puts `ruby #{gitarro_fixpr}`
     return false if $CHILD_STATUS.exitstatus.nonzero?
     true
   end
@@ -77,26 +77,26 @@ class GitbotTestingCmdLine
   def basic_check_test(comm_st, context, desc)
     # we want always to make the retrigger word,
     # so we have idempotency
-    gitbot = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
+    gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
                     " -t #{valid_test} -f #{ftype} -u #{url} "
     # If it new, we need to add first the context
     unless context_present(comm_st, context)
       puts 'CONTEXT NOT FOUND for CHECK TEST'
-      puts `ruby #{gitbot}`
+      puts `ruby #{gitarro}`
     end
-    puts `ruby #{gitbot} -C`
+    puts `ruby #{gitarro} -C`
     # with check we have -1 has value ( used for retrigger)
     return false if $CHILD_STATUS.exitstatus.zero?
-    puts `ruby #{gitbot}`
+    puts `ruby #{gitarro}`
     true
   end
 
   def changelog_should_fail(com_st)
     context = 'changelog_shouldfail'
     desc = 'changelog_fail'
-    gitbot = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
+    gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
                    " -t #{valid_test} -f #{ftype} -u #{url} "
-    puts `ruby #{gitbot} --changelogtest`
+    puts `ruby #{gitarro} --changelogtest`
     return false unless failed_status(com_st, context)
     true
   end
@@ -106,9 +106,9 @@ class GitbotTestingCmdLine
     desc = 'changelog_pass'
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
-    gitbot = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
+    gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
                    " -t #{valid_test} -f #{ftype} -u #{url} "
-    puts `ruby #{gitbot} --changelogtest`
+    puts `ruby #{gitarro} --changelogtest`
     return false if failed_status(com_st, context)
     true
   end

@@ -7,8 +7,8 @@ require_relative 'opt_parser'
 require_relative 'git_op'
 
 # This is a private class, which has the task to execute/run tests
-# called by GitbotBackend
-class GitbotTestExecutor
+# called by Backend
+class TestExecutor
   def initialize(options)
     @options = options
     @options.each do |key, value|
@@ -44,15 +44,15 @@ class GitbotTestExecutor
   end
 end
 
-# this the public class is the backend of gitbot,
+# this the public class is the backend of gitarro,
 # were we execute the tests and so on
-class GitbotBackend
+class Backend
   attr_accessor :j_status, :options, :client, :pr_files, :gbexec
   # public method of backend
   def initialize(option = nil)
     Octokit.auto_paginate = true
     @client = Octokit::Client.new(netrc: true)
-    @options = option.nil? ? OptParser.new.gitbot_options : option
+    @options = option.nil? ? OptParser.new.cmdline_options : option
     @j_status = ''
     @pr_files = []
     # each options will generate a object variable dinamically
@@ -60,7 +60,7 @@ class GitbotBackend
       instance_variable_set("@#{key}", value)
       self.class.send(:attr_accessor, key)
     end
-    @gbexec = GitbotTestExecutor.new(@options)
+    @gbexec = TestExecutor.new(@options)
   end
 
   # public method for get prs opens
@@ -144,13 +144,10 @@ class GitbotBackend
   # this function will check if the PR contains in comment the magic word
   # # for retrigger all the tests.
   def magicword(repo, pr_number, context)
-    magic_word_trigger = "@gitbot rerun #{context} !!!"
+    magic_word_trigger = "@gitarro rerun #{context} !!!"
     pr_comment = @client.issue_comments(repo, pr_number)
     # a pr contain always a comments, cannot be nil
     pr_comment.each do |com|
-      # FIXME: if user in @org retrigger only
-      # add org variable somewhere, maybe as option
-      # next unless @client.organization_member?(@org, com.user.login)
       # delete comment otherwise it will be retrigger infinetely
       if com.body.include? magic_word_trigger
         @client.delete_comment(repo, com.id)
@@ -193,7 +190,7 @@ class GitbotBackend
     end
   end
 
-  # check it the cm of pr contain the context from gitbot already
+  # check it the cm of pr contain the context from gitarro already
   def context_pr(cm_st)
     # 1) context_present == false  triggers test. >
     # this means  the PR is not with context tagged
