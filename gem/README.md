@@ -1,3 +1,3 @@
-## This is used for making the rubygems of gitbot 
+## This is used for making the rubygem of gitbot 
 
-Experimental atm
+

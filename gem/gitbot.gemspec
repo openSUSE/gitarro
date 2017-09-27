@@ -15,6 +15,10 @@ Gem::Specification.new do |s|
   s.license     = 'MIT'
   s.homepage	= 'https://github.com/openSUSE/gitbot'
   s.require_paths = ['lib']
+  s.files = ['lib/gitbot/gitbot_backend.rb', 
+             'lib/gitbot/opt_parser.rb', 'lib/gitbot/git_op.rb',
+             'lib/gitbot/version.rb']
+  s.executables = 'gitbot'
   s.add_dependency 'english', '~> 0.6'
   s.add_dependency 'minitest', '~> 5.9'
   s.add_dependency 'minitest-reporters', '~> 1.1'
