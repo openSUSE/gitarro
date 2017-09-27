@@ -133,7 +133,8 @@ class OptParserInternal
     if @options[:test_file].nil? && @options[:changelog_test].nil?
       raise_incorrect_syntax('Incorrect syntax (use -h for help)')
     end
-    defaults_gitbot
+    defaults_false
+    defaults_to_text
   end
 
   # option help
@@ -159,16 +160,18 @@ class OptParserInternal
   end
 
   # set some default values
-  def defaults_gitbot
+  def defaults_false
     @options[:check] = false if @options[:check].nil?
     @options[:changelog_test] = false if @options[:changelog_test].nil?
     @options[:target_url] = '' if @options[:target_url].nil?
-    @options[:file_type] = '.changes' if @options[:changelog_test]
     @options[:https] = false if @options[:https].nil?
-    @options[:description] = 'use -d to set custum description' if @options[:description].nil?
   end
 
-
+  def defaults_to_text
+    desc = 'use option -d to set a custom test description.'
+    @options[:file_type] = '.changes' if @options[:changelog_test]
+    @options[:description] = desc if @options[:description].nil?
+  end
 end
 
 # Opt_parser class, is for getting needed options
