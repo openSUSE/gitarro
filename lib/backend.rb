@@ -19,13 +19,12 @@ class TestExecutor
 
   # this will clone the repo and execute the tests
   def pr_test(pr)
-    git = GitOp.new(@git_dir, pr, @options)
-    # merge PR-branch to upstream branch
-    git.merge_pr_totarget(pr.base.ref, pr.head.ref)
+    git = GitOp.new(@git_dir, @options)
+    # Get the PR
+    git.get_pr(pr.number)
     # do valid tests and store the result
+    git.print_commit_info(pr)
     test_status = run_script
-    # del branch
-    git.del_pr_branch(pr.base.ref, pr.head.ref)
     test_status
   end
 
