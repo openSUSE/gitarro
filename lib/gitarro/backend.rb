@@ -169,14 +169,13 @@ class Backend
   # check if the commit of a pr is on pending
   def pending_pr(comm_st)
     # 2) pending
-    pending_on_context = false
     (0..comm_st.statuses.size - 1).each do |pr_status|
       if comm_st.statuses[pr_status]['context'] == @context &&
          comm_st.statuses[pr_status]['state'] == 'pending'
-        pending_on_context = true
+        return true
       end
     end
-    pending_on_context
+    false
   end
 
   # if the Pr contains magic word, test changelog
@@ -194,11 +193,10 @@ class Backend
   def context_pr(cm_st)
     # 1) context_present == false  triggers test. >
     # this means  the PR is not with context tagged
-    context_present = false
     (0..cm_st.statuses.size - 1).each do |pr_status|
-      context_present = true if cm_st.statuses[pr_status]['context'] == @context
+      return true if cm_st.statuses[pr_status]['context'] == @context
     end
-    context_present
+    false
   end
 
   # if the pr has travis test and one custom, we will have 2 elements.
@@ -214,25 +212,23 @@ class Backend
   end
 
   def success_status?(comm_st)
-    status = false
     (0..comm_st.statuses.size - 1).each do |pr_status|
       if comm_st.statuses[pr_status]['context'] == @context &&
          comm_st.statuses[pr_status]['state'] == 'success'
-        status = true
+        return true
       end
     end
-    status
+    false
   end
 
   def failed_status?(comm_st)
-    status = false
     (0..comm_st.statuses.size - 1).each do |pr_status|
       if comm_st.statuses[pr_status]['context'] == @context &&
          comm_st.statuses[pr_status]['state'] == 'failure'
-        status = true
+        return true
       end
     end
-    status
+    false
   end
 
   # control if the pr change add any files, specified
