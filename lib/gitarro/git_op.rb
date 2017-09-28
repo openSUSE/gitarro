@@ -80,8 +80,6 @@ class GitOp
     puts `git branch --list #{pr}`
     `git branch -D #{pr} 2>/dev/null` if $CHILD_STATUS.exitstatus.zero?
   end
-
-
 end
 
 # This private class handle the case the repo from PR

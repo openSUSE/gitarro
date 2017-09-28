@@ -57,6 +57,10 @@ DIRS_TO_DEVEL = %w[../lib].freeze
 
 gitarrofs = PrepareGemFS.new
 
+puts '************************'
+puts '************************'
+puts '**************** CREATING GEM !**********'
+
 puts 'removing old dirs'
 gitarrofs.remove_all_dirs(DIRS_TO_REMOVE)
 puts 'copying latest lib'

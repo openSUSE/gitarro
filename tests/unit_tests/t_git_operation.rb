@@ -12,8 +12,7 @@ class GitarroGitop < Minitest::Test
     # crate fake object for internal class external repo
     # FIXME: this could improved creating a full mock obj
     pr = 'fake'
-    gop = GitOp.new(gb.git_dir, pr, @full_hash)
+    GitOp.new(gb.git_dir, pr, @full_hash)
     puts gb.git_dir
-    gop.ck_or_clone_git
   end
 end
