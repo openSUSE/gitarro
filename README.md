@@ -12,6 +12,10 @@ Gitbot allow you to run tests on Git Hub [Pull Requests](https://help.github.com
 
 It can run on any system that is able to use ruby and [octokit](https://github.com/octokit/octokit.rb).
 
+## Install
+
+``` gem install gitarro ```
+
 ## Documentation
 
 * [Basic concepts, installation, configuration, tests, syntax and a basic example](doc/BASICS.md)
