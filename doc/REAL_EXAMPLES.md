@@ -4,6 +4,29 @@
 
 Here are some real life examples so you can can see how easy is it to integrate gitarro with external tools.
 
+
+## Use a docker container a validation script
+
+Assuming you have the docker daemon installed where you run gitarro, you can do following:
+
+```console
+gitarro -r MalloZup/gitarro  -c "java_lint_checkstyle" -d "linting tests" \
+ -t "/home/jenkins/bin/valid-scripts/java-checkstyle.sh" \
+ -f ".java" \
+ -g "/tmp/gitarro_java_lint"
+``
+
+The script java-checkstyle.sh script is
+```console
+#! /bin/bash
+  docker pull registry.mallo.net/test-image
+  docker run --privileged --rm=true -v "mallo-local:/mallo-remote" registry.mallo.net/test-image /mallo-remote/java/lint.sh
+```
+
+As you see, gitarro will execute tests within a docker container. 
+
+
+
 ## Checking gitarro ruby style with Jenkins
 
 We will configure a job to teast a new PR made for an organization/gitarro GitHub repository (or a PR with a new [comment with the command to relaunch tests](ADVANCED.md#retriggering-a-specific-test))
