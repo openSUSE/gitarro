@@ -10,3 +10,5 @@ Then use `gem install` for installing it the devel version
 
 Increasing rel number is a manual op
 
+### Imporant
+Do not modify anything here, all this file are automatically created
