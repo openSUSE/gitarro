@@ -53,7 +53,7 @@ For the first you would run gitarro with exactly the same syntax, but adding the
 Following our [basic example](BASICS.md#a-basic-example), you will run gitarro as follows:
 
 ```console
-ruby gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t /tmp/tests.sh -f ".rb" -C
+gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t /tmp/tests.sh -f ".rb" -C
 ```
 
 

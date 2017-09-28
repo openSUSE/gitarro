@@ -84,7 +84,7 @@ Please take note that if you are using a script and decite to run it without cal
 Run the following command to get help
 
 ```console
-ruby gitarro.rb -h
+gitarro.rb -h
 ```
 
 # A basic example
@@ -92,7 +92,7 @@ ruby gitarro.rb -h
 ```console
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x /tmp/tests.sh
-ruby gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t /tmp/tests.sh -f ".rb"
+gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t /tmp/tests.sh -f ".rb"
 ```
 
 
