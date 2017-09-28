@@ -4,13 +4,13 @@
 http://www.rubydoc.info/gems/gitarro/
 
 
-# How to contribute to GitBot development
+# How to contribute to gitarro development
 
-So you want to be a GitBot hacker!
+So you want to be a gitarro hacker!
 
 Please follow theseg simple rules to make everyone's life easier, including yours :-)
 
-1. First of all, fork the GitBot repository.
+1. First of all, fork the gitarro repository.
 
 2. Then create a new branch at your forked repository, to create your feature or fox.
 

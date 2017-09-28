@@ -2,12 +2,12 @@
 
 require_relative 'test_lib.rb'
 
-describe GitbotTestingCmdLine do
+describe gitarroTestingCmdLine do
   before(:each) do
     @gitarrorepo = 'opensuse/gitarro'
     @rgit = GitRemoteOperations.new(@gitarrorepo)
     @pr = @rgit.first_pr_open
-    @test = GitbotTestingCmdLine.new(@gitarrorepo)
+    @test = gitarroTestingCmdLine.new(@gitarrorepo)
     # commit status
     @comm_st = @rgit.commit_status(@pr)
   end

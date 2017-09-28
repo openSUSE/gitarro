@@ -11,7 +11,7 @@ We will configure a job to teast a new PR made for an organization/gitarro GitHu
 So step by step:
 
 * Make sure that the jenkins node which will run the job can access the ~/.netrc file, and that the file has credentials.
-* Make sure that the jenkins node which will run the job has all the dependencies for Gitbot installed.
+* Make sure that the jenkins node which will run the job has all the dependencies for gitarro installed.
 * Make sure that you have a file `/opt/ruby-checkstyle.sh` (ideally it should be checked out from a Git repository by Jenkins) with the following content:
  
  ```bash

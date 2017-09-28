@@ -1,6 +1,6 @@
 [Documentation index](../README.md#documentation)
 
-# GitBot tests
+# gitarro tests
 
 ## Unit tests 
 

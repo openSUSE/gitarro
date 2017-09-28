@@ -1,4 +1,4 @@
-# Gitbot
+# gitarro
 
 ![GUNDAM image](doc/gundam.jpg)
 ![GUNDAM image](doc/gundam.jpg)
@@ -8,7 +8,7 @@
 
 ## Introduction
 
-Gitbot allow you to run tests on Git Hub [Pull Requests](https://help.github.com/articles/about-pull-requests/) (also known as PRs) using almost any script, language or binary and providing easy integration with other tools.
+gitarro allow you to run tests on Git Hub [Pull Requests](https://help.github.com/articles/about-pull-requests/) (also known as PRs) using almost any script, language or binary and providing easy integration with other tools.
 
 It can run on any system that is able to use ruby and [octokit](https://github.com/octokit/octokit.rb).
 
@@ -21,4 +21,4 @@ It can run on any system that is able to use ruby and [octokit](https://github.c
 * [Basic concepts, installation, configuration, tests, syntax and a basic example](doc/BASICS.md)
 * [Advanced usage](doc/ADVANCED.md)
 * [Real life examples](doc/REAL_EXAMPLES.md)
-* [How to contribute to GitBot development](doc/CONTRIBUTING.md)
+* [How to contribute to gitarro development](doc/CONTRIBUTING.md)

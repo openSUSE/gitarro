@@ -3,7 +3,7 @@
 require_relative 'helper'
 require 'ostruct'
 # Test the option parser
-class GitbotGitop < Minitest::Test
+class gitarroGitop < Minitest::Test
   def test_gitop
     @full_hash = { repo: 'openSUSE/gitarro', context: 'python-t', description:
                    'functional', test_file: 'gino.sh', file_type: '.sh',

@@ -13,7 +13,7 @@ class GitOp
     @pr_fix = 'PR-'
     # pr object for extract all relev. data.
     @pr = pr
-    # All GitBot options
+    # All gitarro options
     @options = options
     # object to handle external repos
     @repo_external = ExternalRepoGit.new(pr, options)
