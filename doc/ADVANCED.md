@@ -24,7 +24,7 @@ Valid examples:
 * ```gitarro rerun gitarro-magic !!!```
   
   It will work since there is a space and at least three exclamation marks after the test name.
-* ```@gitarro rerun gitarro-magic !!!!!!!```
+* ```gitarro rerun gitarro-magic !!!!!!!```
   
   It will work since there is a space and at least three exclamation marks after the test name.
 * ```I discovered a bug so I need to run tests again, gitarro rerun gitarro-magic !!!!!!!```

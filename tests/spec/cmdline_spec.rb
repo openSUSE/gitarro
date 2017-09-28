@@ -26,7 +26,7 @@ describe GitarroTestingCmdLine do
 
   describe '.basic-check-option' do
     it 'gitarro run on first Pr open, with the check option, enabled' do
-      ck_c = @rgit.create_comment(@pr, '@gitarro rerun check-option-test !!!')
+      ck_c = @rgit.create_comment(@pr, 'gitarro rerun check-option-test !!!')
       context = 'check-option-test'
       desc = 'dev-test-checkOption'
       result = @test.basic_check_test(@comm_st, context, desc)
@@ -45,7 +45,7 @@ describe GitarroTestingCmdLine do
     it 'gitarro changelog test should pass' do
       comment = @rgit.create_comment(@pr, 'no changelog needed!')
       cont = 'changelog_shouldpass'
-      rcomment = @rgit.create_comment(@pr, "@gitarro rerun #{cont} !!!")
+      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
       result = @test.changelog_should_pass(@comm_st)
       @rgit.delete_c(comment.id)
       @rgit.delete_c(rcomment.id)
