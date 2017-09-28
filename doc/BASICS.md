@@ -3,10 +3,12 @@
 
 # A basic example
 
+
+Substitute this with your cred
+```GITHUB_USER="GRANDE_USER"```
+```GITUB_PWD_OR_TOKEN="MYPASSWORD"```
 ```console
 
-GITHUB_USER="GRANDE_USER"
-GITUB_PWD_OR_TOKEN="MYPASSWORD"
 echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN > /~.netrc"
 
 echo "#! /bin/bash" > /tmp/tests.sh
