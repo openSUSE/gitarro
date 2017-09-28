@@ -1,5 +1,15 @@
 [Documentation index](../README.md#documentation)
 
+
+# A basic example
+
+```console
+echo "#! /bin/bash" > /tmp/tests.sh
+chmod +x /tmp/tests.sh
+gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t /tmp/tests.sh -f ".rb" --https"
+```
+
+
 # Basic concepts
 
 gitarro runs a validation script, binary or command (-t or --test) against PRs of the GitHub repository you specify (-r or --repo) .
@@ -85,14 +95,6 @@ Run the following command to get help
 
 ```console
 gitarro.rb -h
-```
-
-# A basic example
-
-```console
-echo "#! /bin/bash" > /tmp/tests.sh
-chmod +x /tmp/tests.sh
-gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t /tmp/tests.sh -f ".rb"
 ```
 
 
