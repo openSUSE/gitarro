@@ -5,7 +5,7 @@
 Here are some real life examples so you can can see how easy is it to integrate gitarro with external tools.
 
 
-## Use a docker container a validation script
+## Execute tests inside a docker container (gitarro run outside the container)
 
 Assuming you have the docker daemon installed where you run gitarro, you can do following:
 
@@ -24,6 +24,8 @@ The script java-checkstyle.sh script is
 ```
 
 As you see, gitarro will execute tests within a docker container. 
+
+You can use also gitarro for trigger test in **VMS**, **CLOUD**, and other env., as long they return 0 or 1 for results, gitarro make abstraction of this.
 
 
 
