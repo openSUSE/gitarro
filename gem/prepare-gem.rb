@@ -27,30 +27,29 @@ class PrepareGemFS
   end
 end
 
+# prepare bin
 class PrepareBin
   def initialize
-   # is where the devel bin location file live
-   @bin_d = 'bin/gitarro'
-
+    # is where the devel bin location file live
+    @bin_d = 'bin/gitarro'
   end
- 
+
   def copy_bin
     puts 'creating bin'
     # create bin dir
     FileUtils.mkdir 'bin'
     # copy gitarro.rb to bin
-    FileUtils.cp '../gitarro.rb',  @bin_d  
+    FileUtils.cp '../gitarro.rb', @bin_d
   end
 
   def replace_contents(orig, new)
-    puts '-- ' +  orig + ' replaced with ' + new
+    puts '-- ' + orig + ' replaced with ' + new
     # load the file as a string
-    data = File.read(@bin_d) 
+    data = File.read(@bin_d)
     filtered_data = data.gsub(orig, new)
-    File.open(@bin_d, "w") { |f|  f.write(filtered_data) }
+    File.open(@bin_d, 'w') { |f| f.write(filtered_data) }
   end
 end
-
 
 # MAIN
 DIRS_TO_REMOVE = %w[bin lib].freeze
@@ -64,13 +63,13 @@ puts 'copying latest lib'
 gitarrofs.copy_devel_dirs(DIRS_TO_DEVEL)
 
 # adapt some small changes to bin
-puts 
+puts
 bin = PrepareBin.new
 bin.copy_bin
-bin.replace_contents("require_relative", "require") 
-bin.replace_contents("lib/gitarro", "gitarro") 
+bin.replace_contents('require_relative', 'require')
+bin.replace_contents('lib/gitarro', 'gitarro')
 
-puts 
+puts
 # BUILD
 
 puts 'building gem !!!'

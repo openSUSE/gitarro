@@ -36,7 +36,7 @@ class GitRemoteOperations
 end
 
 # gitarro functional tests
-class gitarroTestingCmdLine
+class GitarroTestingCmdLine
   attr_reader :repo, :client, :gitrem, :script,
               :ftype, :url, :git_dir, :valid_test
   def initialize(repo)

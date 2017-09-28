@@ -3,7 +3,7 @@
 require_relative 'helper'
 
 # Test the option parser
-class gitarroOptionTest < Minitest::Test
+class GitarroOptionTest < Minitest::Test
   def set_option(hash, _s)
     opp = OptParser.new
     opp.options = hash
