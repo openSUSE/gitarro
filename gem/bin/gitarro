@@ -3,9 +3,9 @@
 require 'English'
 require 'octokit'
 require 'optparse'
-require_relative 'lib/opt_parser'
-require_relative 'lib/git_op'
-require_relative 'lib/backend'
+require 'gitarro/opt_parser'
+require 'gitarro/git_op'
+require 'gitarro/backend'
 
 b = Backend.new
 prs = b.open_prs

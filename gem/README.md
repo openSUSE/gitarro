@@ -1,3 +1,7 @@
-## This is used for making the rubygem 
+# Gitarro rubygem
 
-We need an unique name before we can publish the gem
+This directory is used to create the gitarro rubygem. 
+
+At moment it differ only with the devel repo for the lib requirements and some fs hierarchy.
+
+Use `prepare-gem.rb` for creating the gem

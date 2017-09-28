@@ -36,12 +36,12 @@ if [ "$(echo ${TEST_SCRIPT})" != "" ]; then
   chmod 755 /tmp/test.sh
 fi
 
-# PRs: Use gitbot with the parameters
+# PRs: Use gitarro with the parameters
 if [ "${OPERATION}" == "PR" ]; then
   echo "INFO: Configuring ~/.netrc..."
   echo "machine api.github.com login ${GITHUB_USER} password ${GITHUB_PASSWORD}" > ~/.netrc && chmod 600 ~/.netrc
-  echo "INFO: Running gitbot..."
-  eval "ruby.ruby2.4 /opt/gitbot/gitbot.rb ${GITBOT_PARAMS}"
+  echo "INFO: Running gitarro..."
+  eval "ruby.ruby2.4 /opt/gitarro/gitarro.rb ${GITBOT_PARAMS}"
   echo "Return code of GitBot was ${?}"
   exit ${?}
 # NON-PRs: Clone the repo, and run rubocop on its own

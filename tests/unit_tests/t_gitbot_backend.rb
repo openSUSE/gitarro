@@ -6,26 +6,26 @@ Dir.chdir Dir.pwd
 # Test the option parser
 class BackendTest2 < Minitest::Test
   def test_full_option_import2
-    @full_hash = { repo: 'gino/gitbot', context: 'python-t', description:
+    @full_hash = { repo: 'gino/gitarro', context: 'python-t', description:
                    'functional', test_file: 'gino.sh', file_type: '.sh',
                    git_dir: 'gitty' }
-    gitbot = Backend.new(@full_hash)
-    puts gitbot.j_status
-    gitbot.j_status = 'foo'
-    gitbot_assert(gitbot)
+    gitarro = Backend.new(@full_hash)
+    puts gitarro.j_status
+    gitarro.j_status = 'foo'
+    gitarro_assert(gitarro)
   end
 
-  def gitbot_assert(gitbot)
-    assert_equal('gino/gitbot', gitbot.repo)
-    assert_equal('python-t', gitbot.context)
-    assert_equal('functional', gitbot.description)
-    assert_equal('gino.sh', gitbot.test_file)
-    assert_equal('.sh', gitbot.file_type)
-    assert_equal('gitty', gitbot.git_dir)
+  def gitarro_assert(gitarro)
+    assert_equal('gino/gitarro', gitarro.repo)
+    assert_equal('python-t', gitarro.context)
+    assert_equal('functional', gitarro.description)
+    assert_equal('gino.sh', gitarro.test_file)
+    assert_equal('.sh', gitarro.file_type)
+    assert_equal('gitty', gitarro.git_dir)
   end
 
   def test_run_script
-    @full_hash = { repo: 'gino/gitbot', context: 'python-t', description:
+    @full_hash = { repo: 'gino/gitarro', context: 'python-t', description:
                    'functional', test_file: 'test_data/script_ok.sh',
                    file_type: '.sh', git_dir: 'gitty' }
     gbex = TestExecutor.new(@full_hash)

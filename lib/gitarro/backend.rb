@@ -44,7 +44,7 @@ class TestExecutor
   end
 end
 
-# this the public class is the backend of gitbot,
+# this the public class is the backend of gitarro,
 # were we execute the tests and so on
 class Backend
   attr_accessor :j_status, :options, :client, :pr_files, :gbexec
@@ -144,13 +144,10 @@ class Backend
   # this function will check if the PR contains in comment the magic word
   # # for retrigger all the tests.
   def magicword(repo, pr_number, context)
-    magic_word_trigger = "@gitbot rerun #{context} !!!"
+    magic_word_trigger = "@gitarro rerun #{context} !!!"
     pr_comment = @client.issue_comments(repo, pr_number)
     # a pr contain always a comments, cannot be nil
     pr_comment.each do |com|
-      # FIXME: if user in @org retrigger only
-      # add org variable somewhere, maybe as option
-      # next unless @client.organization_member?(@org, com.user.login)
       # delete comment otherwise it will be retrigger infinetely
       if com.body.include? magic_word_trigger
         @client.delete_comment(repo, com.id)
@@ -193,7 +190,7 @@ class Backend
     end
   end
 
-  # check it the cm of pr contain the context from gitbot already
+  # check it the cm of pr contain the context from gitarro already
   def context_pr(cm_st)
     # 1) context_present == false  triggers test. >
     # this means  the PR is not with context tagged

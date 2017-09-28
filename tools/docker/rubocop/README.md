@@ -22,7 +22,7 @@ docker run --rm -e OPERATION='PR' -e GITBOT_PARAMS='<GITBOT_PARAMS>' -e GITHUB_U
 * ```<GITHUB_USER>``` is a GitHub username, used to interact with GitHub API to update the Pull Request status
 * ```<GITHUB_PASSWORD_OR_PERSONAK_TOKEN>``` is a GitHub password or Personal Token, used to interact with GitHub API to update the Pull Request status
 
-Optionally you can specify a parameter ```-e TEST_SCRIPT='<source_code>'``` with the source code of the test script. Note that PWD for the script will ```/opt/gitbot/``` so keep this in mind along with the path you use for GitBot option ```-g``` if you use it.
+Optionally you can specify a parameter ```-e TEST_SCRIPT='<source_code>'``` with the source code of the test script. Note that PWD for the script will ```/opt/gitarro/``` so keep this in mind along with the path you use for GitBot option ```-g``` if you use it.
 
 As a tip, if you are using a shebang (such as ```#!/bin/bash```) and multiple lines, remember to add the corresponding escape secuences.
 

@@ -4,12 +4,12 @@ require 'English'
 require 'fileutils'
 require 'timeout'
 
-# git operation for gitbot
+# git operation for gitarro
 class GitOp
   attr_reader :git_dir, :pr, :pr_fix, :repo_external, :repo_protocol
   def initialize(git_dir, pr, options)
     @git_dir = git_dir
-    # prefix for the test pr that gitbot tests.
+    # prefix for the test pr that gitarro tests.
     @pr_fix = 'PR-'
     # pr object for extract all relev. data.
     @pr = pr
@@ -37,7 +37,7 @@ class GitOp
     # chech that dir exist, otherwise clone it
     ck_or_clone_git
     begin
-      # /tmp/gitbot, this is in case the dir already exists
+      # /tmp/gitarro, this is in case the dir already exists
       Dir.chdir git_repo_dir
     rescue Errno::ENOENT
       # this is in case we clone the repo
@@ -46,7 +46,7 @@ class GitOp
   end
 
   def check_git_dir
-    msg_err = 'gitbot is not working on a git directory'
+    msg_err = 'gitarro is not working on a git directory'
     raise msg_err if File.directory?('.git') == false
   end
 
@@ -81,8 +81,8 @@ end
 
 # This private class handle the case the repo from PR
 # comes from a user external repo
-# PR open against: openSUSE/gitbot
-# PR repo:  MyUSER/gitbot
+# PR open against: openSUSE/gitarro
+# PR repo:  MyUSER/gitarro
 class ExternalRepoGit
   attr_reader :pr, :rem_repo, :pr_fix
   def initialize(pr, options)

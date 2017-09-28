@@ -2,11 +2,11 @@
 
 # Real examples
 
-Here are some real life examples so you can can see how easy is it to integrate gitbot with external tools.
+Here are some real life examples so you can can see how easy is it to integrate gitarro with external tools.
 
-## Checking gitbot ruby style with Jenkins
+## Checking gitarro ruby style with Jenkins
 
-We will configure a job to teast a new PR made for an organization/gitbot GitHub repository (or a PR with a new [comment with the command to relaunch tests](ADVANCED.md#retriggering-a-specific-test))
+We will configure a job to teast a new PR made for an organization/gitarro GitHub repository (or a PR with a new [comment with the command to relaunch tests](ADVANCED.md#retriggering-a-specific-test))
 
 So step by step:
 
@@ -16,18 +16,18 @@ So step by step:
  
  ```bash
  #! /bin/bash
- cd ${WORKSPACE}/gitbot
+ cd ${WORKSPACE}/gitarro
  rubocop
  ```
 * Make sure that /opt/ruby-checkstyle.sh is configured as executable:
  
  ```chmod 755 /opt/ruby-checkstyle.sh```
-* Configure the Jenkins job to clone ```https://github.com/organization/gitbot```
+* Configure the Jenkins job to clone ```https://github.com/organization/gitarro```
 * Add the following script at ```Execute shell```:
  
  ```console
- ${WORKSPACE}/gitbot.rb
-  -r organization/gitbot\
+ ${WORKSPACE}/gitarro.rb
+  -r organization/gitarro\
   -c "ruby_lint_checkstyle"\
   -d "Ruby linting tests"\
   -t "/opt/ruby-checkstyle.sh"\

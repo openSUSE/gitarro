@@ -3,7 +3,7 @@
 ![GUNDAM image](doc/gundam.jpg)
 ![GUNDAM image](doc/gundam.jpg)
 
-[![Build Status Master branch](https://travis-ci.org/openSUSE/gitbot.svg?branch=master)](https://travis-ci.org/openSUSE/gitbot)
+[![Build Status Master branch](https://travis-ci.org/openSUSE/gitarro.svg?branch=master)](https://travis-ci.org/openSUSE/gitarro)
 
 ## Introduction
 

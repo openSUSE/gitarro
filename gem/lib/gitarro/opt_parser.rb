@@ -11,7 +11,7 @@ module MandatoryOptions
   end
 
   def repo_opt(opt)
-    desc = 'GitHub repository to look for PRs. For example: openSUSE/gitbot.'
+    desc = 'GitHub repository to look for PRs. For example: openSUSE/gitarro.'
     opt.on('-r', "--repo 'REPO'", desc) { |repo| @options[:repo] = repo }
   end
 
@@ -30,8 +30,8 @@ module MandatoryOptions
   end
 
   def git_opt(opt)
-    desc = 'Specify a location where gitbot will clone the GitHub project. '\
-           'If the dir does not exists, gitbot will create one. '\
+    desc = 'Specify a location where gitarro will clone the GitHub project. '\
+           'If the dir does not exists, gitarro will create one. '\
            'For example: /tmp/'
     opt.on('-g', "--git_dir 'GIT_LOCAL_DIR'", desc) do |git_dir|
       @options[:git_dir] = git_dir
@@ -143,7 +143,7 @@ class OptParserInternal
     opt.separator 'Help:'
     opt.on('-h', '--help', 'help') do
       opt.separator ''
-      opt.separator "Example: gitbot.rb -r openSUSE/gitbot -c 'python-test' "\
+      opt.separator "Example: gitarro.rb -r openSUSE/gitarro -c 'python-test' "\
                     "-d 'someCoolTest' -g /tmp/pr-ruby01/ -t /tmp/test.sh "\
                     "-f '.py'"
       puts @opt_parser
@@ -180,7 +180,7 @@ class OptParser < OptParserInternal
   private
 
   def option_banner(opt)
-    opt.banner = "Usage: gitbot.rb [options]\n\n" \
+    opt.banner = "Usage: gitarro.rb [options]\n\n" \
   end
 
   public
