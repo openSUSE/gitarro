@@ -4,6 +4,11 @@
 # A basic example
 
 ```console
+
+GITHUB_USER="GRANDE_USER"
+GITUB_PWD_OR_TOKEN="MYPASSWORD"
+echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN > /~.netrc"
+
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x /tmp/tests.sh
 gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp -t /tmp/tests.sh -f ".rb" --https"
