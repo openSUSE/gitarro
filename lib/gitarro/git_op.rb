@@ -4,6 +4,7 @@ require 'English'
 require 'fileutils'
 require 'timeout'
 
+# This class is used by lib/backend.rb
 # git operation for gitarro
 class GitOp
   attr_reader :git_dir, :pr, :pr_fix, :repo_external, :repo_protocol
@@ -21,6 +22,29 @@ class GitOp
     gg = 'git@github.com:'
     @repo_protocol = @options[:https] ? gh : gg
   end
+
+  # merge pr_branch into upstream targeted branch
+  def merge_pr_totarget(upstream, pr_branch)
+    goto_prj_dir
+    check_git_dir
+    `git checkout #{upstream}`
+    check_duplicata_pr_branch("#{pr_fix}#{pr_branch}")
+    `git remote update`
+    `git fetch`
+    `git pull origin #{upstream}`
+    `git checkout -b #{pr_fix}#{pr_branch} origin/#{pr_branch}`
+    return if $CHILD_STATUS.exitstatus.zero?
+    # if it fails the PR contain a forked external repo
+    repo_external.checkout_into
+  end
+
+  # cleanup the pr_branch(delete it)
+  def del_pr_branch(upstream, pr)
+    `git checkout #{upstream}`
+    `git branch -D  #{pr_fix}#{pr}`
+  end
+
+  private
 
   def ck_or_clone_git
     return if File.directory?(git_dir)
@@ -55,27 +79,6 @@ class GitOp
   def check_duplicata_pr_branch(pr)
     puts `git branch --list #{pr}`
     `git branch -D #{pr} 2>/dev/null` if $CHILD_STATUS.exitstatus.zero?
-  end
-
-  # merge pr_branch into upstream targeted branch
-  def merge_pr_totarget(upstream, pr_branch)
-    goto_prj_dir
-    check_git_dir
-    `git checkout #{upstream}`
-    check_duplicata_pr_branch("#{pr_fix}#{pr_branch}")
-    `git remote update`
-    `git fetch`
-    `git pull origin #{upstream}`
-    `git checkout -b #{pr_fix}#{pr_branch} origin/#{pr_branch}`
-    return if $CHILD_STATUS.exitstatus.zero?
-    # if it fails the PR contain a forked external repo
-    repo_external.checkout_into
-  end
-
-  # cleanup the pr_branch(delete it)
-  def del_pr_branch(upstream, pr)
-    `git checkout #{upstream}`
-    `git branch -D  #{pr_fix}#{pr}`
   end
 end
 
