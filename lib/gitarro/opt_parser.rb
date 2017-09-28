@@ -90,6 +90,15 @@ module OptionalOptions
     end
   end
 
+  def changed_since(opt)
+    changed_since_desc = 'If present, will only check PRs with a ' \
+                       'change in the last X seconds'
+    opt.on("--changed_since 'SECONDS'",
+           changed_since_desc) do |changed_since|
+      @options[:changed_since] = Integer(changed_since)
+    end
+  end
+
   def optional_options(opt)
     opt.separator ''
     opt.separator 'Optional options:'
@@ -100,6 +109,7 @@ module OptionalOptions
     url_opt(opt)
     pr_number(opt)
     https_opt(opt)
+    changed_since(opt)
   end
 end
 
@@ -164,6 +174,7 @@ class OptParserInternal
     @options[:changelog_test] = false if @options[:changelog_test].nil?
     @options[:target_url] = '' if @options[:target_url].nil?
     @options[:https] = false if @options[:https].nil?
+    @options[:changed_since] = -1 if @options[:changed_since].nil?
   end
 
   def defaults_to_text

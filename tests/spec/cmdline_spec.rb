@@ -97,4 +97,16 @@ describe 'cmdline secondary options' do
       expect(result).to be true
     end
   end
+
+  describe '.changed_since' do
+    it 'gitarro should see at least PR #30 changed in the last 60 seconds' do
+      context = 'changed-since'
+      desc = 'changed-since'
+      pr = @rgit.pr_by_number(PR_NUMBER)
+      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      result = @test.changed_since_should_find(@comm_st, 60, context, desc)
+      @rgit.delete_c(comment.id)
+      expect(result).to be true
+    end
+  end
 end

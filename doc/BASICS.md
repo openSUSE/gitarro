@@ -29,6 +29,8 @@ There are two basic ways of using it:
   
   It works this way so if you are using Jenkins pulling the repository, you can have one job build for each gitarro execution.
 
+  It is also posible instruct gitarro to scan only the Pull Requests changed during the last X seconds (--changed_since). From GitHub API perspective, and gitarro's perspective a change is either a new commit or a new comment at the PR.
+
 * If you are using [webhooks](https://developer.github.com/webhooks/), then you just need to specify the ID of the Pull Requests that started the hook (--P or --PR)
 
 It is also posible to tell gitarro to ignore PRs unless specific files are changed (by path or by extension with -f or --file), and specify a URL to added to the Pull Requests with the link to the log with the test output, for example to a Jenkins log (-u o --url).
@@ -53,6 +55,7 @@ Optional options:
     -P                               '--PR 'NUMBER'
                                      Specify the PR number instead of checking all of them. This will force gitarro to run the against a specific PR number,even if it is not needed (useful for using Jenkins with GitHub webhooks).
         --https                      If present, use https instead of ssh for git operations
+        --changed_since 'SECONDS'    If present, will only check PRs with a change in the last X seconds
 
 Help:
     -h, --help                       help
