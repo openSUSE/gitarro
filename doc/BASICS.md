@@ -43,13 +43,16 @@ Help:
 Example: gitarro.rb -r openSUSE/gitarro -c 'python-test' -d 'someCoolTest' -g /tmp/pr-ruby01/ -t /tmp/test.sh -f '.py'
 ```
 
-# Installation
+# Devel Installation
 
 Use bundler to download all Ruby dependencies:
 
 ```console
 bundler install
 ```
+
+For the stable use `gem install gitarro`
+
 
 # Configuration
 

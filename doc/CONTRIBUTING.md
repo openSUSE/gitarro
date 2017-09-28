@@ -16,7 +16,7 @@ Please follow theseg simple rules to make everyone's life easier, including your
 
 3. Work on the feature fix. You should have only one commit at each time, so we strongly suggest you use 'git commit --amend' and 'git push -f'. Otherwise you can perform a squash, but it is more complicated.
 
-4. When you are happy, ensure that all [tests](TESTING.md) are passing.
+4. When you are happy, ensure that all [tests](TESTS.md) are passing.
 
 5. Create a Pull Request and describe what your changes do. Travis will run some tests, so if any of them fails you will need to fix the problems.
 

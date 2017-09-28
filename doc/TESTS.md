@@ -23,7 +23,8 @@ These tests use [rspec](http://rspec.info/) are not executed on travis, so you n
 You can use the following command:
 
 ```console
-rspec -fd tests/spec/gitarro_cmdline_spec.rb
+cd tests/spec/
+rspec -fd gitarro_cmdline_spec.rb
 ```
 
 
