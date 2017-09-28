@@ -6,7 +6,7 @@
 ```console
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x /tmp/tests.sh
-gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t /tmp/tests.sh -f ".rb" --https"
+gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp -t /tmp/tests.sh -f ".rb" --https"
 ```
 
 
