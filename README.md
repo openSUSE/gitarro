@@ -8,7 +8,7 @@
 
 ## Introduction
 
-gitarro allow you to run tests on Git Hub [Pull Requests](https://help.github.com/articles/about-pull-requests/) (also known as PRs) using almost any script, language or binary and providing easy integration with other tools.
+gitarro allow you to run tests on Git Hub [Pull Requests](https://help.github.com/articles/about-pull-requests/) (also known as PRs) using almost any script, language or binary and providing easy integration with other tools, and testing env. (such containers, cloud, VMS, etc.)
 
 It can run on any system that is able to use ruby and [octokit](https://github.com/octokit/octokit.rb).
 
