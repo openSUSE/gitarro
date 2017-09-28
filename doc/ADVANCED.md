@@ -11,7 +11,7 @@ so make sure you use a separate comment for this.
 
 Syntax:
 
-```@gitarro rerun <test_name> !!!```
+```gitarro rerun <test_name> !!!```
 
 Notice that there is a space and three exclamation marks (``` !!!```) after the test name. This is required for the command to work.
 
@@ -21,22 +21,22 @@ In this examples you want to rerun a test called gitarro-magic.
 
 Valid examples:
 
-* ```@gitarro rerun gitarro-magic !!!```
+* ```gitarro rerun gitarro-magic !!!```
   
   It will work since there is a space and at least three exclamation marks after the test name.
 * ```@gitarro rerun gitarro-magic !!!!!!!```
   
   It will work since there is a space and at least three exclamation marks after the test name.
-* ```I discovered a bug so I need to run tests again, @gitarro rerun gitarro-magic !!!!!!!```
+* ```I discovered a bug so I need to run tests again, gitarro rerun gitarro-magic !!!!!!!```
   
   It will work since there is a space and at least three exclamation marks after the test name, but **the whole comment will be removed** and the developer will loose it.
 
 Invalid examples:
 
-* ```@gitarro rerun gitarro-magic !```
+* ```gitarro rerun gitarro-magic !```
  
   It will not work since there is a space after the test name, but less than three exclamation marks.
-* ```@gitarro rerun gitarro-magic2 !!!!!!!```
+* ```gitarro rerun gitarro-magic2 !!!!!!!```
  
   It will not work since there is a space and at least three exclamation marks after the test name, but the test name itself is incorrect.
 
