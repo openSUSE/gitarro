@@ -84,9 +84,8 @@ module OptionalOptions
 
   def pr_number(opt)
     desc = 'Specify the PR number instead of checking all of them. ' \
-           'This will force to re/run the against a specific PR number,' \
-           'even if it is not needed (useful to use Jenkins with GitHub '\
-           'webhooks).'
+           'Force to rerun against a specific PR number,' \
+           'even if it is not needed.'
     opt.on('-P', "--PR 'NUMBER'", desc) do |pr_number|
       @options[:pr_number] = Integer(pr_number)
     end
