@@ -1,5 +1,9 @@
 [Documentation index](../README.md#documentation)
 
+# Rubygem doc:
+http://www.rubydoc.info/gems/gitarro/
+
+
 # How to contribute to GitBot development
 
 So you want to be a GitBot hacker!
