@@ -2,7 +2,7 @@
 
 require_relative 'test_lib.rb'
 
-describe GitarroTestingCmdLine do
+describe 'cmdline foundamental' do
   before(:each) do
     @gitarrorepo = 'opensuse/gitarro'
     @rgit = GitRemoteOperations.new(@gitarrorepo)
@@ -33,6 +33,17 @@ describe GitarroTestingCmdLine do
       @rgit.delete_c(ck_c)
       expect(result).to be true
     end
+  end
+end
+
+describe 'cmdline secondary options' do
+  before(:each) do
+    @gitarrorepo = 'opensuse/gitarro'
+    @rgit = GitRemoteOperations.new(@gitarrorepo)
+    @pr = @rgit.first_pr_open
+    @test = GitarroTestingCmdLine.new(@gitarrorepo)
+    # commit status
+    @comm_st = @rgit.commit_status(@pr)
   end
 
   describe '.changelog-fail' do
