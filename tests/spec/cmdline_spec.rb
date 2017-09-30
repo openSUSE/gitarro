@@ -36,6 +36,7 @@ describe 'cmdline foundamental' do
   end
 end
 
+# secondary (not mandatory options tests)
 describe 'cmdline secondary options' do
   before(:each) do
     @gitarrorepo = 'opensuse/gitarro'
@@ -44,6 +45,16 @@ describe 'cmdline secondary options' do
     @test = GitarroTestingCmdLine.new(@gitarrorepo)
     # commit status
     @comm_st = @rgit.commit_status(@pr)
+  end
+
+  describe '.file_type_optional_option_not_set' do
+    it 'we should run without filter and execute tests' do
+      cont = 'file_type_option_optional'
+      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
+      result = @test.file_type_unset(@comm_st, cont)
+      @rgit.delete_c(rcomment.id)
+      expect(result).to be true
+    end
   end
 
   describe '.changelog-fail' do

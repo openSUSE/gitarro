@@ -9,7 +9,6 @@ require_relative 'lib/gitarro/backend'
 
 b = Backend.new
 prs = b.open_prs
-
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # this check the last commit state, catch for review or not reviewd status.

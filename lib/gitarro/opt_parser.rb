@@ -22,13 +22,6 @@ module MandatoryOptions
     end
   end
 
-  def file_opt(opt)
-    file_description = 'pr_file type to run the test against: .py, .rb'
-    opt.on('-f', "--file \'.py\'", file_description) do |file_type|
-      @options[:file_type] = file_type
-    end
-  end
-
   def git_opt(opt)
     desc = 'Specify a location where gitarro will clone the GitHub project. '\
            'If the dir does not exists, gitarro will create one. '\
@@ -43,7 +36,6 @@ module MandatoryOptions
     repo_opt(opt)
     context_opt(opt)
     test_opt(opt)
-    file_opt(opt)
     git_opt(opt)
   end
 end
@@ -66,6 +58,13 @@ module OptionalOptions
            'Usually you will use an URL to the Jenkins build log.'
     opt.on('-u', "--url 'TARGET_URL'", desc) do |target_url|
       @options[:target_url] = target_url
+    end
+  end
+
+  def file_opt(opt)
+    file_description = 'pr_file type to run the test against: .py, .rb'
+    opt.on('-f', "--file \'.py\'", file_description) do |file_type|
+      @options[:file_type] = file_type
     end
   end
 
@@ -96,6 +95,7 @@ module OptionalOptions
     opt.separator 'Optional options:'
     desc_opt(opt)
     check_opt(opt)
+    file_opt(opt)
     changelog_opt(opt)
     url_opt(opt)
     pr_number(opt)
@@ -127,7 +127,7 @@ class OptParserInternal
 
   def parse(opt_parser)
     parse_options(opt_parser)
-    mandatory_options = %w[repo context test_file file_type git_dir]
+    mandatory_options = %w[repo context test_file git_dir]
     mandatory_options.each { |opt| ck_mandatory_option(opt) }
     if @options[:test_file].nil? && @options[:changelog_test].nil?
       raise_incorrect_syntax('Incorrect syntax (use -h for help)')
@@ -170,6 +170,7 @@ class OptParserInternal
     desc = 'use option -d to set a custom test description.'
     @options[:file_type] = '.changes' if @options[:changelog_test]
     @options[:description] = desc if @options[:description].nil?
+    @options[:file_type] = 'notype' if @options[:file_type].nil?
   end
 end
 
