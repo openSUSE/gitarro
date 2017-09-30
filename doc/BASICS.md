@@ -13,7 +13,7 @@ echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN > /
 
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x /tmp/tests.sh
-gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp -t /tmp/tests.sh -f ".rb" --https"
+gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.sh --https"
 ```
 
 
@@ -42,10 +42,10 @@ Mandatory options:
     -r, --repo 'REPO'                GitHub repository to look for PRs. For example: openSUSE/gitarro.
     -c, --context 'CONTEXT'          Context to set on comment (test name). For example: python-test.
     -t, --test 'TEST.SH'             Command, or full path to script/binary to be used to run the test.
-    -f, --file '.py'                 pr_file type to run the test against: .py, .rb
     -g, --git_dir 'GIT_LOCAL_DIR'    Specify a location where gitarro will clone the GitHub project. If the dir does not exists, gitarro will create one. For example: /tmp/
 
 Optional options:
+    -f, --file '.py'                 pr_file type to filter/trigger the test against: .py, .rb
     -d, --description 'DESCRIPTION'  Test decription
     -C, --check                      Check if there is any PR requiring a test, but do not run it.
         --changelogtest              Check if the PR includes a changelog entry (Automatically sets --file ".changes").

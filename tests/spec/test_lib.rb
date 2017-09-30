@@ -113,6 +113,17 @@ class GitarroTestingCmdLine
     true
   end
 
+  def file_type_unset(comm_st, cont)
+    desc = 'we dont filter particular files'
+    `echo '#! /bin/bash' > #{valid_test}`
+    `chmod +x #{valid_test}`
+    gitarro = "#{script} -r #{repo} -c #{cont} -d #{desc} -g #{git_dir}" \
+                   " -t #{valid_test} -u #{url} "
+    puts `ruby #{gitarro}`
+    return false if failed_status(comm_st, cont)
+    true
+  end
+
   private
 
   def create_test_script(script)

@@ -161,9 +161,21 @@ class Backend
   # EX: Pr 56, we check if files are '.rb'
   def pr_all_files_type(repo, pr_number, type)
     files = @client.pull_request_files(repo, pr_number)
-    files.each do |file|
-      @pr_files.push(file.filename) if file.filename.include? type
+    @pr_files = filter_files_by_type(files, type)
+  end
+
+  # by default type is 'notype', which imply we get all files
+  # modified by a Pull Request
+  # otherwise we filter the file '.rb' type or fs ''
+  def filter_files_by_type(files, type)
+    # ff: filtered files array
+    ff = []
+    if type == 'notype'
+      ff = files
+    else
+      files.each { |f| ff.push(f.filename) if f.filename.include? type }
     end
+    ff
   end
 
   # check if the commit of a pr is on pending

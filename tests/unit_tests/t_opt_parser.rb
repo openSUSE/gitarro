@@ -32,6 +32,26 @@ class GitarroOptionTest < Minitest::Test
     assert_equal(optional_desc, options[:description])
   end
 
+  def test_optional_filetype
+    opp2 = OptParser.new
+    full_hash = { repo: 'gino/gitarro', context: 'python-t',
+                  test_file: 'gino.sh',
+                  git_dir: 'gitty' }
+    opp2.options = full_hash
+    options = opp2.cmdline_options
+    assert_equal('notype', options[:file_type])
+  end
+
+  def test_custom_filetype
+    opp2 = OptParser.new
+    full_hash = { repo: 'gino/gitarro', context: 'python-t',
+                  test_file: 'gino.sh', file_type: '.sh',
+                  git_dir: 'gitty' }
+    opp2.options = full_hash
+    options = opp2.cmdline_options
+    assert_equal('.sh', options[:file_type])
+  end
+
   def test_full_option_import
     opp2 = OptParser.new
     full_hash = { repo: 'gino/gitarro', context: 'python-t',
