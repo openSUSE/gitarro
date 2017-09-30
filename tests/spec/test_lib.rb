@@ -95,7 +95,7 @@ class GitarroTestingCmdLine
     context = 'changelog_shouldfail'
     desc = 'changelog_fail'
     gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
-                   " -t #{valid_test} -f #{ftype} -u #{url} "
+                   "-f #{ftype} -u #{url} "
     puts `ruby #{gitarro} --changelogtest`
     return false unless failed_status(com_st, context)
     true
@@ -107,7 +107,7 @@ class GitarroTestingCmdLine
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
     gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
-                   " -t #{valid_test} -f #{ftype} -u #{url} "
+                   "-f #{ftype} -u #{url} "
     puts `ruby #{gitarro} --changelogtest`
     return false if failed_status(com_st, context)
     true

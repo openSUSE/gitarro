@@ -122,6 +122,8 @@ class OptParserInternal
 
   def ck_mandatory_option(option)
     return unless @options[option.to_sym].nil?
+    # changelog option bypass the test_script mandatory option
+    return if @options[:test_file].nil? && !@options[:changelog_test].nil?
     raise_incorrect_syntax("option --#{option} not found")
   end
 
@@ -129,9 +131,6 @@ class OptParserInternal
     parse_options(opt_parser)
     mandatory_options = %w[repo context test_file git_dir]
     mandatory_options.each { |opt| ck_mandatory_option(opt) }
-    if @options[:test_file].nil? && @options[:changelog_test].nil?
-      raise_incorrect_syntax('Incorrect syntax (use -h for help)')
-    end
     defaults_false
     defaults_to_text
   end
