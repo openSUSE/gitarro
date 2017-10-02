@@ -19,13 +19,11 @@ class TestExecutor
 
   # this will clone the repo and execute the tests
   def pr_test(pr)
-    git = GitOp.new(@git_dir, pr, @options)
-    # merge PR-branch to upstream branch
-    git.merge_pr_totarget(pr.base.ref, pr.head.ref)
+    git = GitOp.new(@git_dir, @options)
+    # Get the PR
+    git.get_pr(pr.number, pr.base.ref)
     # do valid tests and store the result
     test_status = run_script
-    # del branch
-    git.del_pr_branch(pr.base.ref, pr.head.ref)
     test_status
   end
 
@@ -63,6 +61,12 @@ class Backend
     @gbexec = TestExecutor.new(@options)
   end
 
+  def create_status(pr_head_sha, status)
+    client.create_status(@repo, pr_head_sha, status, context: @context,
+                                                     description: @description,
+                                                     target_url: @target_url)
+  end
+
   # public method for get prs opens
   # given a repo
   def open_prs
@@ -71,31 +75,35 @@ class Backend
     prs
   end
 
+  def in_mergeable_state(pr)
+    if pr.mergeable_state != 'clean'
+      create_status(pr.head.sha, 'failure')
+      magicword(@repo, pr.number, @context)
+      return false
+    end
+    true
+  end
+
   # public for etrigger the test
   def retrigger_check(pr)
     return unless retrigger_needed?(pr)
-    client.create_status(@repo, pr.head.sha, 'pending',
-                         context: @context, description: @description,
-                         target_url: @target_url)
+    create_status(pr.head.sha, 'pending')
     exit 1 if @check
-    launch_test_and_setup_status(@repo, pr)
+    launch_test_and_setup_status(pr)
     j_status == 'success' ? exit(0) : exit(1)
   end
 
   # public always rerun tests against the pr number if this exists
   def trigger_by_pr_number(pr)
-    return false if @pr_number.nil?
-    return false if @pr_number != pr.number
+    return false if @pr_number.nil? || @pr_number != pr.number
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
-    launch_test_and_setup_status(@repo, pr)
+    launch_test_and_setup_status(pr)
     true
   end
 
   # public method, trigger changelogtest if option active
   def changelog_active(pr, comm_st)
-    return false unless @changelog_test
-    return false unless changelog_changed(@repo, pr, comm_st)
-    true
+    @changelog_test || changelog_changed(pr, comm_st) ? true : false
   end
 
   def unreviewed_pr_test(pr, comm_st)
@@ -105,7 +113,7 @@ class Backend
     # gb.check is true when there is a job running as scheduler
     # which doesn't execute the test but trigger another job
     return false if @check
-    launch_test_and_setup_status(@repo, pr)
+    launch_test_and_setup_status(pr)
     true
   end
 
@@ -128,17 +136,13 @@ class Backend
   # then set the status according to the results of script executed.
   # pr_head = is the PR branch
   # base = is a the upstream branch, where the pr targets
-  def launch_test_and_setup_status(repo, pr)
+  def launch_test_and_setup_status(pr)
     # pending
-    @client.create_status(repo, pr.head.sha, 'pending',
-                          context: @context, description: @description,
-                          target_url: @target_url)
+    create_status(pr.head.sha, 'pending')
     # do tests
     @j_status = gbexec.pr_test(pr)
     # set status
-    @client.create_status(repo, pr.head.sha, @j_status,
-                          context: @context, description: @description,
-                          target_url: @target_url)
+    create_status(pr.head.sha, @j_status)
   end
 
   # this function will check if the PR contains in comment the magic word
@@ -251,25 +255,22 @@ class Backend
     true
   end
 
-  def do_changelog_test(repo, pr)
+  def do_changelog_test(pr)
     @j_status = 'failure'
     pr_all_files_type(repo, pr.number, @file_type)
     # if the pr contains changes on .changes file, test ok
     @j_status = 'success' if @pr_files.any?
     magic_comment(repo, pr.number)
-    @client.create_status(repo, pr.head.sha, @j_status,
-                          context: @context, description: @description,
-                          target_url: @target_url)
+    create_status(pr.head.sha, @j_status)
     true
   end
 
   # do the changelog test and set status
-  def changelog_changed(repo, pr, comm_st)
+  def changelog_changed(pr, comm_st)
     return false unless @changelog_test
     # only execute 1 time, don"t run if test is failed, or ok
-    return false if failed_status?(comm_st)
-    return false if success_status?(comm_st)
-    do_changelog_test(repo, pr)
+    return false if failed_status?(comm_st) || success_status?(comm_st)
+    do_changelog_test(pr)
   end
 
   def retrigger_needed?(pr)
@@ -277,13 +278,12 @@ class Backend
     return false unless magicword(@repo, pr.number, @context)
     # changelog trigger
     if @changelog_test
-      do_changelog_test(@repo, pr)
+      do_changelog_test(pr)
       return false
     end
     pr_all_files_type(@repo, pr.number, @file_type)
-    return false unless @pr_files.any?
     # if check is set, the comment in the trigger job will be del.
     # so setting it to pending, it will be remembered
-    true
+    @pr_files.any ? true : false
   end
 end

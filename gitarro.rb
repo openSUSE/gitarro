@@ -11,6 +11,11 @@ b = Backend.new
 prs = b.open_prs
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
+  # Mark test as failed and skip thest if the PR mergeable_state is not clean
+  unless b.in_mergeable_state(pr)
+    puts 'PR mergeable state is not clean! Please fix conflicts before testing!'
+    next
+  end
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = b.client.status(b.repo, pr.head.sha)
   # pr number trigger.

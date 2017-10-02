@@ -90,6 +90,13 @@ module OptionalOptions
     end
   end
 
+  def no_merge_upstream(opt)
+    desc = 'Test without merging changes from master into the PR code'
+    opt.on('--no_merge_upstream', desc) do |no_merge_upstream|
+      @options[:no_merge_upstream] = no_merge_upstream
+    end
+  end
+
   def optional_options(opt)
     opt.separator ''
     opt.separator 'Optional options:'
@@ -100,6 +107,7 @@ module OptionalOptions
     url_opt(opt)
     pr_number(opt)
     https_opt(opt)
+    no_merge_upstream(opt)
   end
 end
 
@@ -164,6 +172,7 @@ class OptParserInternal
     @options[:changelog_test] = false if @options[:changelog_test].nil?
     @options[:target_url] = '' if @options[:target_url].nil?
     @options[:https] = false if @options[:https].nil?
+    @options[:no_merge_upstream] = false if @options[:no_merge_upstream].nil?
   end
 
   def defaults_to_text

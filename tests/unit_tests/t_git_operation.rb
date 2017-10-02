@@ -7,12 +7,11 @@ class GitarroGitop < Minitest::Test
   def test_gitop
     @full_hash = { repo: 'openSUSE/gitarro', context: 'python-t', description:
                    'functional', test_file: 'gino.sh', file_type: '.sh',
-                   git_dir: 'gitty', https: true }
+                   git_dir: 'gitty', https: true, pr_number: 5,
+                   no_merge_upstream: true }
     gb = Backend.new(@full_hash)
-    # crate fake object for internal class external repo
-    # FIXME: this could improved creating a full mock obj
-    pr = 'fake'
-    GitOp.new(gb.git_dir, pr, @full_hash)
+    gop = GitOp.new(gb.git_dir, @full_hash)
     puts gb.git_dir
+    gop.get_pr(@full_hash[:pr_number], 'master')
   end
 end

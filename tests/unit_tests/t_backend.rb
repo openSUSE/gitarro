@@ -8,7 +8,7 @@ class BackendTest2 < Minitest::Test
   def test_full_option_import2
     @full_hash = { repo: 'gino/gitarro', context: 'python-t', description:
                    'functional', test_file: 'gino.sh', file_type: '.sh',
-                   git_dir: 'gitty' }
+                   git_dir: 'gitty', no_merge_upstream: true }
     gitarro = Backend.new(@full_hash)
     puts gitarro.j_status
     gitarro.j_status = 'foo'
@@ -27,7 +27,8 @@ class BackendTest2 < Minitest::Test
   def test_run_script
     @full_hash = { repo: 'gino/gitarro', context: 'python-t', description:
                    'functional', test_file: 'test_data/script_ok.sh',
-                   file_type: '.sh', git_dir: 'gitty' }
+                   file_type: '.sh', git_dir: 'gitty',
+                   no_merge_upstream: true }
     gbex = TestExecutor.new(@full_hash)
     ck_files(gbex)
     test_file = 'nofile.txt'
