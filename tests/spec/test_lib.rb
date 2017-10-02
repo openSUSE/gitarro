@@ -4,8 +4,7 @@ require 'octokit'
 require 'English'
 
 # this might change
-GITARRO_BIN = '../../gitarro.rb'
-
+GITARRO_BIN = '../../gitarro.rb'.freeze
 
 # github octokit operation
 class GitRemoteOperations
