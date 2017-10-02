@@ -8,6 +8,21 @@ http://www.rubydoc.info/gems/gitarro/
 
 So you want to be a gitarro hacker!
 
+## Issues before big Prs aka features 
+
+If you want to contribute, just look at current issues and start to discuss/thinking how you will solve some of them.
+If you have in mind a new feature, just **open an issue first.**
+ 
+Instead of Proposing directly a Pull Request, openining an issue where you describe what you want to do, how, etc.,
+will give you directly a feedeback, and have a sense of knowing what you will do by describing, discussing it **before**, 
+will  increase the ease you will code ( discussing the design before, instead of changing it after).
+
+
+For small bugfixing/improvements of course you don't need an Issue referenced.
+
+
+
+## GIT Workflow
 Please follow theseg simple rules to make everyone's life easier, including yours :-)
 
 1. First of all, fork the gitarro repository.
