@@ -3,6 +3,10 @@
 require 'octokit'
 require 'English'
 
+# this might change
+GITARRO_BIN = '../../gitarro.rb'
+
+
 # github octokit operation
 class GitRemoteOperations
   attr_reader :repo, :client
@@ -17,10 +21,6 @@ class GitRemoteOperations
     prs.shift
   end
 
-  def pr_by_number(num)
-    client.pull_request(repo, num)
-  end
-
   def commit_status(pr)
     client.status(repo, pr.head.sha)
   end
@@ -29,7 +29,6 @@ class GitRemoteOperations
     client.add_comment(repo, pr.number, comment)
   end
 
-  # FXIME: test if it works really
   def delete_c(comment_id)
     client.delete_comment(repo, comment_id)
   end
@@ -41,7 +40,7 @@ class GitarroTestingCmdLine
               :ftype, :url, :git_dir, :valid_test
   def initialize(repo)
     @repo = repo
-    @script = '../../gitarro.rb'
+    @script = GITARRO_BIN
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
     @gitrem = GitRemoteOperations.new(repo)
@@ -52,10 +51,9 @@ class GitarroTestingCmdLine
     create_test_script(@valid_test)
   end
 
-  def basic
+  def basic(num)
     context = 'basic'
     desc = 'dev-test'
-    num = 30
     gitarro_fixpr = "#{script} -r #{repo} -c #{context} -d #{desc}" \
                " -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}"
     puts `ruby #{gitarro_fixpr}`
@@ -63,10 +61,9 @@ class GitarroTestingCmdLine
     true
   end
 
-  def basic_https
+  def basic_https(num)
     context = 'basic-https'
     desc = 'dev-test'
-    num = 30
     gb_http = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
               " -t #{valid_test} -f #{ftype} -u #{url} -P #{num} --https"
     puts `ruby #{gb_http}`
@@ -81,7 +78,7 @@ class GitarroTestingCmdLine
                     " -t #{valid_test} -f #{ftype} -u #{url} "
     # If it new, we need to add first the context
     unless context_present(comm_st, context)
-      puts 'CONTEXT NOT FOUND for CHECK TEST'
+      puts 'INFO: CONTEXT NOT FOUND for CHECK TEST'
       puts `ruby #{gitarro}`
     end
     puts `ruby #{gitarro} -C`
