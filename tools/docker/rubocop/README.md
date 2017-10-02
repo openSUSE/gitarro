@@ -15,10 +15,10 @@ First, decide if you want to check Pull Requests or you want to check branches.
 If you want to check Pull Requests, use the following syntax:
 
 ```console
-docker run --rm -e OPERATION='PR' -e gitarro_PARAMS='<gitarro_PARAMS>' -e GITHUB_USER='<GITHUB_USER>' -e GITHUB_PASSWORD='<GITHUB_PASSWORD_OR_PERSONAL_TOKEN>' rubocop:latest
+docker run --rm -e OPERATION='PR' -e GITARRO_PARAMS='<GITARRO_PARAMS>' -e GITHUB_USER='<GITHUB_USER>' -e GITHUB_PASSWORD='<GITHUB_PASSWORD_OR_PERSONAL_TOKEN>' rubocop:latest
 ```
 
-* ```<gitarro_PARAMS>``` are all the parameters you need to use for gitarro (see documentation for more help)
+* ```<GITARRO_PARAMS>``` are all the parameters you need to use for gitarro (see documentation for more help)
 * ```<GITHUB_USER>``` is a GitHub username, used to interact with GitHub API to update the Pull Request status
 * ```<GITHUB_PASSWORD_OR_PERSONAK_TOKEN>``` is a GitHub password or Personal Token, used to interact with GitHub API to update the Pull Request status
 
@@ -28,7 +28,7 @@ As a tip, if you are using a shebang (such as ```#!/bin/bash```) and multiple li
 
 However, ideally, your test script should be at the same repository where your sources are, and you should just call it using gitarro. It will save you a lot of headaches.
 
-**NOTE:** If you do not use ```--https``` at ```<gitarro_PARAMS>```, gitarro will use SSH to clone the repository, so make sure to read about ```SSH_PRIVATE_KEY``` below.
+**NOTE:** If you do not use ```--https``` at ```<GITARRO_PARAMS>```, gitarro will use SSH to clone the repository, so make sure to read about ```SSH_PRIVATE_KEY``` below.
 
 ## Branches
 
