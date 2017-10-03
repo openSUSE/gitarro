@@ -30,6 +30,3 @@ prs.each do |pr|
   break if b.reviewed_pr_test(comm_st, pr)
 end
 STDOUT.flush
-
-# red balls for jenkins
-exit 1 if b.j_status == 'failure'

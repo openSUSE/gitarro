@@ -7,6 +7,35 @@ require 'English'
 require_relative 'opt_parser'
 require_relative 'git_op'
 
+# this module have helper methods for changelog tests
+# it will be removed soon, but it helps to extract all
+# changelog code from backend class
+module ChangelogTests
+  # if the Pr contains magic word, test changelog
+  def magic_comment?(pr_num)
+    @client.issue_comments(@repo, pr_num).each do |com|
+      return true if com.body.include?('no changelog needed!')
+    end
+  end
+
+  def do_changelog_test(pr)
+    # if the pr contains changes on .changes file, test ok
+    test_status = 'failure'
+    test_status = 'success' if pr_all_files_type(pr.number, @file_type).any? ||
+                               magic_comment?(pr.number)
+    create_status(pr, test_status)
+    test_status
+  end
+
+  # do the changelog test and set status
+  def changelog_changed(pr, comm_st)
+    return false unless @changelog_test
+    # only execute 1 time, don"t run if test is failed, or ok
+    return false if failed_status?(comm_st) || success_status?(comm_st)
+    do_changelog_test(pr)
+  end
+end
+
 # This is a private class, which has the task to execute/run tests
 # called by Backend
 class TestExecutor
@@ -48,13 +77,15 @@ end
 # this the public class is the backend of gitarro,
 # were we execute the tests and so on
 class Backend
-  attr_accessor :j_status, :options, :client, :gbexec
+  attr_accessor :options, :client, :gbexec
+  # changelog tests module ( FIXME  remove this once changelog
+  # tests are gone from backend and run separately
+  include ChangelogTests
   # public method of backend
   def initialize(option = nil)
     Octokit.auto_paginate = true
     @client = Octokit::Client.new(netrc: true)
     @options = option.nil? ? OptParser.new.cmdline_options : option
-    @j_status = ''
     # each options will generate a object variable dinamically
     @options.each do |key, value|
       instance_variable_set("@#{key}", value)
@@ -83,13 +114,12 @@ class Backend
     prs
   end
 
-  # public for etrigger the test
+  # public for retrigger the test
   def retrigger_check(pr)
     return unless retrigger_needed?(pr)
     create_status(pr, 'pending')
     exit 1 if @check
-    launch_test_and_setup_status(pr)
-    j_status == 'success' ? exit(0) : exit(1)
+    launch_test_and_setup_status(pr) == 'success' ? exit(0) : exit(1)
   end
 
   # public always rerun tests against the pr number if this exists
@@ -99,6 +129,7 @@ class Backend
     launch_test_and_setup_status(pr)
   end
 
+  # FIXME: remove this pub. method once changelog test are separated
   # public method, trigger changelogtest if option active
   def changelog_active(pr, comm_st)
     return false unless @changelog_test
@@ -161,13 +192,16 @@ class Backend
   # then set the status according to the results of script executed.
   # pr_head = is the PR branch
   # base = is a the upstream branch, where the pr targets
+  # it return a string 'success', 'failure' (github status)
   def launch_test_and_setup_status(pr)
     # pending
     create_status(pr, 'pending')
     # do tests
-    @j_status = gbexec.pr_test(pr)
+    test_status = gbexec.pr_test(pr)
     # set status
-    create_status(pr, @j_status)
+    create_status(pr, test_status)
+    # return status for other functions
+    test_status
   end
 
   # check all files of a Prs Number if they are a specific type
@@ -200,17 +234,6 @@ class Backend
       end
     end
     false
-  end
-
-  # if the Pr contains magic word, test changelog
-  # is true
-  def magic_comment(pr_num)
-    @client.issue_comments(@repo, pr_num).each do |com|
-      if com.body.include?('no changelog needed!')
-        @j_status = 'success'
-        break
-      end
-    end
   end
 
   # check it the cm of pr contain the context from gitarro already
@@ -261,22 +284,6 @@ class Backend
     return if pr_all_files_type(pr.number, @file_type).any?
     puts "no files of type #{@file_type} found! skipping"
     true
-  end
-
-  def do_changelog_test(pr)
-    @j_status = 'failure'
-    # if the pr contains changes on .changes file, test ok
-    @j_status = 'success' if pr_all_files_type(pr.number, @file_type).any?
-    magic_comment(pr.number)
-    create_status(pr, @j_status)
-  end
-
-  # do the changelog test and set status
-  def changelog_changed(pr, comm_st)
-    return false unless @changelog_test
-    # only execute 1 time, don"t run if test is failed, or ok
-    return false if failed_status?(comm_st) || success_status?(comm_st)
-    do_changelog_test(pr)
   end
 
   def retrigger_needed?(pr)
