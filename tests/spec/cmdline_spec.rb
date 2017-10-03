@@ -7,13 +7,15 @@ require_relative 'test_lib.rb'
 class SetupRspec
   def self.custom_git_repo
     git_repo = ENV['repo']
-    return 'openSUSE/gitarro' if git_repo.nil?
+    no_repo = 'No gitarro repo was given! use your forked repo'
+    raise ArgumentError, no_repo if git_repo.nil?
     git_repo
   end
 
   def self.pr_number
     number = ENV['pr_num']
-    return 30 if number.nil?
+    no_pr = 'No pr Number where to run tests was given'
+    raise ArgumentError, no_pr if number.nil?
     number
   end
 end
