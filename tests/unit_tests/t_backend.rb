@@ -47,24 +47,4 @@ class BackendTest2 < Minitest::Test
     assert_equal("'#{test_file}\' doesn't exists.Enter valid file, -t option",
                  ex.message)
   end
-
-  # this test consume rate_limiting
-  # in travis we skip them, because they are failing
-  # locally they are fine.
-  def test_get_all_prs
-    skip if ENV['TRAVIS']
-    @full_hash[:repo] = 'openSUSE/gitarro'
-    gitarro = Backend.new(@full_hash)
-    prs = gitarro.open_newer_prs
-    assert(true, prs.any?)
-  end
-
-  def test_get_no_prs
-    skip if ENV['TRAVIS']
-    @full_hash[:repo] = 'openSUSE/gitarro'
-    @full_hash[:changed_since] = 0
-    gitarro = Backend.new(@full_hash)
-    prs = gitarro.open_newer_prs
-    assert(0, prs.count)
-  end
 end

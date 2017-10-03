@@ -9,7 +9,7 @@ require_relative 'lib/gitarro/backend'
 
 b = Backend.new
 prs = b.open_newer_prs
-exit 0 if b.pr_list_empty?(prs)
+exit 0 if prs.empty?
 
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30

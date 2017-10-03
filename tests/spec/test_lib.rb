@@ -124,15 +124,16 @@ class GitarroTestingCmdLine
     true
   end
 
-  def changed_since_should_find(com_st, sec, context, desc)
+  def changed_since(com_st, sec, cont)
     `echo '#! /bin/bash' > #{valid_test}`
     `chmod +x #{valid_test}`
-    gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
-                   " -t #{valid_test} -f #{ftype} -u #{url}" \
-                   " --changed_since #{sec}"
-    puts `ruby #{gitarro}`
-    return false if failed_status(com_st, context)
-    true
+    gitarro = "#{script} -r #{repo} -c #{cont} -d #{cont} -g #{git_dir}" \
+              " -t #{valid_test} -f #{ftype} -u #{url}"
+    changed_since_param = "--changed_since #{sec}" if sec >= 0
+    stdout = `ruby #{gitarro} #{changed_since_param}`
+    puts stdout
+    [failed_status(com_st, cont) && (sec > 0 || sec < 0) ? false : true,
+     stdout]
   end
 
   private
