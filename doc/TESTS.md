@@ -23,6 +23,7 @@ These tests use [rspec](http://rspec.info/) are not executed on travis, so you n
 
 **Run your tests always on your forked repo!**
 
+### Syntax variables
 
 You need a fixed PR open for running some tests.
 REPO is the value of your forked repo.
@@ -35,6 +36,23 @@ Syntax:
 
 Where ```REPO``` is your repository in format ```project/repo``` and ```PR_NUM``` is an opened and mergeable Pull Request.
 
+
+How to run them:
+
+#### Via rake (best way)
+
+Then create a file called: `.rspec.yml`
+And put your Repo and PR_Number in yml. (this file is ignored by git)
+
+```yaml
+repo: MalloZup/gitarro
+pr_num: 1
+```
+
+Then run the tests with
+``` rake spec```
+
+#### Manually (using rspec)
 For example:
 
 ```console
