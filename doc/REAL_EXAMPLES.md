@@ -4,6 +4,36 @@
 
 Here are some real life examples so you can can see how easy is it to integrate gitarro with external tools.
 
+## Checking gitarro ruby style with Docker
+
+1. Create a GitHub repository (we will call it upstream) with some ruby code (use extension .rb for your ruby files)
+
+2. Fork upstream repository, and create a Pull Request changing at least on ruby file.
+
+3. Follow the [instructions to configure .netrc](BASICS.md#configuration) so gitarro can interact with the upstream reposity using the API.
+
+4. Assuming you have the docker daemon installed where you run gitarro, configure a test script called /tmp/ruby-checkstyle.sh
+ 
+ ```console
+ #!/bin/bash -e
+ docker pull gitarro/docker-example:latest
+ docker run --rm=true --name -ruby-style -v "/tmp/gitrepo:/opt/gitrepo gitarro/docker-example:latest
+ ```
+ This script will maje sure you have the most recent gitarro/docker-example image, and will launch a container with your local folder /tmp/gitrepo (you will use this path for Gitarro later on) binded as /opt/gitrepo, and finally will launch the test.
+
+5. Now you can run Gitarro:
+ 
+ ```console
+ ./gitarro.rb -r organization/repo  -c "ruby_checkstyle" -d "Ruby checkstyle test" \
+ -t "/tmp/ruby-checkstyle.sh" \
+ -f ".rb" \
+ -g "/tmp/gitrepo"
+ ```
+ 
+ Make sure you replace ```organization/repo````with the correct values for your upstream repository.
+ 
+ This will check all the open Pull Requests with at least one file changed with extension '.rb' and will run rubocop for the first PR it finds. You will see how gitarro updates the status.
+
 ## Checking gitarro ruby style with Jenkins
 
 We will configure a job to teast a new PR made for an organization/gitarro GitHub repository (or a PR with a new [comment with the command to relaunch tests](ADVANCED.md#retriggering-a-specific-test))
