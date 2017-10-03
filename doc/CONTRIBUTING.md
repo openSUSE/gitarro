@@ -21,6 +21,10 @@ will give you directly a feedeback, and have a sense of knowing what you will do
 will  increase the ease you will code ( discussing the design before, instead of changing it after).
 For small bugfixing/improvements of course you don't need an Issue referenced.
 
+## Ruby workflow
+
+1. Run rake locally with `rake`. 
+
 ## GIT Workflow
 
 Please follow theseg simple rules to make everyone's life easier, including yours :-)
