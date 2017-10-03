@@ -31,6 +31,10 @@ class GitRemoteOperations
   def delete_c(comment_id)
     client.delete_comment(repo, comment_id)
   end
+
+  def pr_by_number(num)
+    client.pull_request(repo, num)
+  end
 end
 
 # gitarro functional tests
@@ -117,6 +121,17 @@ class GitarroTestingCmdLine
                    " -t #{valid_test} -u #{url} "
     puts `ruby #{gitarro}`
     return false if failed_status(comm_st, cont)
+    true
+  end
+
+  def changed_since_should_find(com_st, sec, context, desc)
+    `echo '#! /bin/bash' > #{valid_test}`
+    `chmod +x #{valid_test}`
+    gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
+                   " -t #{valid_test} -f #{ftype} -u #{url}" \
+                   " --changed_since #{sec}"
+    puts `ruby #{gitarro}`
+    return false if failed_status(com_st, context)
     true
   end
 
