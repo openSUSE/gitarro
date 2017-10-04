@@ -1,8 +1,6 @@
 require 'rake/testtask'
 require 'yaml'
 
-
-
 task default: %i[lint test buildgem]
 
 task :test do
@@ -24,16 +22,16 @@ task :buildgem do
 end
 
 task :spec do
-   unless File.file?('.rspec.yml')
+  unless File.file?('.rspec.yml')
     puts '*******************************'
-    puts 'Create a .rspec.yml file first' 
-    puts 'repo and pr_number as variables'  
-    puts 
+    puts 'Create a .rspec.yml file first'
+    puts 'repo and pr_number as variables'
+    puts
     puts 'EXAMPLE: repo: MalloZup/gitarro'
     puts '         pr_num: 1'
     puts '*******************************'
     return false
-   end
+  end
   conf = YAML.load_file('.rspec.yml')
   repo = conf['repo']
   prnum = conf['pr_num']

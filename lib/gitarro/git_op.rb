@@ -49,7 +49,7 @@ class GitOp
   def ck_or_clone_git
     git_repo_dir = git_dir + '/' + @options[:repo].split('/')[1]
     return if File.directory?(git_repo_dir)
-    FileUtils.mkdir_p(git_dir) if File.directory?(git_dir)
+    FileUtils.mkdir_p(git_dir) unless File.directory?(git_dir)
     Dir.chdir git_dir
     clone_repo
   end
