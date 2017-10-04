@@ -99,16 +99,52 @@ describe 'cmdline secondary options' do
       expect(result).to be true
     end
   end
+end
 
-  describe '.changed_since' do
-    it 'gitarro should see at least PR #30 changed in the last 60 seconds' do
-      context = 'changed-since'
-      desc = 'changed-since'
+# secondary --changed_since
+describe 'cmdline changed-since' do
+  before(:each) do
+    @gitarrorepo = GIT_REPO
+    @rgit = GitRemoteOperations.new(@gitarrorepo)
+    @pr = @rgit.first_pr_open
+    @test = GitarroTestingCmdLine.new(@gitarrorepo)
+    # commit status
+    @comm_st = @rgit.commit_status(@pr)
+  end
+
+  describe '.changed_since_not_present' do
+    it "gitarro should see PR ##{PR_NUMBER} when --change_since not present" do
+      context = 'changed-since-not-present'
       pr = @rgit.pr_by_number(PR_NUMBER)
       comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
-      result = @test.changed_since_should_find(@comm_st, 60, context, desc)
+      result, output = @test.changed_since(@comm_st, -1, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
+      expect(output).to match(/^\[PRS=true\].*/)
+    end
+  end
+
+  describe '.changed_since_60' do
+    it "gitarro should see PR ##{PR_NUMBER} changed in the last 60 seconds" do
+      context = 'changed-since-60'
+      pr = @rgit.pr_by_number(PR_NUMBER)
+      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      result, output = @test.changed_since(@comm_st, 60, context)
+      @rgit.delete_c(comment.id)
+      expect(result).to be true
+      expect(output).to match(/^\[PRS=true\].*/)
+    end
+  end
+
+  describe '.changed_since_zero' do
+    it 'gitarro should not see any PRs' do
+      context = 'changed-since-zero'
+      pr = @rgit.pr_by_number(PR_NUMBER)
+      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      result, output = @test.changed_since(@comm_st, 0, context)
+      @rgit.delete_c(comment.id)
+      expect(result).to be true
+      expect(output).to match(/^\[PRS=false\].*/)
     end
   end
 end

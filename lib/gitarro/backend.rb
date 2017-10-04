@@ -94,23 +94,13 @@ class Backend
     @gbexec = TestExecutor.new(@options)
   end
 
-  # Check if a PR list is empty
-  # If it is and we do want to consider the update time, return true
-  # Otherwise return false
-  def pr_list_empty?(prs)
-    prs.empty? && @options[:changed_since] >= 0 ? true : false
-  end
-
   # public method for get prs opened and matching the changed_since
   # condition
   def open_newer_prs
     prs = @client.pull_requests(@repo, state: 'open').select do |pr|
       pr_last_update_less_than(pr, @options[:changed_since])
     end
-    if pr_list_empty?(prs)
-      puts 'There are no Pull Requests opened or with changes newer than ' \
-           "#{options[:changed_since]} seconds"
-    end
+    print_pr_resume(prs)
     prs
   end
 
@@ -173,6 +163,20 @@ class Backend
   end
 
   private
+
+  # Show a message stating if there are opened PRs or not
+  def print_pr_resume(prs)
+    if prs.any?
+      puts "[PRS=#{prs.any?}] PRs opened. Analyzing them..."
+      return
+    end
+    if @options[:changed_since] >= 0
+      puts "[PRS=#{prs.any?}] No Pull Requests opened or with changes " \
+           "newer than #{options[:changed_since]} seconds"
+    else
+      puts "[PRS=#{prs.any?}] No Pull Requests opened"
+    end
+  end
 
   # Create a status for a PR
   def create_status(pr, status)
