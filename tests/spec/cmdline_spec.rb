@@ -148,3 +148,39 @@ describe 'cmdline changed-since' do
     end
   end
 end
+
+# Testing checks
+describe 'testing checks' do
+  before(:each) do
+    @gitarrorepo = GIT_REPO
+    @rgit = GitRemoteOperations.new(@gitarrorepo)
+    @pr = @rgit.first_pr_open
+    @test = GitarroTestingCmdLine.new(@gitarrorepo)
+    # commit status
+    @comm_st = @rgit.commit_status(@pr)
+  end
+
+  describe '.pr_requiring_test' do
+    it "gitarro should see PR ##{PR_NUMBER} as requiring test" do
+      context = 'pr-should-retest'
+      pr = @rgit.pr_by_number(PR_NUMBER)
+      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      result, output = @test.changed_since(@comm_st, 60, context)
+      @rgit.delete_c(comment.id)
+      expect(result).to be true
+      expect(output).to match(/^\[TESTREQUIRED=true\].*/)
+    end
+  end
+
+  describe '.pr_not_requiring_test' do
+    it "gitarro should see PR ##{PR_NUMBER} as not requiring test" do
+      context = 'pr-should-not-retest'
+      pr = @rgit.pr_by_number(PR_NUMBER)
+      comment = @rgit.create_comment(pr, "Updating PR for #{context} !!!")
+      result, output = @test.changed_since(@comm_st, 60, context)
+      @rgit.delete_c(comment.id)
+      expect(result).to be true
+      expect(output).not_to match(/^\[TESTREQUIRED=true\].*/)
+    end
+  end
+end

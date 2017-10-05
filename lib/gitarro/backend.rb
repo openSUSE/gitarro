@@ -108,7 +108,8 @@ class Backend
   def retrigger_check(pr)
     return unless retrigger_needed?(pr)
     create_status(pr, 'pending')
-    exit 1 if @check
+    print_test_required
+    exit 0 if @check
     launch_test_and_setup_status(pr) == 'success' ? exit(0) : exit(1)
   end
 
@@ -116,6 +117,7 @@ class Backend
   def trigger_by_pr_number(pr)
     return false if @pr_number.nil? || @pr_number != pr.number
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
+    print_test_required
     launch_test_and_setup_status(pr)
   end
 
@@ -133,6 +135,7 @@ class Backend
     return if empty_files_changed_by_pr(pr)
     # gb.check is true when there is a job running as scheduler
     # which doesn't execute the test but trigger another job
+    print_test_required
     return false if @check
     launch_test_and_setup_status(pr)
   end
@@ -144,7 +147,9 @@ class Backend
                         pending_pr(comm_st) == true
     return true if changelog_active(pr, comm_st)
     return false unless pr_all_files_type(pr.number, @file_type).any?
-    @check ? exit(1) : launch_test_and_setup_status(pr)
+    print_test_required
+    exit(0) if @check
+    launch_test_and_setup_status(pr)
   end
 
   # this function will check if the PR contains in comment the magic word
@@ -176,6 +181,10 @@ class Backend
     else
       puts "[PRS=#{prs.any?}] No Pull Requests opened"
     end
+  end
+
+  def print_test_required
+    puts '[TESTREQUIRED=true] PR requires test'
   end
 
   # Create a status for a PR
