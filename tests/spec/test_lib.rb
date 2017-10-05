@@ -86,9 +86,9 @@ class GitarroTestingCmdLine
     end
     puts `ruby #{gitarro} -C`
     # with check we have -1 has value ( used for retrigger)
-    return false if $CHILD_STATUS.exitstatus.zero?
+    return true if $CHILD_STATUS.exitstatus.zero?
     puts `ruby #{gitarro}`
-    true
+    false
   end
 
   def changelog_should_fail(com_st)
