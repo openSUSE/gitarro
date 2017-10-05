@@ -10,7 +10,7 @@ GITUB_PWD_OR_TOKEN="MYPASSWORD"
 ```console
 
 echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN > /~.netrc"
-
+sudo chmod 0600 ~/.netrc
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x /tmp/tests.sh
 gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.sh --https"
@@ -54,6 +54,7 @@ Optional options:
     -u, --url 'TARGET_URL'           Specify the URL to append to add to the GitHub review. Usually you will use an URL to the Jenkins build log.
     -P                               '--PR 'NUMBER'
                                      Specify the PR number instead of checking all of them. This will force gitarro to run the against a specific PR number,even if it is not needed (useful for using Jenkins with GitHub webhooks).
+    -k, --cachepath 'CACHEPATH'      Custom path where http cache for gitarro is stored. by default is set to /tmp/gitarro/httpcache
         --https                      If present, use https instead of ssh for git operations
         --changed_since 'SECONDS'    If present, will only check PRs with a change in the last X seconds
 

@@ -4,8 +4,35 @@ require 'octokit'
 require 'optparse'
 require 'time'
 require 'English'
+require 'faraday-http-cache'
 require_relative 'opt_parser'
 require_relative 'git_op'
+require 'active_support'
+
+# by default enabled (faraday_cache in memory, will be deleted
+# after gitarro run 2nd time. usefull for -C check option
+# and performance, since we cache)
+module CachingOctokit
+  def create_dir_store(cache_path)
+    cache_name = 'httpcache'
+    full_cache_dir = "#{cache_path}#{cache_name}"
+    ActiveSupport::Cache::FileStore.new(full_cache_dir)
+  end
+
+  def generate_cache(httpcache_path)
+    # changed_since cannot work with cache
+    return false if @changed_since > 0
+    stack = Faraday::RackBuilder.new do |builder|
+      builder.use Faraday::HttpCache,
+                  store: create_dir_store(httpcache_path),
+                  serializer: Marshal,
+                  shared_cache: false
+      builder.use Octokit::Response::RaiseError
+      builder.adapter Faraday.default_adapter
+    end
+    Octokit.middleware = stack
+  end
+end
 
 # this module have helper methods for changelog tests
 # it will be removed soon, but it helps to extract all
@@ -79,17 +106,20 @@ class Backend
   attr_accessor :options, :client, :gbexec
   # changelog tests module ( FIXME  remove this once changelog
   # tests are gone from backend and run separately
+  include CachingOctokit
   include ChangelogTests
   # public method of backend
   def initialize(option = nil)
-    Octokit.auto_paginate = true
-    @client = Octokit::Client.new(netrc: true)
     @options = option.nil? ? OptParser.new.cmdline_options : option
     # each options will generate a object variable dinamically
     @options.each do |key, value|
       instance_variable_set("@#{key}", value)
       self.class.send(:attr_accessor, key)
     end
+    # if changed_since option on, dont generate cache.
+    generate_cache(@cachehttp)
+    Octokit.auto_paginate = true
+    @client = Octokit::Client.new(netrc: true)
     @gbexec = TestExecutor.new(@options)
   end
 

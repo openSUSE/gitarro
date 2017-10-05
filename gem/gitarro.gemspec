@@ -23,4 +23,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rake', '~> 10.5'
   s.add_dependency 'rubocop', '~> 0.49'
   s.add_dependency 'rspec', '~> 3.6'
+  s.add_dependency 'activesupport', '~> 5.1'
+  s.add_dependency 'faraday-http-cache', '~> 2.0'
 end

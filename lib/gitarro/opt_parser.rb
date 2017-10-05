@@ -73,6 +73,14 @@ module OptionalOptions
     opt.on('--https', https_desc) { |https| @options[:https] = https }
   end
 
+  def cachehttp_opt(opt)
+    desc = 'Custom path where http cache for gitarro is stored' \
+           'by default is set to /tmp/gitarro/httpcache'
+    opt.on('-k', "--cachepath 'CACHEPATH'", desc) do |cache_http|
+      @options[:cachehttp] = cache_http
+    end
+  end
+
   def changelog_opt(opt)
     desc = 'Check if the PR includes a changelog entry ' \
            '(Automatically sets --file ".changes").'
@@ -100,8 +108,7 @@ module OptionalOptions
   end
 
   def optional_options(opt)
-    opt.separator ''
-    opt.separator 'Optional options:'
+    opt.separator "\n Optional options:"
     desc_opt(opt)
     check_opt(opt)
     file_opt(opt)
@@ -109,6 +116,7 @@ module OptionalOptions
     url_opt(opt)
     pr_number(opt)
     https_opt(opt)
+    cachehttp_opt(opt)
     changed_since(opt)
   end
 end
@@ -182,6 +190,7 @@ class OptParserInternal
     @options[:file_type] = '.changes' if @options[:changelog_test]
     @options[:description] = desc if @options[:description].nil?
     @options[:file_type] = 'notype' if @options[:file_type].nil?
+    @options[:cachehttp] = '/tmp/gitarro' if @options[:cachehttp].nil?
   end
 end
 

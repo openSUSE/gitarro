@@ -1,6 +1,8 @@
 source 'https://rubygems.org'
 
+gem 'activesupport'
 gem 'english'
+gem 'faraday-http-cache'
 gem 'minitest'
 gem 'minitest-reporters'
 gem 'netrc'
