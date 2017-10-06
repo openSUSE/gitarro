@@ -84,7 +84,10 @@ describe 'cmdline secondary options' do
 
   describe '.changelog-fail' do
     it 'gitarro changelog test should fail' do
+      cont = 'changelog_shouldfail'
+      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
       expect(@test.changelog_should_fail(@comm_st)).to be true
+      @rgit.delete_c(rcomment.id)
     end
   end
 

@@ -11,18 +11,17 @@ require_relative 'git_op'
 # it will be removed soon, but it helps to extract all
 # changelog code from backend class
 module ChangelogTests
-  # if the Pr contains magic word, test changelog
-  def magic_comment?(pr_num)
-    @client.issue_comments(@repo, pr_num).each do |com|
-      return true if com.body.include?('no changelog needed!')
+  def magic_comment(pr_num)
+    return true if @client.issue_comments(@repo, pr_num).any? do |com|
+      com.body.include?('no changelog needed!')
     end
   end
 
   def do_changelog_test(pr)
     # if the pr contains changes on .changes file, test ok
     test_status = 'failure'
-    test_status = 'success' if pr_all_files_type(pr.number, @file_type).any? ||
-                               magic_comment?(pr.number)
+    test_status = 'success' if pr_all_files_type(pr.number, @file_type).any?
+    test_status = 'success' if magic_comment(pr.number)
     create_status(pr, test_status)
     test_status
   end
