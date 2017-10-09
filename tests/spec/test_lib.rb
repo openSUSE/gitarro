@@ -37,31 +37,15 @@ class GitRemoteOperations
   end
 end
 
-# gitarro functional tests
-class GitarroTestingCmdLine
-  attr_reader :repo, :client, :gitrem, :script,
-              :ftype, :url, :git_dir, :valid_test
-  def initialize(repo)
-    @repo = repo
-    @script = GITARRO_BIN
-    @client = Octokit::Client.new(netrc: true)
-    Octokit.auto_paginate = true
-    @gitrem = GitRemoteOperations.new(repo)
-    @ftype = '.'
-    @git_dir = '/tmp/ruby312'
-    @url = 'https://github.com/openSUSE/gitarro/pull/8'
-    @valid_test = '/tmp/gitarro.sh'
-    create_test_script(@valid_test)
-  end
-
+# Fondamental tests
+module BasicTests
   def basic(num)
     context = 'basic'
     desc = 'dev-test'
     gitarro_fixpr = "#{script} -r #{repo} -c #{context} -d #{desc}" \
                " -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url} -P #{num}"
     puts `ruby #{gitarro_fixpr}`
-    return false if $CHILD_STATUS.exitstatus.nonzero?
-    true
+    $CHILD_STATUS.exitstatus.nonzero? ? false : true
   end
 
   def basic_https(num)
@@ -70,8 +54,7 @@ class GitarroTestingCmdLine
     gb_http = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
               " -t #{valid_test} -f #{ftype} -u #{url} -P #{num} --https"
     puts `ruby #{gb_http}`
-    return false if $CHILD_STATUS.exitstatus.nonzero?
-    true
+    $CHILD_STATUS.exitstatus.nonzero? ? false : true
   end
 
   def basic_check_test(comm_st, context, desc)
@@ -90,15 +73,17 @@ class GitarroTestingCmdLine
     puts `ruby #{gitarro}`
     false
   end
+end
 
+# changelog tests (to be removed when changelog is removed)
+module ChangeLogTests
   def changelog_should_fail(com_st)
     context = 'changelog_shouldfail'
     desc = 'changelog_fail'
     gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
                    " -t #{valid_test} -f #{ftype} -u #{url} "
     puts `ruby #{gitarro} --changelogtest`
-    return false unless failed_status(com_st, context)
-    true
+    failed_status(com_st, context) ? true : false
   end
 
   def changelog_should_pass(com_st)
@@ -109,9 +94,30 @@ class GitarroTestingCmdLine
     gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
                    " -t #{valid_test} -f #{ftype} -u #{url} "
     puts `ruby #{gitarro} --changelogtest`
-    return false if failed_status(com_st, context)
-    true
+    failed_status(com_st, context) ? false : true
   end
+end
+
+# gitarro functional tests
+class GitarroTestingCmdLine
+  attr_reader :repo, :client, :gitrem, :script,
+              :ftype, :url, :git_dir, :valid_test
+  def initialize(repo)
+    @repo = repo
+    @script = GITARRO_BIN
+    @client = Octokit::Client.new(netrc: true)
+    Octokit.auto_paginate = true
+    @gitrem = GitRemoteOperations.new(repo)
+    @ftype = '.'
+    @git_dir = '/tmp/ruby312'
+    @url = 'https://github.com/openSUSE/gitarro/pull/8'
+    @valid_test = '/tmp/gitarro.sh'
+    # create for all test a valid test script
+    create_test_script(@valid_test)
+  end
+
+  include BasicTests
+  include ChangeLogTests
 
   def file_type_unset(comm_st, cont)
     desc = 'we dont filter particular files'
@@ -120,23 +126,35 @@ class GitarroTestingCmdLine
     gitarro = "#{script} -r #{repo} -c #{cont} -d #{desc} -g #{git_dir}" \
                    " -t #{valid_test} -u #{url} "
     puts `ruby #{gitarro}`
-    return false if failed_status(comm_st, cont)
-    true
+    failed_status(comm_st, cont) ? false : true
   end
 
   def changed_since(com_st, sec, cont)
-    `echo '#! /bin/bash' > #{valid_test}`
-    `chmod +x #{valid_test}`
     gitarro = "#{script} -r #{repo} -c #{cont} -d #{cont} -g #{git_dir}" \
               " -t #{valid_test} -f #{ftype} -u #{url}"
     changed_since_param = "--changed_since #{sec}" if sec >= 0
-    stdout = `ruby #{gitarro} #{changed_since_param}`
-    puts stdout
+    puts stdout = `ruby #{gitarro} #{changed_since_param}`
     [failed_status(com_st, cont) && (sec > 0 || sec < 0) ? false : true,
      stdout]
   end
 
+  def cache_test(cont)
+    # before and after rate_limiting (2nd run) must be the same
+    # since the caching do conditional request!
+    gitarro = "#{script} -r #{repo} -c #{cont} -d http_cache  -g #{git_dir}" \
+              " -t #{valid_test} -f #{ftype} -u #{url}"
+    before = run_gitarro_cachetest(gitarro)
+    puts 'After 2 time running'
+    after = run_gitarro_cachetest(gitarro)
+    before == after
+  end
+
   private
+
+  def run_gitarro_cachetest(gitarro)
+    puts `ruby #{gitarro}`
+    puts "RATE-LIMTING: #{client.rate_limit.remaining}"
+  end
 
   def create_test_script(script)
     `echo '#! /bin/bash' > #{script}`
@@ -144,32 +162,29 @@ class GitarroTestingCmdLine
   end
 
   def failed_status(comm_st, context)
-    status = false
     (0..comm_st.statuses.size - 1).each do |pr_status|
       if comm_st.statuses[pr_status]['context'] == context &&
          comm_st.statuses[pr_status]['state'] == 'failure'
-        status = true
+        return true
       end
     end
-    status
+    false
   end
 
   def pending_status(comm_st, context)
-    status = false
     (0..comm_st.statuses.size - 1).each do |pr_status|
       if comm_st.statuses[pr_status]['context'] == context &&
          comm_st.statuses[pr_status]['state'] == 'pending'
-        status = true
+        return true
       end
     end
-    status
+    false
   end
 
   def context_present(comm_st, context)
-    status = false
     (0..comm_st.statuses.size - 1).each do |pr_status|
-      status = true if comm_st.statuses[pr_status]['context'] == context
+      return true if comm_st.statuses[pr_status]['context'] == context
     end
-    status
+    false
   end
 end

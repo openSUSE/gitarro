@@ -38,13 +38,13 @@ describe 'cmdline foundamental' do
   end
 
   describe '.basic' do
-    it 'gitarro run on pr number 30 with basic options, cmdline' do
+    it 'gitarro run on fixed pr_number with basic options, cmdline' do
       expect(@test.basic(PR_NUMBER)).to be true
     end
   end
 
   describe '.basic-https' do
-    it 'run on pr number 30 with basic options, https protocol enabled' do
+    it 'run on pr fixed number with basic options, https protocol enabled' do
       expect(@test.basic_https(PR_NUMBER)).to be true
     end
   end
@@ -152,7 +152,7 @@ describe 'cmdline changed-since' do
   end
 end
 
-# Testing checks
+# testing checks
 describe 'testing checks' do
   before(:each) do
     @gitarrorepo = GIT_REPO
@@ -184,6 +184,27 @@ describe 'testing checks' do
       @rgit.delete_c(comment.id)
       expect(result).to be true
       expect(output).not_to match(/^\[TESTREQUIRED=true\].*/)
+    end
+  end
+end
+
+# http cache tests
+describe 'http_cache_tests' do
+  before(:each) do
+    @gitarrorepo = GIT_REPO
+    @rgit = GitRemoteOperations.new(@gitarrorepo)
+    @pr = @rgit.first_pr_open
+    @test = GitarroTestingCmdLine.new(@gitarrorepo)
+    # commit status
+    @comm_st = @rgit.commit_status(@pr)
+  end
+
+  describe '.rate_limiting_cache' do
+    it 'gitarro run 2 times, but we have only 1 ratelimiting' do
+      cont = 'cachehttp_test'
+      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
+      expect(@test.cache_test(cont)).to be true
+      @rgit.delete_c(rcomment.id)
     end
   end
 end
