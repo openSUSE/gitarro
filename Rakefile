@@ -1,7 +1,7 @@
 require 'rake/testtask'
 require 'yaml'
 
-task default: %i[lint test buildgem]
+task default: %i[lint reek test buildgem]
 
 task :test do
   Dir.chdir('tests/unit_tests') do
@@ -37,5 +37,15 @@ task :spec do
   prnum = conf['pr_num']
   Dir.chdir('tests/spec') do
     sh "repo=#{repo} pr_num=#{prnum} rspec -fd cmdline_spec.rb"
+  end
+end
+
+task :reek do
+  # add files that are safe without errors
+  # FIXME: addmore(atm to much errors)
+  #  must_pass_f =['gitarro.rb', "lib/gitarro/*.rb"]
+  must_pass_f = ['gitarro.rb']
+  must_pass_f.each do |f|
+    sh "reek #{f}"
   end
 end
