@@ -38,8 +38,8 @@ end
 # it will be removed soon, but it helps to extract all
 # changelog code from backend class
 module ChangelogTests
-  def magic_comment(pr_num)
-    return true if @client.issue_comments(@repo, pr_num).any? do |com|
+  def magic_comment?(pr_num)
+    @client.issue_comments(@repo, pr_num).any? do |com|
       com.body.include?('no changelog needed!')
     end
   end
@@ -48,13 +48,13 @@ module ChangelogTests
     # if the pr contains changes on .changes file, test ok
     test_status = 'failure'
     test_status = 'success' if pr_all_files_type(pr.number, @file_type).any?
-    test_status = 'success' if magic_comment(pr.number)
+    test_status = 'success' if magic_comment?(pr.number)
     create_status(pr, test_status)
     test_status
   end
 
   # do the changelog test and set status
-  def changelog_changed(pr, comm_st)
+  def changelog_changed?(pr, comm_st)
     return false unless @changelog_test
     # only execute 1 time, don"t run if test is failed, or ok
     return false if failed_status?(comm_st) || success_status?(comm_st)
@@ -143,7 +143,7 @@ class Backend
   end
 
   # public always rerun tests against the pr number if this exists
-  def trigger_by_pr_number(pr)
+  def triggered_by_pr_number?(pr)
     return false if @pr_number.nil? || @pr_number != pr.number
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     print_test_required
@@ -152,14 +152,14 @@ class Backend
 
   # FIXME: remove this pub. method once changelog test are separated
   # public method, trigger changelogtest if option active
-  def changelog_active(pr, comm_st)
+  def changelog_active?(pr, comm_st)
     return false unless @changelog_test
-    return false unless changelog_changed(pr, comm_st)
+    return false unless changelog_changed?(pr, comm_st)
     true
   end
 
-  def unreviewed_pr_test(pr, comm_st)
-    return unless unreviewed_pr_ck(comm_st)
+  def unreviewed_new_pr?(pr, comm_st)
+    return unless commit_is_unreviewed?(comm_st)
     pr_all_files_type(pr.number, @file_type)
     return if empty_files_changed_by_pr(pr)
     # gb.check is true when there is a job running as scheduler
@@ -169,12 +169,12 @@ class Backend
     launch_test_and_setup_status(pr)
   end
 
-  def reviewed_pr_test(comm_st, pr)
+  def reviewed_pr?(comm_st, pr)
     # if PR status is not on pending and the context is not set,
     #  we dont run the tests
-    return false unless context_pr(comm_st) == false ||
-                        pending_pr(comm_st) == true
-    return true if changelog_active(pr, comm_st)
+    return false unless context_present?(comm_st) == false ||
+                        pending_pr?(comm_st)
+    return true if changelog_active?(pr, comm_st)
     return false unless pr_all_files_type(pr.number, @file_type).any?
     print_test_required
     exit(0) if @check
@@ -183,7 +183,7 @@ class Backend
 
   # this function will check if the PR contains in comment the magic word
   # # for retrigger all the tests.
-  def magicword(pr_number, context)
+  def retriggered_by_comment?(pr_number, context)
     magic_word_trigger = "gitarro rerun #{context} !!!"
     # a pr contain always a comments, cannot be nil
     @client.issue_comments(@repo, pr_number).each do |com|
@@ -267,25 +267,21 @@ class Backend
   end
 
   # check if the commit of a pr is on pending
-  def pending_pr(comm_st)
+  def pending_pr?(comm_st)
     # 2) pending
-    (0..comm_st.statuses.size - 1).each do |pr_status|
-      if comm_st.statuses[pr_status]['context'] == @context &&
-         comm_st.statuses[pr_status]['state'] == 'pending'
-        return true
-      end
+    (0..comm_st.statuses.size - 1).any? do |pr_status|
+      comm_st.statuses[pr_status]['context'] == @context &&
+        comm_st.statuses[pr_status]['state'] == 'pending'
     end
-    false
   end
 
   # check it the cm of pr contain the context from gitarro already
-  def context_pr(cm_st)
+  def context_present?(cm_st)
     # 1) context_present == false  triggers test. >
     # this means  the PR is not with context tagged
-    (0..cm_st.statuses.size - 1).each do |pr_status|
-      return true if cm_st.statuses[pr_status]['context'] == @context
+    (0..cm_st.statuses.size - 1).any? do |pr_status|
+      cm_st.statuses[pr_status]['context'] == @context
     end
-    false
   end
 
   # if the pr has travis test and one custom, we will have 2 elements.
@@ -293,7 +289,7 @@ class Backend
   # state property is "pending", failure etc.
   # if we don't have this, so we have 0 status
   # the PRs is "unreviewed"
-  def unreviewed_pr_ck(comm_st)
+  def commit_is_unreviewed?(comm_st)
     puts comm_st.statuses[0]['state']
     return false
   rescue NoMethodError
@@ -301,23 +297,17 @@ class Backend
   end
 
   def success_status?(comm_st)
-    (0..comm_st.statuses.size - 1).each do |pr_status|
-      if comm_st.statuses[pr_status]['context'] == @context &&
-         comm_st.statuses[pr_status]['state'] == 'success'
-        return true
-      end
+    (0..comm_st.statuses.size - 1).any? do |pr_status|
+      comm_st.statuses[pr_status]['context'] == @context &&
+        comm_st.statuses[pr_status]['state'] == 'success'
     end
-    false
   end
 
   def failed_status?(comm_st)
-    (0..comm_st.statuses.size - 1).each do |pr_status|
-      if comm_st.statuses[pr_status]['context'] == @context &&
-         comm_st.statuses[pr_status]['state'] == 'failure'
-        return true
-      end
+    (0..comm_st.statuses.size - 1).any? do |pr_status|
+      comm_st.statuses[pr_status]['context'] == @context &&
+        comm_st.statuses[pr_status]['state'] == 'failure'
     end
-    false
   end
 
   # control if the pr change add any files, specified
@@ -330,7 +320,7 @@ class Backend
 
   def retrigger_needed?(pr)
     # we want redo sometimes tests
-    return false unless magicword(pr.number, @context)
+    return false unless retriggered_by_comment?(pr.number, @context)
     # changelog trigger
     if @changelog_test
       do_changelog_test(pr)

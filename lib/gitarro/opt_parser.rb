@@ -156,11 +156,10 @@ class OptParserInternal
 
   # option help
   def option_help(opt)
-    opt.separator ''
-    opt.separator 'Help:'
+    opt.separator "\n Help:"
     opt.on('-h', '--help', 'help') do
-      opt.separator ''
-      opt.separator "Example: gitarro.rb -r openSUSE/gitarro -c 'python-test' "\
+      opt.separator " \n Example: gitarro.rb -r " \
+                    "openSUSE/gitarro -c 'python-test " \
                     "-d 'someCoolTest' -g /tmp/pr-ruby01/ -t /tmp/test.sh "\
                     "-f '.py'"
       puts @opt_parser
@@ -197,17 +196,9 @@ end
 # Opt_parser class, is for getting needed options
 #  this is the public class used by backend
 class OptParser < OptParserInternal
-  private
-
-  def option_banner(opt)
-    opt.banner = "Usage: gitarro.rb [options]\n\n" \
-  end
-
-  public
-
   def cmdline_options
     @opt_parser = OptionParser.new do |opt|
-      option_banner(opt)
+      opt.banner = "Usage: gitarro.rb [options]\n\n"
       mandatory_options(opt)
       optional_options(opt)
       option_help(opt)
