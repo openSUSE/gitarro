@@ -1,9 +1,9 @@
-GITARRO_VERSION = '0.1.0'.freeze
+GITARRO_VERSION = '0.1.4'.freeze
 
 Gem::Specification.new do |s|
   s.name = 'gitarro'
   s.version = GITARRO_VERSION
-  s.date        = '2017-09-26'
+  s.date        = '2017-10-10'
   s.summary     = 'gitarro gem'
   s.description = 'gitarro run tests on GitHub PRs using almost any script,' \
                    'language or binary, it integrate easy with other tools.'
