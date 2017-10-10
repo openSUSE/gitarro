@@ -9,6 +9,70 @@ require_relative 'opt_parser'
 require_relative 'git_op'
 require 'active_support'
 
+# this module perform basic operations
+# on prs and contain helper functions
+# that use octokit client for retrieving info
+# about the PR or commit
+module GitHubPrOperations
+  # check if the commit of a pr is on pending
+  def pending_pr?(comm_st)
+    # 2) pending
+    (0..comm_st.statuses.size - 1).any? do |pr_status|
+      comm_st.statuses[pr_status]['context'] == @context &&
+        comm_st.statuses[pr_status]['state'] == 'pending'
+    end
+  end
+
+  # check it the cm of pr contain the context from gitarro already
+  def context_present?(cm_st)
+    # 1) context_present == false  triggers test. >
+    # this means  the PR is not with context tagged
+    (0..cm_st.statuses.size - 1).any? do |pr_status|
+      cm_st.statuses[pr_status]['context'] == @context
+    end
+  end
+
+  # if the pr has travis test and one custom, we will have 2 elements.
+  # in this case, if the 1st element doesn't have the state property
+  # state property is "pending", failure etc.
+  # if we don't have this, so we have 0 status
+  # the PRs is "unreviewed"
+  def commit_is_unreviewed?(comm_st)
+    puts comm_st.statuses[0]['state']
+    return false
+  rescue NoMethodError
+    return true
+  end
+
+  def success_status?(comm_st)
+    (0..comm_st.statuses.size - 1).any? do |pr_status|
+      comm_st.statuses[pr_status]['context'] == @context &&
+        comm_st.statuses[pr_status]['state'] == 'success'
+    end
+  end
+
+  def failed_status?(comm_st)
+    (0..comm_st.statuses.size - 1).any? do |pr_status|
+      comm_st.statuses[pr_status]['context'] == @context &&
+        comm_st.statuses[pr_status]['state'] == 'failure'
+    end
+  end
+
+  # Create a status for a PR
+  def create_status(pr, status)
+    client.create_status(@repo, pr.head.sha, status, context: @context,
+                                                     description: @description,
+                                                     target_url: @target_url)
+  end
+
+  # Return true if the PR was updated in less than the value of variable sec
+  # or if sec < 0 (the check was disabled)
+  # GitHub considers a PR updated when there is a new commit or a new comment
+  def pr_last_update_less_than(pr, sec)
+    Time.now.utc - pr.updated_at < sec || sec < 0 ? true : false
+  end
+end
+
 # by default enabled (faraday_cache in memory, will be deleted
 # after gitarro run 2nd time. usefull for -C check option
 # and performance, since we cache)
@@ -100,7 +164,7 @@ class TestExecutor
   end
 end
 
-# this the public class is the backend of gitarro,
+# this the main public class is the backend of gitarro,
 # were we execute the tests and so on
 class Backend
   attr_accessor :options, :client, :gbexec
@@ -108,6 +172,8 @@ class Backend
   # tests are gone from backend and run separately
   include CachingOctokit
   include ChangelogTests
+  include GitHubPrOperations
+
   # public method of backend
   def initialize(option = nil)
     @options = option.nil? ? OptParser.new.cmdline_options : option
@@ -161,7 +227,7 @@ class Backend
   def unreviewed_new_pr?(pr, comm_st)
     return unless commit_is_unreviewed?(comm_st)
     pr_all_files_type(pr.number, @file_type)
-    return if empty_files_changed_by_pr(pr)
+    return if empty_files_changed_by_pr?(pr)
     # gb.check is true when there is a job running as scheduler
     # which doesn't execute the test but trigger another job
     print_test_required
@@ -216,20 +282,6 @@ class Backend
     puts '[TESTREQUIRED=true] PR requires test'
   end
 
-  # Create a status for a PR
-  def create_status(pr, status)
-    client.create_status(@repo, pr.head.sha, status, context: @context,
-                                                     description: @description,
-                                                     target_url: @target_url)
-  end
-
-  # Return true if the PR was updated in less than the value of variable sec
-  # or if sec < 0 (the check was disabled)
-  # GitHub considers a PR updated when there is a new commit or a new comment
-  def pr_last_update_less_than(pr, sec)
-    Time.now.utc - pr.updated_at < sec || sec < 0 ? true : false
-  end
-
   # this function setup first pending to PR, then execute the tests
   # then set the status according to the results of script executed.
   # pr_head = is the PR branch
@@ -266,56 +318,10 @@ class Backend
     ff
   end
 
-  # check if the commit of a pr is on pending
-  def pending_pr?(comm_st)
-    # 2) pending
-    (0..comm_st.statuses.size - 1).any? do |pr_status|
-      comm_st.statuses[pr_status]['context'] == @context &&
-        comm_st.statuses[pr_status]['state'] == 'pending'
-    end
-  end
-
-  # check it the cm of pr contain the context from gitarro already
-  def context_present?(cm_st)
-    # 1) context_present == false  triggers test. >
-    # this means  the PR is not with context tagged
-    (0..cm_st.statuses.size - 1).any? do |pr_status|
-      cm_st.statuses[pr_status]['context'] == @context
-    end
-  end
-
-  # if the pr has travis test and one custom, we will have 2 elements.
-  # in this case, if the 1st element doesn't have the state property
-  # state property is "pending", failure etc.
-  # if we don't have this, so we have 0 status
-  # the PRs is "unreviewed"
-  def commit_is_unreviewed?(comm_st)
-    puts comm_st.statuses[0]['state']
-    return false
-  rescue NoMethodError
-    return true
-  end
-
-  def success_status?(comm_st)
-    (0..comm_st.statuses.size - 1).any? do |pr_status|
-      comm_st.statuses[pr_status]['context'] == @context &&
-        comm_st.statuses[pr_status]['state'] == 'success'
-    end
-  end
-
-  def failed_status?(comm_st)
-    (0..comm_st.statuses.size - 1).any? do |pr_status|
-      comm_st.statuses[pr_status]['context'] == @context &&
-        comm_st.statuses[pr_status]['state'] == 'failure'
-    end
-  end
-
   # control if the pr change add any files, specified
   # it can be also a dir
-  def empty_files_changed_by_pr(pr)
-    return if pr_all_files_type(pr.number, @file_type).any?
-    puts "no files of type #{@file_type} found! skipping"
-    true
+  def empty_files_changed_by_pr?(pr)
+    pr_all_files_type(pr.number, @file_type).any?
   end
 
   def retrigger_needed?(pr)

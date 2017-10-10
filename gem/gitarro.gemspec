@@ -1,4 +1,4 @@
-GITARRO_VERSION = '0.1.3'.freeze
+GITARRO_VERSION = '0.1.4'.freeze
 
 Gem::Specification.new do |s|
   s.name = 'gitarro'
