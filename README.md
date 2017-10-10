@@ -3,7 +3,6 @@
 ![GUNDAM image](doc/gundam.jpg)
 ![GUNDAM image](doc/gundam.jpg)
 
-[![Gem Version](https://badge.fury.io/rb/gitarro.svg)](https://badge.fury.io/rb/gitarro)
 [![Build Status Master branch](https://travis-ci.org/openSUSE/gitarro.svg?branch=master)](https://travis-ci.org/openSUSE/gitarro)
 
 ## Introduction
