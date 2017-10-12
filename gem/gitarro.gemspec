@@ -1,9 +1,11 @@
-GITARRO_VERSION = '0.1.4'.freeze
+require 'date'
 
+GITARRO_VERSION = '0.1.5'.freeze
+TODAY = Date.today.strftime('%Y-%m-%d')
 Gem::Specification.new do |s|
   s.name = 'gitarro'
   s.version = GITARRO_VERSION
-  s.date        = '2017-10-10'
+  s.date        = TODAY
   s.summary     = 'gitarro gem'
   s.description = 'gitarro run tests on GitHub PRs using almost any script,' \
                    'language or binary, it integrate easy with other tools.'

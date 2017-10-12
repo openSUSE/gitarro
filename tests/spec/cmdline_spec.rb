@@ -26,15 +26,20 @@ puts 'Using following github repo: ' + GIT_REPO
 PR_NUMBER = SetupRspec.pr_number
 puts 'Using pull_request number: ' + PR_NUMBER
 
+# helper_functon
+def init_tests_setup(git_repo)
+  @gitarrorepo = git_repo
+  @rgit = GitRemoteOperations.new(@gitarrorepo)
+  @pr = @rgit.first_pr_open
+  @test = GitarroTestingCmdLine.new(@gitarrorepo)
+  # commit status
+  @comm_st = @rgit.commit_status(@pr)
+end
+
 # do tests
 describe 'cmdline foundamental' do
   before(:each) do
-    @gitarrorepo = GIT_REPO
-    @rgit = GitRemoteOperations.new(@gitarrorepo)
-    @pr = @rgit.first_pr_open
-    @test = GitarroTestingCmdLine.new(@gitarrorepo)
-    # commit status
-    @comm_st = @rgit.commit_status(@pr)
+    init_tests_setup(GIT_REPO)
   end
 
   describe '.basic' do
@@ -64,12 +69,7 @@ end
 # secondary (not mandatory options tests)
 describe 'cmdline secondary options' do
   before(:each) do
-    @gitarrorepo = GIT_REPO
-    @rgit = GitRemoteOperations.new(@gitarrorepo)
-    @pr = @rgit.first_pr_open
-    @test = GitarroTestingCmdLine.new(@gitarrorepo)
-    # commit status
-    @comm_st = @rgit.commit_status(@pr)
+    init_tests_setup(GIT_REPO)
   end
 
   describe '.file_type_optional_option_not_set' do
@@ -107,12 +107,7 @@ end
 # secondary --changed_since
 describe 'cmdline changed-since' do
   before(:each) do
-    @gitarrorepo = GIT_REPO
-    @rgit = GitRemoteOperations.new(@gitarrorepo)
-    @pr = @rgit.first_pr_open
-    @test = GitarroTestingCmdLine.new(@gitarrorepo)
-    # commit status
-    @comm_st = @rgit.commit_status(@pr)
+    init_tests_setup(GIT_REPO)
   end
 
   describe '.changed_since_not_present' do
@@ -155,12 +150,7 @@ end
 # testing checks
 describe 'testing checks' do
   before(:each) do
-    @gitarrorepo = GIT_REPO
-    @rgit = GitRemoteOperations.new(@gitarrorepo)
-    @pr = @rgit.first_pr_open
-    @test = GitarroTestingCmdLine.new(@gitarrorepo)
-    # commit status
-    @comm_st = @rgit.commit_status(@pr)
+    init_tests_setup(GIT_REPO)
   end
 
   describe '.pr_requiring_test' do
@@ -191,12 +181,7 @@ end
 # http cache tests
 describe 'http_cache_tests' do
   before(:each) do
-    @gitarrorepo = GIT_REPO
-    @rgit = GitRemoteOperations.new(@gitarrorepo)
-    @pr = @rgit.first_pr_open
-    @test = GitarroTestingCmdLine.new(@gitarrorepo)
-    # commit status
-    @comm_st = @rgit.commit_status(@pr)
+    init_tests_setup(GIT_REPO)
   end
 
   describe '.rate_limiting_cache' do
@@ -204,6 +189,28 @@ describe 'http_cache_tests' do
       cont = 'cachehttp_test'
       rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
       expect(@test.cache_test(cont)).to be true
+      @rgit.delete_c(rcomment.id)
+    end
+  end
+end
+
+# env variables
+describe 'gitarro pass env. variable to scripts' do
+  before(:each) do
+    init_tests_setup(GIT_REPO)
+  end
+
+  describe '.env variable are read from script' do
+    it 'gitarro run 2 times, but we have only 1 ratelimiting' do
+      cont = 'env_test_script'
+      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
+      stdout = @test.env_test(cont)
+      gitarro_pr_number = @pr.number.to_s
+      gitarro_pr_title = @pr.title.to_s
+      gitarro_pr_author = @pr.head.user.login.to_s
+      expect(stdout).to match("GITARRO_PR_NUMBER: #{gitarro_pr_number}")
+      expect(stdout).to match("GITARRO_PR_TITLE: #{gitarro_pr_title}")
+      expect(stdout).to match("GITARRO_PR_AUTHOR: #{gitarro_pr_author}")
       @rgit.delete_c(rcomment.id)
     end
   end
