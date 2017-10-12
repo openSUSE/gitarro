@@ -17,24 +17,6 @@ gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.sh --
 ```
 
 
-# Basic concepts
-
-gitarro runs a validation script, binary or command (-t or --test) against PRs of the GitHub repository you specify (-r or --repo) .
-
-There are two basic ways of using it:
-
-* It can run against the first untested PR or the first PR with a comment to force a test, or against the PR you specify.
- 
-  In this case you will need to run gitarro as many times as opened PRs requiring tests.  
-  
-  It works this way so if you are using Jenkins pulling the repository, you can have one job build for each gitarro execution.
-
-  It is also posible instruct gitarro to scan only the Pull Requests changed during the last X seconds (--changed_since). From GitHub API perspective, and gitarro's perspective a change is either a new commit or a new comment at the PR.
-
-* If you are using [webhooks](https://developer.github.com/webhooks/), then you just need to specify the ID of the Pull Requests that started the hook (--P or --PR)
-
-It is also posible to tell gitarro to ignore PRs unless specific files are changed (by path or by extension with -f or --file), and specify a URL to added to the Pull Requests with the link to the log with the test output, for example to a Jenkins log (-u o --url).
-
 # Current syntax:
 
 ```
@@ -63,6 +45,36 @@ Help:
 
 Example: gitarro.rb -r openSUSE/gitarro -c 'python-test' -d 'someCoolTest' -g /tmp/pr-ruby01/ -t /tmp/test.sh -f '.py'
 ```
+# Basic concepts part 1.
+
+gitarro runs a validation script, binary or command (-t or --test) against PRs of the GitHub repository you specify (-r or --repo).
+
+
+```gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.sh --https ```
+
+When you run this command, you will run the script tests.sh against the 1st PR open on the GitHub Repository openSUSE/gitarro. 
+
+When you run it for the 2nd time, it will run on the 2nd PR if open, otherwise if you have only 1 PR open, it will not reschedule any test. The `-c` option, is the context(mandatory), which is the Name of tests.
+If you change the context name, it will reschedule the test for the PR. 
+
+Having 10 differents context, mean that you have 10 differents type of tests on PR. ( like python-pylint, python-acceptance, ruby-rspec etc..)
+
+# Basic concepts part 2.
+
+There are two basic ways of using it:
+
+* It can run against the first untested PR or the first PR with a comment to force a test, or against the PR you specify.
+ 
+  In this case you will need to run gitarro as many times as opened PRs requiring tests.  
+  
+  It works this way so if you are using Jenkins pulling the repository, you can have one job build for each gitarro execution.
+
+  It is also posible instruct gitarro to scan only the Pull Requests changed during the last X seconds (--changed_since). From GitHub API perspective, and gitarro's perspective a change is either a new commit or a new comment at the PR.
+
+* If you are using [webhooks](https://developer.github.com/webhooks/), then you just need to specify the ID of the Pull Requests that started the hook (--P or --PR)
+
+It is also posible to tell gitarro to ignore PRs unless specific files are changed (by path or by extension with -f or --file), and specify a URL to added to the Pull Requests with the link to the log with the test output, for example to a Jenkins log (-u o --url).
+
 
 # Devel Installation
 
