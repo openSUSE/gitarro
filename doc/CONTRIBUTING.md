@@ -24,7 +24,7 @@ For small bugfixing/improvements of course you don't need an Issue referenced.
 ## Ruby workflow
 
 1. Run rake locally with `rake`. 
-2.  Run `rake spec` adding repository and creating a fake PR on your forked repo.
+2. Run `rake spec`. [Read more here](https://github.com/openSUSE/gitarro/blob/master/doc/TESTS.md#acceptance-tests)
 3. Run reek for improve your code `rake reek` or `reek your_file.rb`
 
 ## GIT Workflow
