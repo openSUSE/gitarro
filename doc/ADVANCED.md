@@ -1,5 +1,27 @@
 [Documentation index](../README.md#documentation)
 
+# Using Env Variable in your script.
+
+Gitarro add some meta information about the PR your are testing, and this are passed as env. variables.
+
+The variable currently are:
+
+```console 
+GITARRO_PR_AUTHOR
+GITARRO_PR_TITLE
+GITARRO_PR_NUMBER
+```
+
+In the script that you are using with the **-t option**, you can use them , reading the env var.
+
+Here just an example..
+```ruby
+ do_stuff if ENV['GITARRO_PR_AUTHOR'] == 'MalloZup'
+ puts ENV['GITARRO_PR_TITLE']
+ puts ENV['GITARRO_PR_NUMBER'] 
+```
+
+
 # Retriggering a specific test
 
 ## Instructions

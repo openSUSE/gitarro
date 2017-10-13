@@ -102,6 +102,10 @@ end
 class GitarroTestingCmdLine
   attr_reader :repo, :client, :gitrem, :script,
               :ftype, :url, :git_dir, :valid_test
+
+  include BasicTests
+  include ChangeLogTests
+
   def initialize(repo)
     @repo = repo
     @script = GITARRO_BIN
@@ -115,9 +119,6 @@ class GitarroTestingCmdLine
     # create for all test a valid test script
     create_test_script(@valid_test)
   end
-
-  include BasicTests
-  include ChangeLogTests
 
   def file_type_unset(comm_st, cont)
     desc = 'we dont filter particular files'
@@ -147,6 +148,19 @@ class GitarroTestingCmdLine
     puts 'After 2 time running'
     after = run_gitarro_cachetest(gitarro)
     before == after
+  end
+
+  def env_test(cont)
+    desc = 'env variable are passed'
+    `echo '#! /bin/bash' > #{valid_test}`
+    `echo 'echo "GITARRO_PR_NUMBER: $GITARRO_PR_NUMBER"' >> #{valid_test}`
+    `echo 'echo "GITARRO_PR_TITLE: $GITARRO_PR_TITLE"' >> #{valid_test}`
+    `echo 'echo "GITARRO_PR_AUTHOR: $GITARRO_PR_AUTHOR"' >> #{valid_test}`
+    `chmod +x #{valid_test}`
+    gitarro = "#{script} -r #{repo} -c #{cont} -d #{desc} -g #{git_dir}" \
+                   " -t #{valid_test} -u #{url} "
+    puts stdout = `ruby #{gitarro}`
+    stdout
   end
 
   private

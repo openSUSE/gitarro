@@ -79,7 +79,7 @@ end
 module CachingOctokit
   def create_dir_store(cache_path)
     cache_name = 'httpcache'
-    full_cache_dir = "#{cache_path}#{cache_name}"
+    full_cache_dir = "#{cache_path}/#{cache_name}"
     ActiveSupport::Cache::FileStore.new(full_cache_dir)
   end
 
@@ -151,6 +151,8 @@ class TestExecutor
     git = GitOp.new(@git_dir, pr, @options)
     # merge PR-branch to upstream branch
     git.merge_pr_totarget(pr.base.ref, pr.head.ref)
+    # export variables
+    export_pr_variables(pr)
     # do valid tests and store the result
     test_status = run_script
     # del branch
@@ -166,6 +168,12 @@ class TestExecutor
   end
 
   private
+
+  def export_pr_variables(pr)
+    ENV['GITARRO_PR_AUTHOR'] = pr.head.user.login.to_s
+    ENV['GITARRO_PR_TITLE'] = pr.title.to_s
+    ENV['GITARRO_PR_NUMBER'] = pr.number.to_s
+  end
 
   def script_exists?(script)
     n_exist = "\'#{script}\' doesn't exists.Enter valid file, -t option"
