@@ -69,7 +69,7 @@ class GitarroOptionTest < Minitest::Test
                   git_dir: 'gitty' }
     opp2.options = full_hash
     options = opp2.cmdline_options
-    assert_equal('/tmp/gitarro', options[:cachehttp])
+    assert_equal(false, options[:cachehttp])
   end
 
   def test_custom_cachehttp

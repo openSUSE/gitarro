@@ -80,23 +80,10 @@ gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t 
 
 # Caching Http in gitarro.
 
-Gitarro by default use faraday_http cache for storing and sparing rate limiting in github API.
+Gitarro  use faraday_http cache for storing and sparing rate limiting in github API.
 https://github.com/plataformatec/faraday-http-cache
 
-The cache dir is saved by default in /tmp/gitarro (but you can add a custom path via option -k or --cachepath).
+To enable the cache use the option -k or --cachepath).
 
-If you enable the option --changed_since, the cache will not be generated.
-
-These two options are not compatible, since --changed_since (which is a trigger option) need to consume a GitHub API to have the response time.
-The cache will give back a cached reponse, so the changed_since will not work, because it need the lastest updated time.
-
-So by default you will reuse always the cache, because the changed_since option is rarely used. 
-
-It useful to use it in CI when you need to spare job history, having 2 jobs running:
-
-- 1 job a test executor (downstream/slave job)
-- 1 trigger job (upstream/master that trigger the downstream)
-
-Usually you should have the --changed_since option enabled on a trigger job/scheduler, where this job just run to see if there are PR needing test.
 
 [Documentation index](../README.md#documentation)
