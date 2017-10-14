@@ -1,2 +1,3 @@
 .rspec.yml
 Gemfile.lock
+*.html
