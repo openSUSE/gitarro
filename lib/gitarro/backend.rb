@@ -97,7 +97,7 @@ module CachingOctokit
     Octokit.middleware = stack
   end
 
-  # by default is false, enable only via option
+  # if true we dont need the cache
   def generate_cache?
     @cachehttp
   end

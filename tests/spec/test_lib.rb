@@ -3,8 +3,12 @@
 require 'octokit'
 require 'English'
 
-# this might change
-GITARRO_BIN = '../../gitarro.rb'.freeze
+# allow flexibility
+# if called in rspec dir or from rake file
+inside_spec = '././../gitarro.rb'
+GITARRO_BIN = inside_spec if File.file?(inside_spec)
+GITARRO_BIN = 'gitarro.rb'.freeze unless File.file?(inside_spec)
+raise 'cannot find gitarrobin' unless File.file?(GITARRO_BIN)
 
 # github octokit operation
 class GitRemoteOperations
@@ -102,14 +106,14 @@ class GitarroTestingCmdLine
   include BasicTests
   include ChangeLogTests
 
-  def initialize(repo)
+  def initialize(repo, git_dir)
     @repo = repo
     @script = GITARRO_BIN
     @client = Octokit::Client.new(netrc: true)
     Octokit.auto_paginate = true
     @gitrem = GitRemoteOperations.new(repo)
     @ftype = '.'
-    @git_dir = '/tmp/ruby312'
+    @git_dir = git_dir
     @url = 'https://github.com/openSUSE/gitarro/pull/8'
     @valid_test = '/tmp/gitarro.sh'
     # create for all test a valid test script
@@ -152,6 +156,7 @@ class GitarroTestingCmdLine
 
   def env_test(cont)
     desc = 'env variable are passed'
+    valid_test = '/tmp/environ.sh'
     `echo '#! /bin/bash' > #{valid_test}`
     `echo 'echo "GITARRO_PR_NUMBER: $GITARRO_PR_NUMBER"' >> #{valid_test}`
     `echo 'echo "GITARRO_PR_TITLE: $GITARRO_PR_TITLE"' >> #{valid_test}`
