@@ -143,7 +143,7 @@ class GitarroTestingCmdLine
     # before and after rate_limiting (2nd run) must be the same
     # since the caching do conditional request!
     gitarro = "#{script} -r #{repo} -c #{cont} -d http_cache  -g #{git_dir}" \
-              " -t #{valid_test} -f #{ftype} -u #{url}"
+              " -t #{valid_test} -f #{ftype} -u #{url} -k '/tmp/focache'"
     before = run_gitarro_cachetest(gitarro)
     puts 'After 2 time running'
     after = run_gitarro_cachetest(gitarro)

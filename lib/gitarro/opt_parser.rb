@@ -182,6 +182,7 @@ class OptParserInternal
     @options[:target_url] = '' if @options[:target_url].nil?
     @options[:https] = false if @options[:https].nil?
     @options[:changed_since] = -1 if @options[:changed_since].nil?
+    @options[:cachehttp] = false if @options[:cachehttp].nil?
   end
 
   def defaults_to_text
@@ -189,7 +190,6 @@ class OptParserInternal
     @options[:file_type] = '.changes' if @options[:changelog_test]
     @options[:description] = desc if @options[:description].nil?
     @options[:file_type] = 'notype' if @options[:file_type].nil?
-    @options[:cachehttp] = '/tmp/gitarro' if @options[:cachehttp].nil?
   end
 end
 

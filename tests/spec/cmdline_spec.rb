@@ -201,7 +201,7 @@ describe 'gitarro pass env. variable to scripts' do
   end
 
   describe '.env variable are read from script' do
-    it 'gitarro run 2 times, but we have only 1 ratelimiting' do
+    it 'Passing env variable to script, we can use them in script' do
       cont = 'env_test_script'
       rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
       stdout = @test.env_test(cont)
