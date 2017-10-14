@@ -86,6 +86,7 @@ module CachingOctokit
   def generate_cache(httpcache_path)
     # changed_since cannot work with cache
     return false unless generate_cache?
+    puts 'GENERATING/USING HTTP CACHE'
     stack = Faraday::RackBuilder.new do |builder|
       builder.use Faraday::HttpCache,
                   store: create_dir_store(httpcache_path),
@@ -97,7 +98,7 @@ module CachingOctokit
     Octokit.middleware = stack
   end
 
-  # by default is false, enable only via option
+  # if true we dont need the cache
   def generate_cache?
     @cachehttp
   end
