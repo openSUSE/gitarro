@@ -72,13 +72,15 @@ describe 'cmdline secondary options' do
     init_tests_setup(GIT_REPO)
   end
 
-  describe '.file_type_optional_option_not_set' do
-    it 'we should run without filter and execute tests' do
+  describe '.run only one time with same context' do
+    it 'with same context, we run only one time' do
       cont = 'file_type_option_optional'
       rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      result = @test.file_type_unset(@comm_st, cont)
+      result = @test.only_onetime(@comm_st, cont)
       @rgit.delete_c(rcomment.id)
-      expect(result).to be true
+      # result contain false, because we are creating on 2nd run tscript
+      # a file, which it must be not create to ensure that we run 1 time
+      expect(result).to be false
     end
   end
 

@@ -116,14 +116,18 @@ class GitarroTestingCmdLine
     create_test_script(@valid_test)
   end
 
-  def file_type_unset(comm_st, cont)
-    desc = 'we dont filter particular files'
-    `echo '#! /bin/bash' > #{valid_test}`
-    `chmod +x #{valid_test}`
-    gitarro = "#{script} -r #{repo} -c #{cont} -d #{desc} -g #{git_dir}" \
+  def only_onetime(comm_st, cont)
+    desc = 'run only 1time with same context'
+    2.times do |n|
+      `echo '#! /bin/bash' > #{valid_test}`
+      `echo 'touch /tmp/foo#{n.to_s}' > #{valid_test}`
+      `chmod +x #{valid_test}`
+      gitarro = "#{script} -r #{repo} -c #{cont} -d #{desc} -g #{git_dir}" \
                    " -t #{valid_test} -u #{url} "
-    puts `ruby #{gitarro}`
-    failed_status(comm_st, cont) ? false : true
+      puts `ruby #{gitarro}`
+    end
+    raise 'GITARRO SHOULDNT FAIL' if failed_status(comm_st, cont)
+    File.file?('/tmp/foo2')
   end
 
   def changed_since(com_st, sec, cont)
