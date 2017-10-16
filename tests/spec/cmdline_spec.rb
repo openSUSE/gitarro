@@ -111,10 +111,9 @@ describe 'cmdline changed-since' do
   end
 
   describe '.changed_since_not_present' do
-    it "gitarro should see PR ##{PR_NUMBER} when --change_since not present" do
+    it 'gitarro should see PR when --change_since not present' do
       context = 'changed-since-not-present'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
       result, output = @test.changed_since(@comm_st, -1, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
@@ -123,10 +122,9 @@ describe 'cmdline changed-since' do
   end
 
   describe '.changed_since_60' do
-    it "gitarro should see PR ##{PR_NUMBER} changed in the last 60 seconds" do
+    it 'gitarro should see PR hanged in the last 60 seconds' do
       context = 'changed-since-60'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
       result, output = @test.changed_since(@comm_st, 60, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
@@ -137,8 +135,7 @@ describe 'cmdline changed-since' do
   describe '.changed_since_zero' do
     it 'gitarro should not see any PRs' do
       context = 'changed-since-zero'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
       result, output = @test.changed_since(@comm_st, 0, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
@@ -147,17 +144,15 @@ describe 'cmdline changed-since' do
   end
 end
 
-# testing checks
-describe 'testing checks' do
+describe 'gitarro print when a PR requre test' do
   before(:each) do
     init_tests_setup(GIT_REPO)
   end
 
   describe '.pr_requiring_test' do
-    it "gitarro should see PR ##{PR_NUMBER} as requiring test" do
+    it 'gitarro should see PR requiring test' do
       context = 'pr-should-retest'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
       result, output = @test.changed_since(@comm_st, 60, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
@@ -166,10 +161,9 @@ describe 'testing checks' do
   end
 
   describe '.pr_not_requiring_test' do
-    it "gitarro should see PR ##{PR_NUMBER} as not requiring test" do
+    it 'gitarro should see PR as not requiring test' do
       context = 'pr-should-not-retest'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "Updating PR for #{context} !!!")
+      comment = @rgit.create_comment(@pr, "Updating PR for #{context} !!!")
       result, output = @test.changed_since(@comm_st, 60, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
