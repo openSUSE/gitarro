@@ -31,10 +31,6 @@ class GitRemoteOperations
   def delete_c(comment_id)
     client.delete_comment(repo, comment_id)
   end
-
-  def pr_by_number(num)
-    client.pull_request(repo, num)
-  end
 end
 
 # Fondamental tests
