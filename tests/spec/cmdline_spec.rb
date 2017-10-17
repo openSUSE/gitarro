@@ -31,7 +31,8 @@ def init_tests_setup(git_repo)
   @gitarrorepo = git_repo
   @rgit = GitRemoteOperations.new(@gitarrorepo)
   @pr = @rgit.first_pr_open
-  @test = GitarroTestingCmdLine.new(@gitarrorepo)
+  git_workspace = '/tmp/foo1'
+  @test = GitarroTestingCmdLine.new(@gitarrorepo, git_workspace)
   # commit status
   @comm_st = @rgit.commit_status(@pr)
 end
@@ -64,13 +65,6 @@ describe 'cmdline foundamental' do
       expect(result).to be true
     end
   end
-end
-
-# secondary (not mandatory options tests)
-describe 'cmdline secondary options' do
-  before(:each) do
-    init_tests_setup(GIT_REPO)
-  end
 
   describe '.run only one time with same context' do
     it 'with same context, we run only one time' do
@@ -81,133 +75,6 @@ describe 'cmdline secondary options' do
       # result contain false, because we are creating on 2nd run tscript
       # a file, which it must be not create to ensure that we run 1 time
       expect(result).to be false
-    end
-  end
-
-  describe '.changelog-fail' do
-    it 'gitarro changelog test should fail' do
-      cont = 'changelog_shouldfail'
-      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      expect(@test.changelog_should_fail(@comm_st)).to be true
-      @rgit.delete_c(rcomment.id)
-    end
-  end
-
-  describe '.changelog-pass' do
-    it 'gitarro changelog test should pass' do
-      comment = @rgit.create_comment(@pr, 'no changelog needed!')
-      cont = 'changelog_shouldpass'
-      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      result = @test.changelog_should_pass(@comm_st)
-      @rgit.delete_c(comment.id)
-      @rgit.delete_c(rcomment.id)
-      expect(result).to be true
-    end
-  end
-end
-
-# secondary --changed_since
-describe 'cmdline changed-since' do
-  before(:each) do
-    init_tests_setup(GIT_REPO)
-  end
-
-  describe '.changed_since_not_present' do
-    it 'gitarro should see PR when --change_since not present' do
-      context = 'changed-since-not-present'
-      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
-      result, output = @test.changed_since(@comm_st, -1, context)
-      @rgit.delete_c(comment.id)
-      expect(result).to be true
-      expect(output).to match(/^\[PRS=true\].*/)
-    end
-  end
-
-  describe '.changed_since_60' do
-    it 'gitarro should see PR hanged in the last 60 seconds' do
-      context = 'changed-since-60'
-      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
-      result, output = @test.changed_since(@comm_st, 60, context)
-      @rgit.delete_c(comment.id)
-      expect(result).to be true
-      expect(output).to match(/^\[PRS=true\].*/)
-    end
-  end
-
-  describe '.changed_since_zero' do
-    it 'gitarro should not see any PRs' do
-      context = 'changed-since-zero'
-      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
-      result, output = @test.changed_since(@comm_st, 0, context)
-      @rgit.delete_c(comment.id)
-      expect(result).to be true
-      expect(output).to match(/^\[PRS=false\].*/)
-    end
-  end
-end
-
-describe 'gitarro print when a PR requre test' do
-  before(:each) do
-    init_tests_setup(GIT_REPO)
-  end
-
-  describe '.pr_requiring_test' do
-    it 'gitarro should see PR requiring test' do
-      context = 'pr-should-retest'
-      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
-      result, output = @test.changed_since(@comm_st, 60, context)
-      @rgit.delete_c(comment.id)
-      expect(result).to be true
-      expect(output).to match(/^\[TESTREQUIRED=true\].*/)
-    end
-  end
-
-  describe '.pr_not_requiring_test' do
-    it 'gitarro should see PR as not requiring test' do
-      context = 'pr-should-not-retest'
-      comment = @rgit.create_comment(@pr, "Updating PR for #{context} !!!")
-      result, output = @test.changed_since(@comm_st, 60, context)
-      @rgit.delete_c(comment.id)
-      expect(result).to be true
-      expect(output).not_to match(/^\[TESTREQUIRED=true\].*/)
-    end
-  end
-end
-
-# http cache tests
-describe 'http_cache_tests' do
-  before(:each) do
-    init_tests_setup(GIT_REPO)
-  end
-
-  describe '.rate_limiting_cache' do
-    it 'gitarro run 2 times, but we have only 1 ratelimiting' do
-      cont = 'cachehttp_test'
-      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      expect(@test.cache_test(cont)).to be true
-      @rgit.delete_c(rcomment.id)
-    end
-  end
-end
-
-# env variables
-describe 'gitarro pass env. variable to scripts' do
-  before(:each) do
-    init_tests_setup(GIT_REPO)
-  end
-
-  describe '.env variable are read from script' do
-    it 'Passing env variable to script, we can use them in script' do
-      cont = 'env_test_script'
-      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      stdout = @test.env_test(cont)
-      gitarro_pr_number = @pr.number.to_s
-      gitarro_pr_title = @pr.title.to_s
-      gitarro_pr_author = @pr.head.user.login.to_s
-      expect(stdout).to match("GITARRO_PR_NUMBER: #{gitarro_pr_number}")
-      expect(stdout).to match("GITARRO_PR_TITLE: #{gitarro_pr_title}")
-      expect(stdout).to match("GITARRO_PR_AUTHOR: #{gitarro_pr_author}")
-      @rgit.delete_c(rcomment.id)
     end
   end
 end

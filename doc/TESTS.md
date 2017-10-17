@@ -43,6 +43,7 @@ How to run them:
 
 Then create a file called: `.rspec.yml`
 And put your Repo and PR_Number in yml. (this file is ignored by git)
+The Pr number is the fake repo on your forked repo
 
 ```yaml
 repo: MalloZup/gitarro
