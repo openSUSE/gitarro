@@ -31,22 +31,21 @@ def init_tests_setup(git_repo)
   @gitarrorepo = git_repo
   @rgit = GitRemoteOperations.new(@gitarrorepo)
   @pr = @rgit.first_pr_open
-  @test = GitarroTestingCmdLine.new(@gitarrorepo)
+  git_workspace = '/tmp/foo2'
+  @test = GitarroTestingCmdLine.new(@gitarrorepo, git_workspace)
   # commit status
   @comm_st = @rgit.commit_status(@pr)
 end
 
-# testing checks
-describe 'testing checks' do
+describe 'gitarro print when a PR requre test' do
   before(:each) do
     init_tests_setup(GIT_REPO)
   end
 
   describe '.pr_requiring_test' do
-    it "gitarro should see PR ##{PR_NUMBER} as requiring test" do
+    it 'gitarro should see PR requiring test' do
       context = 'pr-should-retest'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
       result, output = @test.changed_since(@comm_st, 60, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
@@ -55,10 +54,9 @@ describe 'testing checks' do
   end
 
   describe '.pr_not_requiring_test' do
-    it "gitarro should see PR ##{PR_NUMBER} as not requiring test" do
+    it 'gitarro should see PR as not requiring test' do
       context = 'pr-should-not-retest'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "Updating PR for #{context} !!!")
+      comment = @rgit.create_comment(@pr, "Updating PR for #{context} !!!")
       result, output = @test.changed_since(@comm_st, 60, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
@@ -90,7 +88,7 @@ describe 'gitarro pass env. variable to scripts' do
   end
 
   describe '.env variable are read from script' do
-    it 'gitarro run 2 times, but we have only 1 ratelimiting' do
+    it 'Passing env variable to script, we can use them in script' do
       cont = 'env_test_script'
       rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
       stdout = @test.env_test(cont)

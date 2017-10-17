@@ -31,7 +31,8 @@ def init_tests_setup(git_repo)
   @gitarrorepo = git_repo
   @rgit = GitRemoteOperations.new(@gitarrorepo)
   @pr = @rgit.first_pr_open
-  @test = GitarroTestingCmdLine.new(@gitarrorepo)
+  git_workspace = '/tmp/foo3'
+  @test = GitarroTestingCmdLine.new(@gitarrorepo, git_workspace)
   # commit status
   @comm_st = @rgit.commit_status(@pr)
 end
@@ -40,16 +41,6 @@ end
 describe 'cmdline secondary options' do
   before(:each) do
     init_tests_setup(GIT_REPO)
-  end
-
-  describe '.file_type_optional_option_not_set' do
-    it 'we should run without filter and execute tests' do
-      cont = 'file_type_option_optional'
-      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      result = @test.file_type_unset(@comm_st, cont)
-      @rgit.delete_c(rcomment.id)
-      expect(result).to be true
-    end
   end
 
   describe '.changelog-fail' do
@@ -81,10 +72,9 @@ describe 'cmdline changed-since' do
   end
 
   describe '.changed_since_not_present' do
-    it "gitarro should see PR ##{PR_NUMBER} when --change_since not present" do
+    it 'gitarro should see PR when --change_since not present' do
       context = 'changed-since-not-present'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
       result, output = @test.changed_since(@comm_st, -1, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
@@ -93,10 +83,9 @@ describe 'cmdline changed-since' do
   end
 
   describe '.changed_since_60' do
-    it "gitarro should see PR ##{PR_NUMBER} changed in the last 60 seconds" do
+    it 'gitarro should see PR hanged in the last 60 seconds' do
       context = 'changed-since-60'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
       result, output = @test.changed_since(@comm_st, 60, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
@@ -107,8 +96,7 @@ describe 'cmdline changed-since' do
   describe '.changed_since_zero' do
     it 'gitarro should not see any PRs' do
       context = 'changed-since-zero'
-      pr = @rgit.pr_by_number(PR_NUMBER)
-      comment = @rgit.create_comment(pr, "gitarro rerun #{context} !!!")
+      comment = @rgit.create_comment(@pr, "gitarro rerun #{context} !!!")
       result, output = @test.changed_since(@comm_st, 0, context)
       @rgit.delete_c(comment.id)
       expect(result).to be true
