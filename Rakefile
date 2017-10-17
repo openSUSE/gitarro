@@ -31,6 +31,7 @@ task :test do
     end
   end
 end
+
 task :lint do
   sh 'rubocop '
   sh 'rubocop Rakefile'
@@ -44,8 +45,8 @@ end
 
 #  this are the differents testsuites
 TESTSUITES = FileList.new('tests/spec/*_spec.rb')
-puts TESTSUITES
 # run spec testsuite ( a file in parallel)
+
 def run_suite(suite_name)
   repo, prnum = RspecConfiguration.load_yaml_conf
   sh "repo=#{repo} pr_num=#{prnum} " \
