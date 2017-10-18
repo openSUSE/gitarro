@@ -98,6 +98,7 @@ describe 'gitarro pass env. variable to scripts' do
       expect(stdout).to match("GITARRO_PR_NUMBER: #{gitarro_pr_number}")
       expect(stdout).to match("GITARRO_PR_TITLE: #{gitarro_pr_title}")
       expect(stdout).to match("GITARRO_PR_AUTHOR: #{gitarro_pr_author}")
+      expect(stdout).to match("GITARRO_PR_TARGET_REPO: #{GIT_REPO}")
       @rgit.delete_c(rcomment.id)
     end
   end

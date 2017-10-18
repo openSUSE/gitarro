@@ -10,6 +10,8 @@ The variable currently are:
 GITARRO_PR_AUTHOR
 GITARRO_PR_TITLE
 GITARRO_PR_NUMBER
+GITARRO_PR_TARGET_REPO
+
 ```
 
 In the script that you are using with the **-t option**, you can use them , reading the env var.
@@ -19,6 +21,7 @@ Here just an example..
  do_stuff if ENV['GITARRO_PR_AUTHOR'] == 'MalloZup'
  puts ENV['GITARRO_PR_TITLE']
  puts ENV['GITARRO_PR_NUMBER'] 
+ puts ENV['GITARRO_PR_TARGET_REPO'] 
 ```
 
 

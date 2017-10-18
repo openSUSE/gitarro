@@ -161,6 +161,7 @@ class GitarroTestingCmdLine
     `echo 'echo "GITARRO_PR_NUMBER: $GITARRO_PR_NUMBER"' >> #{valid_test}`
     `echo 'echo "GITARRO_PR_TITLE: $GITARRO_PR_TITLE"' >> #{valid_test}`
     `echo 'echo "GITARRO_PR_AUTHOR: $GITARRO_PR_AUTHOR"' >> #{valid_test}`
+    `echo 'echo "GITARRO_PR_TARGET_REPO: $GITARRO_PR_TARGET_REPO"' >> #{valid_test}`
     `chmod +x #{valid_test}`
     gitarro = "#{script} -r #{repo} -c #{cont} -d #{desc} -g #{git_dir}" \
                    " -t #{valid_test} -u #{url} "
