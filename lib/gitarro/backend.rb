@@ -169,6 +169,7 @@ class TestExecutor
     ENV['GITARRO_PR_AUTHOR'] = pr.head.user.login.to_s
     ENV['GITARRO_PR_TITLE'] = pr.title.to_s
     ENV['GITARRO_PR_NUMBER'] = pr.number.to_s
+    ENV['GITARRO_PR_TARGET_REPO'] = @repo
   end
 
   def script_exists?(script)
