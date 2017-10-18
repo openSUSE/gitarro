@@ -1,11 +1,11 @@
 require 'date'
 
-GITARRO_VERSION = '0.1.52'.freeze
-TODAY = Date.today.strftime('%Y-%m-%d')
+GITARRO_VERSION = '0.1.53'.freeze
+GITARRO_TODAY = Date.today.strftime('%Y-%m-%d')
 Gem::Specification.new do |s|
   s.name = 'gitarro'
   s.version = GITARRO_VERSION
-  s.date        = TODAY
+  s.date        = GITARRO_TODAY
   s.summary     = 'gitarro gem'
   s.description = 'gitarro run tests on GitHub PRs using almost any script,' \
                    'language or binary, it integrate easy with other tools.'
@@ -18,13 +18,13 @@ Gem::Specification.new do |s|
              'lib/gitarro/opt_parser.rb', 'lib/gitarro/git_op.rb']
   s.executables = 'gitarro'
   s.add_dependency 'english', '~> 0.6'
-  s.add_dependency 'minitest', '~> 5.9'
-  s.add_dependency 'minitest-reporters', '~> 1.1'
   s.add_dependency 'netrc', '~> 0.11'
   s.add_dependency 'octokit', '~> 4.7'
-  s.add_dependency 'rake', '~> 10.5'
-  s.add_dependency 'rubocop', '~> 0.49'
-  s.add_dependency 'rspec', '~> 3.6'
   s.add_dependency 'activesupport', '~> 5.1'
   s.add_dependency 'faraday-http-cache', '~> 2.0'
+  s.add_development_dependency 'minitest', '~> 5.9'
+  s.add_development_dependency 'minitest-reporters', '~> 1.1'
+  s.add_development_dependency 'rake', '~> 10.5'
+  s.add_development_dependency 'rubocop', '~> 0.49'
+  s.add_development_dependency 'rspec', '~> 3.6'
 end

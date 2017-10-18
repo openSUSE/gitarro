@@ -37,34 +37,6 @@ def init_tests_setup(git_repo)
   @comm_st = @rgit.commit_status(@pr)
 end
 
-# secondary (not mandatory options tests)
-describe 'cmdline secondary options' do
-  before(:each) do
-    init_tests_setup(GIT_REPO)
-  end
-
-  describe '.changelog-fail' do
-    it 'gitarro changelog test should fail' do
-      cont = 'changelog_shouldfail'
-      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      expect(@test.changelog_should_fail(@comm_st)).to be true
-      @rgit.delete_c(rcomment.id)
-    end
-  end
-
-  describe '.changelog-pass' do
-    it 'gitarro changelog test should pass' do
-      comment = @rgit.create_comment(@pr, 'no changelog needed!')
-      cont = 'changelog_shouldpass'
-      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      result = @test.changelog_should_pass(@comm_st)
-      @rgit.delete_c(comment.id)
-      @rgit.delete_c(rcomment.id)
-      expect(result).to be true
-    end
-  end
-end
-
 # secondary --changed_since
 describe 'cmdline changed-since' do
   before(:each) do

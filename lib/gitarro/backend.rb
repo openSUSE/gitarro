@@ -103,34 +103,6 @@ module CachingOctokit
   end
 end
 
-# this module have helper methods for changelog tests
-# it will be removed soon, but it helps to extract all
-# changelog code from backend class
-module ChangelogTests
-  def magic_comment?(pr_num)
-    @client.issue_comments(@repo, pr_num).any? do |com|
-      com.body.include?('no changelog needed!')
-    end
-  end
-
-  def do_changelog_test(pr)
-    # if the pr contains changes on .changes file, test ok
-    test_status = 'failure'
-    test_status = 'success' if pr_all_files_type(pr.number, @file_type).any?
-    test_status = 'success' if magic_comment?(pr.number)
-    create_status(pr, test_status)
-    test_status
-  end
-
-  # do the changelog test and set status
-  def changelog_changed?(pr, comm_st)
-    return false unless @changelog_test
-    # only execute 1 time, don"t run if test is failed, or ok
-    return false if failed_status?(comm_st) || success_status?(comm_st)
-    do_changelog_test(pr)
-  end
-end
-
 # This is a private class, which has the task to execute/run tests
 # called by Backend
 class TestExecutor
@@ -182,10 +154,7 @@ end
 # were we execute the tests and so on
 class Backend
   attr_accessor :options, :client, :gbexec
-  # changelog tests module ( FIXME  remove this once changelog
-  # tests are gone from backend and run separately
   include CachingOctokit
-  include ChangelogTests
   include GitHubPrOperations
 
   # public method of backend
@@ -230,14 +199,6 @@ class Backend
     launch_test_and_setup_status(pr)
   end
 
-  # FIXME: remove this pub. method once changelog test are separated
-  # public method, trigger changelogtest if option active
-  def changelog_active?(pr, comm_st)
-    return false unless @changelog_test
-    return false unless changelog_changed?(pr, comm_st)
-    true
-  end
-
   def unreviewed_new_pr?(pr, comm_st)
     return unless commit_is_unreviewed?(comm_st)
     pr_all_files_type(pr.number, @file_type)
@@ -254,7 +215,6 @@ class Backend
     #  we dont run the tests
     return false unless context_present?(comm_st) == false ||
                         pending_pr?(comm_st)
-    return true if changelog_active?(pr, comm_st)
     return false unless pr_all_files_type(pr.number, @file_type).any?
     print_test_required
     exit(0) if @check
@@ -341,11 +301,6 @@ class Backend
   def retrigger_needed?(pr)
     # we want redo sometimes tests
     return false unless retriggered_by_comment?(pr.number, @context)
-    # changelog trigger
-    if @changelog_test
-      do_changelog_test(pr)
-      return false
-    end
     # if check is set, the comment in the trigger job will be del.
     # so setting it to pending, it will be remembered
     pr_all_files_type(pr.number, @file_type).any?

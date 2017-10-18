@@ -75,36 +75,12 @@ module BasicTests
   end
 end
 
-# changelog tests (to be removed when changelog is removed)
-module ChangeLogTests
-  def changelog_should_fail(com_st)
-    context = 'changelog_shouldfail'
-    desc = 'changelog_fail'
-    gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
-                   " -t #{valid_test} -f #{ftype} -u #{url} "
-    puts `ruby #{gitarro} --changelogtest`
-    failed_status(com_st, context) ? true : false
-  end
-
-  def changelog_should_pass(com_st)
-    context = 'changelog_shouldpass'
-    desc = 'changelog_pass'
-    `echo '#! /bin/bash' > #{valid_test}`
-    `chmod +x #{valid_test}`
-    gitarro = "#{script} -r #{repo} -c #{context} -d #{desc} -g #{git_dir}" \
-                   " -t #{valid_test} -f #{ftype} -u #{url} "
-    puts `ruby #{gitarro} --changelogtest`
-    failed_status(com_st, context) ? false : true
-  end
-end
-
 # gitarro functional tests
 class GitarroTestingCmdLine
   attr_reader :repo, :client, :gitrem, :script,
               :ftype, :url, :git_dir, :valid_test
 
   include BasicTests
-  include ChangeLogTests
 
   def initialize(repo, git_dir)
     @repo = repo

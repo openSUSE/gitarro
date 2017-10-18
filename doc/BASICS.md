@@ -32,7 +32,6 @@ Optional options:
     -f, --file '.py'                 pr_file type to filter/trigger the test against: .py, .rb
     -d, --description 'DESCRIPTION'  Test decription
     -C, --check                      Check if there is any PR requiring a test, but do not run it.
-        --changelogtest              Check if the PR includes a changelog entry (Automatically sets --file ".changes").
     -u, --url 'TARGET_URL'           Specify the URL to append to add to the GitHub review. Usually you will use an URL to the Jenkins build log.
     -P                               '--PR 'NUMBER'
                                      Specify the PR number instead of checking all of them. This will force gitarro to run the against a specific PR number,even if it is not needed (useful for using Jenkins with GitHub webhooks).

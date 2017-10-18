@@ -19,8 +19,6 @@ prs.each do |pr|
   break if b.triggered_by_pr_number?(pr)
   # retrigger if magic word found
   b.retrigger_check(pr)
-  # check if changelog test was enabled
-  break if b.changelog_active?(pr, comm_st)
   # 0) do test for unreviewed pr
   break if b.unreviewed_new_pr?(pr, comm_st)
   # we run the test in 2 conditions:
