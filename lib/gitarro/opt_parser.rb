@@ -81,14 +81,6 @@ module OptionalOptions
     end
   end
 
-  def changelog_opt(opt)
-    desc = 'Check if the PR includes a changelog entry ' \
-           '(Automatically sets --file ".changes").'
-    opt.on('--changelogtest', desc) do |changelogtest|
-      @options[:changelog_test] = changelogtest
-    end
-  end
-
   def pr_number(opt)
     desc = 'Specify the PR number instead of checking all of them. ' \
            'Force to rerun against a specific PR number,' \
@@ -112,7 +104,6 @@ module OptionalOptions
     desc_opt(opt)
     check_opt(opt)
     file_opt(opt)
-    changelog_opt(opt)
     url_opt(opt)
     pr_number(opt)
     https_opt(opt)
@@ -178,7 +169,6 @@ class OptParserInternal
   # set some default values
   def defaults_false
     @options[:check] = false if @options[:check].nil?
-    @options[:changelog_test] = false if @options[:changelog_test].nil?
     @options[:target_url] = '' if @options[:target_url].nil?
     @options[:https] = false if @options[:https].nil?
     @options[:changed_since] = -1 if @options[:changed_since].nil?
@@ -187,7 +177,6 @@ class OptParserInternal
 
   def defaults_to_text
     desc = 'use option -d to set a custom test description.'
-    @options[:file_type] = '.changes' if @options[:changelog_test]
     @options[:description] = desc if @options[:description].nil?
     @options[:file_type] = 'notype' if @options[:file_type].nil?
   end
