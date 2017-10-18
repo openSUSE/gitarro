@@ -16,7 +16,7 @@ It can run on any system that is able to use ruby and [octokit](https://github.c
 ``` gem install gitarro ```
 
 
-## QUICKSTART
+## Quickstart
 
 
 0. Create a fake test script that will run against your open Pull Request.
@@ -32,11 +32,10 @@ chmod +x /tmp/tests.sh
 
 1. Run gitarro against your GitHub project.
 
-$GITHUB_PROJECT=USER/REPO 
-$GITHUB_PROJECT=MalloZup/gitarro 
+$YOUR_GITHUB_PROJECT=MalloZup/gitarro 
 
 ```console
-gitarro.rb -r $GITHUB_PROJECT -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.sh --https"
+gitarro.rb -r $YOUR_GITHUB_PROJECT -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.sh --https"
 ```
 
 ## Documentation
