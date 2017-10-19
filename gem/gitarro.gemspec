@@ -17,14 +17,14 @@ Gem::Specification.new do |s|
   s.files = ['lib/gitarro/backend.rb',
              'lib/gitarro/opt_parser.rb', 'lib/gitarro/git_op.rb']
   s.executables = 'gitarro'
+  s.add_dependency 'activesupport', '~> 5.1'
   s.add_dependency 'english', '~> 0.6'
+  s.add_dependency 'faraday-http-cache', '~> 2.0'
   s.add_dependency 'netrc', '~> 0.11'
   s.add_dependency 'octokit', '~> 4.7'
-  s.add_dependency 'activesupport', '~> 5.1'
-  s.add_dependency 'faraday-http-cache', '~> 2.0'
   s.add_development_dependency 'minitest', '~> 5.9'
   s.add_development_dependency 'minitest-reporters', '~> 1.1'
   s.add_development_dependency 'rake', '~> 10.5'
-  s.add_development_dependency 'rubocop', '~> 0.49'
   s.add_development_dependency 'rspec', '~> 3.6'
+  s.add_development_dependency 'rubocop', '~> 0.49'
 end
