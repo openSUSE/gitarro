@@ -69,8 +69,8 @@ module BasicTests
     end
     puts `ruby #{gitarro} -C`
     # with check we have -1 has value ( used for retrigger)
-    return true if $CHILD_STATUS.exitstatus.zero?
     puts `ruby #{gitarro}`
+    return true if $CHILD_STATUS.exitstatus.zero?
     false
   end
 end
