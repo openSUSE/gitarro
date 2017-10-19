@@ -65,22 +65,6 @@ describe 'gitarro print when a PR requre test' do
   end
 end
 
-# http cache tests
-describe 'http_cache_tests' do
-  before(:each) do
-    init_tests_setup(GIT_REPO)
-  end
-
-  describe '.rate_limiting_cache' do
-    it 'gitarro run 2 times, but we have only 1 ratelimiting' do
-      cont = 'cachehttp_test'
-      rcomment = @rgit.create_comment(@pr, "gitarro rerun #{cont} !!!")
-      expect(@test.cache_test(cont)).to be true
-      @rgit.delete_c(rcomment.id)
-    end
-  end
-end
-
 # env variables
 describe 'gitarro pass env. variable to scripts' do
   before(:each) do

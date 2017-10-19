@@ -62,26 +62,6 @@ class GitarroOptionTest < Minitest::Test
     option_ass(options)
   end
 
-  def test_default_cachehttp
-    opp2 = OptParser.new
-    full_hash = { repo: 'gino/gitarro', context: 'python-t',
-                  test_file: 'gino.sh',
-                  git_dir: 'gitty' }
-    opp2.options = full_hash
-    options = opp2.cmdline_options
-    assert_equal(false, options[:cachehttp])
-  end
-
-  def test_custom_cachehttp
-    opp2 = OptParser.new
-    full_hash = { repo: 'gino/gitarro', context: 'python-t',
-                  test_file: 'gino.sh', cachehttp: '/tmp/customd',
-                  git_dir: 'gitty' }
-    opp2.options = full_hash
-    options = opp2.cmdline_options
-    assert_equal('/tmp/customd', options[:cachehttp])
-  end
-
   def option_ass(options)
     assert_equal('gino/gitarro', options[:repo])
     assert_equal('python-t', options[:context])

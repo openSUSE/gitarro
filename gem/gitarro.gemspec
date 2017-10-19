@@ -1,6 +1,6 @@
 require 'date'
 
-GITARRO_VERSION = '0.1.53'.freeze
+GITARRO_VERSION = '0.1.54'.freeze
 GITARRO_TODAY = Date.today.strftime('%Y-%m-%d')
 Gem::Specification.new do |s|
   s.name = 'gitarro'
@@ -17,9 +17,7 @@ Gem::Specification.new do |s|
   s.files = ['lib/gitarro/backend.rb',
              'lib/gitarro/opt_parser.rb', 'lib/gitarro/git_op.rb']
   s.executables = 'gitarro'
-  s.add_dependency 'activesupport', '~> 5.1'
   s.add_dependency 'english', '~> 0.6'
-  s.add_dependency 'faraday-http-cache', '~> 2.0'
   s.add_dependency 'netrc', '~> 0.11'
   s.add_dependency 'octokit', '~> 4.7'
   s.add_development_dependency 'minitest', '~> 5.9'

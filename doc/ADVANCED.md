@@ -80,13 +80,4 @@ Following our [basic example](BASICS.md#a-basic-example), you will run gitarro a
 ```console
 gitarro.rb -r openSUSE/gitarro -c "ruby-test" -d "ruby-gitarro-tuto" -g /tmp -t /tmp/tests.sh -f ".rb" -C
 ```
-
-# Caching Http in gitarro.
-
-Gitarro  use faraday_http cache for storing and sparing rate limiting in github API.
-https://github.com/plataformatec/faraday-http-cache
-
-To enable the cache use the option -k or --cachepath).
-
-
 [Documentation index](../README.md#documentation)

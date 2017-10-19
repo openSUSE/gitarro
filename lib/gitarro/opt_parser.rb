@@ -73,14 +73,6 @@ module OptionalOptions
     opt.on('--https', https_desc) { |https| @options[:https] = https }
   end
 
-  def cachehttp_opt(opt)
-    desc = 'Custom path where http cache for gitarro is stored' \
-           'by default is set to /tmp/gitarro/httpcache'
-    opt.on('-k', "--cachepath 'CACHEPATH'", desc) do |cache_http|
-      @options[:cachehttp] = cache_http
-    end
-  end
-
   def pr_number(opt)
     desc = 'Specify the PR number instead of checking all of them. ' \
            'Force to rerun against a specific PR number,' \
@@ -107,7 +99,6 @@ module OptionalOptions
     url_opt(opt)
     pr_number(opt)
     https_opt(opt)
-    cachehttp_opt(opt)
     changed_since(opt)
   end
 end
@@ -169,7 +160,6 @@ class OptParserInternal
     @options[:target_url] = '' if @options[:target_url].nil?
     @options[:https] = false if @options[:https].nil?
     @options[:changed_since] = -1 if @options[:changed_since].nil?
-    @options[:cachehttp] = false if @options[:cachehttp].nil?
   end
 
   def defaults_to_text
