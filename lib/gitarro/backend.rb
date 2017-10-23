@@ -121,7 +121,8 @@ end
 # this the main public class is the backend of gitarro,
 # were we execute the tests and so on
 class Backend
-  attr_accessor :options, :client, :gbexec
+  attr_accessor :options
+  attr_reader :gbexec, :client
   include GitHubPrOperations
 
   # public method of backend
