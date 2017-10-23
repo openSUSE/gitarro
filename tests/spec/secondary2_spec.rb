@@ -38,7 +38,7 @@ def init_tests_setup(git_repo)
 end
 
 describe 'gitarro print when a PR requre test' do
-  before(:each) do
+  before do
     init_tests_setup(GIT_REPO)
   end
 
@@ -67,7 +67,7 @@ end
 
 # env variables
 describe 'gitarro pass env. variable to scripts' do
-  before(:each) do
+  before do
     init_tests_setup(GIT_REPO)
   end
 

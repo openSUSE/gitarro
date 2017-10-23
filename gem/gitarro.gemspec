@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rake', '~> 10.5'
   s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'rubocop', '~> 0.49'
+  s.add_development_dependency 'rubocop-rspec', '~> 1.19'
 end

@@ -39,7 +39,7 @@ end
 
 # secondary --changed_since
 describe 'cmdline changed-since' do
-  before(:each) do
+  before do
     init_tests_setup(GIT_REPO)
   end
 

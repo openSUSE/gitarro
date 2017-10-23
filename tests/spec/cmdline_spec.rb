@@ -39,7 +39,7 @@ end
 
 # do tests
 describe 'cmdline foundamental' do
-  before(:each) do
+  before do
     init_tests_setup(GIT_REPO)
   end
 
