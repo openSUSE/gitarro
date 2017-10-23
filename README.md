@@ -42,5 +42,4 @@ gitarro.rb -r $YOUR_GITHUB_PROJECT -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.s
 
 * [Basic concepts, installation, configuration, tests, syntax and a basic example](doc/BASICS.md)
 * [Advanced usage](doc/ADVANCED.md)
-* [Real life examples](doc/REAL_EXAMPLES.md)
 * [How to contribute to gitarro development](doc/CONTRIBUTING.md)
