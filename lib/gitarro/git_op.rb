@@ -56,7 +56,7 @@ class GitOp
 
   def clone_repo
     repo_url = "#{repo_protocol}#{@options[:repo]}.git"
-    puts `git clone #{repo_url}`
+    puts `git clone --depth 1 #{repo_url}`
     exit 1 if $CHILD_STATUS.exitstatus.nonzero?
   end
 
