@@ -3,6 +3,39 @@
 require 'English'
 require 'fileutils'
 require 'timeout'
+require 'tmpdir'
+
+# handle shallow clone
+class GitShallowClone
+  attr_reader :git_dir, :pr, :options, :repo_protocol
+  def initialize(git_dir, pr, options)
+    @git_dir = git_dir
+    # pr object for extract all relev. data.
+    @pr = pr
+    # All gitarro options
+    @options = options
+    gh = 'https://github.com/'
+    gg = 'git@github.com:'
+    @repo_protocol = @options[:https] ? gh : gg
+    @repo_url = @options[:https] ? pr.head.repo.html_url : pr.head.repo.ssh_url
+  end
+
+  # shallow clone
+  def clone
+    tmp_dir = create_tmp_dir!
+    git_local = "#{git_dir}/#{tmp_dir}"
+    puts `git clone --depth 1 #{@repo_url} -b #{pr.head.ref} #{git_local}`
+    exit 1 if $CHILD_STATUS.exitstatus.nonzero?
+    Dir.chdir git_local
+  end
+
+  private
+
+  def create_tmp_dir!
+    repo = options[:repo].split('/')[1]
+    "#{repo}#{Time.now.to_i}_#{rand(100)}"
+  end
+end
 
 # This class is used by lib/backend.rb
 # git operation for gitarro

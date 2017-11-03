@@ -73,6 +73,8 @@ module BasicTests
     return true if $CHILD_STATUS.exitstatus.zero?
     false
   end
+
+
 end
 
 # gitarro functional tests
@@ -119,15 +121,13 @@ class GitarroTestingCmdLine
      stdout]
   end
 
-  def cache_test(cont)
-    # before and after rate_limiting (2nd run) must be the same
-    # since the caching do conditional request!
-    gitarro = "#{script} -r #{repo} -c #{cont} -d http_cache  -g #{git_dir}" \
-              " -t #{valid_test} -f #{ftype} -u #{url} -k '/tmp/focache'"
-    before = run_gitarro_cachetest(gitarro)
-    puts 'After 2 time running'
-    after = run_gitarro_cachetest(gitarro)
-    before == after
+  def noshallow(comm_st, cont)
+    gitarro = "#{script} -r #{repo} -c #{cont} -d noshallowclone  -g #{git_dir}" \
+              " -t #{valid_test} -f #{ftype} -u #{url} --noshallow"
+  
+    puts `ruby #{gitarro}`
+    raise 'GITARRO SHOULDNT FAIL' if failed_status(comm_st, cont)
+    true
   end
 
   def env_test(cont)
@@ -146,11 +146,6 @@ class GitarroTestingCmdLine
   end
 
   private
-
-  def run_gitarro_cachetest(gitarro)
-    puts `ruby #{gitarro}`
-    puts "RATE-LIMTING: #{client.rate_limit.remaining}"
-  end
 
   def create_test_script(script)
     `echo '#! /bin/bash' > #{script}`

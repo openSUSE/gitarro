@@ -84,15 +84,11 @@ class TestExecutor
 
   # this will clone the repo and execute the tests
   def pr_test(pr)
-    git = GitOp.new(@git_dir, pr, @options)
-    # merge PR-branch to upstream branch
-    git.merge_pr_totarget(pr.base.ref, pr.head.ref)
+    clone_repo(@noshallow, pr)
     # export variables
     export_pr_variables(pr)
     # do valid tests and store the result
     test_status = run_script
-    # del branch
-    git.del_pr_branch(pr.base.ref, pr.head.ref)
     test_status
   end
 
@@ -104,6 +100,23 @@ class TestExecutor
   end
 
   private
+
+  def clone_repo(noshallow, pr)
+    shallow = GitShallowClone.new(@git_dir, pr, @options)
+    # by default we use always shallow clone
+    unless noshallow
+      shallow.clone
+      return
+    end
+    # this is for using the merging to ref
+    full_clone(pr)
+  end
+
+  def full_clone(pr)
+    git = GitOp.new(@git_dir, pr, @options)
+    git.merge_pr_totarget(pr.base.ref, pr.head.ref)
+    git.del_pr_branch(pr.base.ref, pr.head.ref)
+  end
 
   def export_pr_variables(pr)
     ENV['GITARRO_PR_AUTHOR'] = pr.head.user.login.to_s
