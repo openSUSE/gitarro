@@ -5,7 +5,7 @@ require 'fileutils'
 require 'timeout'
 require 'tmpdir'
 
-# handle shallow clone
+# handle shallow clone by default
 class GitShallowClone
   attr_reader :git_dir, :pr, :options, :repo_protocol
   def initialize(git_dir, pr, options)
