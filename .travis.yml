@@ -7,5 +7,5 @@ gemfile:
 - Gemfile
 
 script:
-- bundler install
+- bundle install
 - rake 

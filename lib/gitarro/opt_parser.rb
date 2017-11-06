@@ -22,21 +22,11 @@ module MandatoryOptions
     end
   end
 
-  def git_opt(opt)
-    desc = 'Specify a location where gitarro will clone the GitHub project. '\
-           'If the dir does not exists, gitarro will create one. '\
-           'For example: /tmp/'
-    opt.on('-g', "--git_dir 'GIT_LOCAL_DIR'", desc) do |git_dir|
-      @options[:git_dir] = git_dir
-    end
-  end
-
   def mandatory_options(opt)
     opt.separator 'Mandatory options:'
     repo_opt(opt)
     context_opt(opt)
     test_opt(opt)
-    git_opt(opt)
   end
 end
 
@@ -47,9 +37,23 @@ module OptionalOptions
     opt.on('-C', '--check', desc) { |check| @options[:check] = check }
   end
 
+  def no_shallow(opt)
+    desc = 'If enabled, gitarro will not use git shallow clone'
+    opt.on('--noshallow', desc) { |noshallow| @options[:noshallow] = noshallow }
+  end
+
   def desc_opt(opt)
     opt.on('-d', "--description 'DESCRIPTION'", 'Test decription') do |d|
       @options[:description] = d
+    end
+  end
+
+  def git_opt(opt)
+    desc = 'Specify a location where gitarro will clone the GitHub project. '\
+           'If the dir does not exists, gitarro will create one. '\
+           'by default is the /tmp'
+    opt.on('-g', "--git_dir 'GIT_LOCAL_DIR'", desc) do |git_dir|
+      @options[:git_dir] = git_dir
     end
   end
 
@@ -95,11 +99,13 @@ module OptionalOptions
     opt.separator "\n Optional options:"
     desc_opt(opt)
     check_opt(opt)
+    no_shallow(opt)
     file_opt(opt)
     url_opt(opt)
     pr_number(opt)
     https_opt(opt)
     changed_since(opt)
+    git_opt(opt)
   end
 end
 
@@ -127,7 +133,7 @@ class OptParserInternal
 
   def parse(opt_parser)
     parse_options(opt_parser)
-    mandatory_options = %w[repo context test_file git_dir]
+    mandatory_options = %w[repo context test_file]
     mandatory_options.each { |opt| ck_mandatory_option(opt) }
     defaults_false
     defaults_to_text
@@ -159,6 +165,7 @@ class OptParserInternal
     @options[:check] = false if @options[:check].nil?
     @options[:target_url] = '' if @options[:target_url].nil?
     @options[:https] = false if @options[:https].nil?
+    @options[:noshallow] = false if @options[:noshallow].nil?
     @options[:changed_since] = -1 if @options[:changed_since].nil?
   end
 
@@ -166,6 +173,7 @@ class OptParserInternal
     desc = 'use option -d to set a custom test description.'
     @options[:description] = desc if @options[:description].nil?
     @options[:file_type] = 'notype' if @options[:file_type].nil?
+    @options[:git_dir] = '/tmp' if @options[:git_dir].nil?
   end
 end
 

@@ -39,4 +39,14 @@ describe 'secondary2 features' do
     expect(stdout).to match("GITARRO_PR_TARGET_REPO: #{GIT_REPO}")
     rgit.delete_c(rcomment.id)
   end
+
+  # don't use shallow clone (enabled by default)
+  it 'dont use shallow clone but full one clone' do
+    cont = 'noshallowclone'
+    rcomment = rgit.create_comment(pr, "gitarro rerun #{cont} !!!")
+    result = test.noshallow(comm_st, cont)
+    rgit.delete_c(rcomment.id)
+    expect(result).to be true
+  end
+
 end

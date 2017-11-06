@@ -13,7 +13,7 @@ echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN > /
 sudo chmod 0600 ~/.netrc
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x /tmp/tests.sh
-gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.sh --https"
+gitarro.rb -r openSUSE/gitarro -c "ruby-test" -t /tmp/tests.sh --https"
 ```
 
 
@@ -26,7 +26,6 @@ Mandatory options:
     -r, --repo 'REPO'                GitHub repository to look for PRs. For example: openSUSE/gitarro.
     -c, --context 'CONTEXT'          Context to set on comment (test name). For example: python-test.
     -t, --test 'TEST.SH'             Command, or full path to script/binary to be used to run the test.
-    -g, --git_dir 'GIT_LOCAL_DIR'    Specify a location where gitarro will clone the GitHub project. If the dir does not exists, gitarro will create one. For example: /tmp/
 
 Optional options:
     -f, --file '.py'                 pr_file type to filter/trigger the test against: .py, .rb
@@ -39,17 +38,22 @@ Optional options:
         --https                      If present, use https instead of ssh for git operations
         --changed_since 'SECONDS'    If present, will only check PRs with a change in the last X seconds
 
+    -g, --git_dir 'GIT_LOCAL_DIR'    Specify a location where gitarro will clone the GitHub project. If the dir does not exists, gitarro will create one. For example: /tmp/
+
 Help:
     -h, --help                       help
 
-Example: gitarro.rb -r openSUSE/gitarro -c 'python-test' -d 'someCoolTest' -g /tmp/pr-ruby01/ -t /tmp/test.sh -f '.py'
+Example: gitarro.rb -r openSUSE/gitarro -c 'python-test' -d 'someCoolTest' -t /tmp/test.sh -f '.py'
 ```
 # Basic concepts part 1.
 
 gitarro runs a validation script, binary or command (-t or --test) against PRs of the GitHub repository you specify (-r or --repo).
 
 
-```gitarro.rb -r openSUSE/gitarro -c "ruby-test" -g /tmp/ruby21 -t /tmp/tests.sh --https ```
+```gitarro.rb -r openSUSE/gitarro -c "ruby-test" -t /tmp/tests.sh --https ```
+
+Gitarro use shallow clone by default with a temporary gitrepo. 
+
 
 When you run this command, you will run the script tests.sh against the 1st PR open on the GitHub Repository openSUSE/gitarro. 
 
