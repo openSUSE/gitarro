@@ -13,9 +13,8 @@ echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN > /
 sudo chmod 0600 ~/.netrc
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x /tmp/tests.sh
-gitarro.rb -r openSUSE/gitarro -c "ruby-test" -t /tmp/tests.sh --https"
+gitarro.rb -r openSUSE/gitarro -c "ruby-test" -t /tmp/tests.sh 
 ```
-
 
 # Current syntax:
 
