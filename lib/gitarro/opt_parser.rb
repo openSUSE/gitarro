@@ -49,7 +49,8 @@ module OptionalOptions
   end
 
   def branch_opt(opt)
-    opt.on('-b', "--branch 'GITHUB BRANCH'", 'GitHub Branch') do |b|
+    desc = 'run tests only if the pr target the upstream branch specified'
+    opt.on('-b', "--branch 'GITHUB BRANCH'", desc) do |b|
       @options[:branch] = b
     end
   end

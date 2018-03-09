@@ -14,7 +14,7 @@ exit 0 if prs.empty?
 prs.each do |pr|
   puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
   # check if prs contains the branch given otherwise just break
-  break unless b.pr_equal_spefic_branch?(pr)
+  next unless b.pr_equal_spefic_branch?(pr)
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = b.client.status(b.repo, pr.head.sha)
   # pr number trigger.
