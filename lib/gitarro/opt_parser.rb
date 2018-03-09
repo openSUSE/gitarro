@@ -48,6 +48,12 @@ module OptionalOptions
     end
   end
 
+  def branch_opt(opt)
+    opt.on('-b', "--branch 'GITHUB BRANCH'", 'GitHub Branch') do |b|
+      @options[:branch] = b
+    end
+  end
+
   def git_opt(opt)
     desc = 'Specify a location where gitarro will clone the GitHub project. '\
            'If the dir does not exists, gitarro will create one. '\
@@ -99,6 +105,7 @@ module OptionalOptions
     opt.separator "\n Optional options:"
     desc_opt(opt)
     check_opt(opt)
+    branch_opt(opt)
     no_shallow(opt)
     file_opt(opt)
     url_opt(opt)

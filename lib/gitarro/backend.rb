@@ -151,6 +151,17 @@ class Backend
     @gbexec = TestExecutor.new(@options)
   end
 
+  # public method for check if pr belong to user specified branch
+  # if the pr belong to the branch continue tests
+  # otherwise just skip tests without setting any status
+  def pr_equal_spefic_branch?(pr)
+     return true if @branch.nil?
+     return true if @branch == pr.base.ref 
+     puts "branch \"#{pr.base.ref}\" should match github-branch \"#{@branch}\" (given) !!!"
+     puts "skipping tests !!!"
+     false
+  end
+
   # public method for get prs opened and matching the changed_since
   # condition
   def open_newer_prs
