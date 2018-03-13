@@ -94,7 +94,6 @@ class TestExecutor
 
   # run validation script for validating the PR.
   def run_script
-    script_exists?(@test_file)
     puts `#{@test_file}`
     $CHILD_STATUS.exitstatus.nonzero? ? 'failure' : 'success'
   end
@@ -123,11 +122,6 @@ class TestExecutor
     ENV['GITARRO_PR_TITLE'] = pr.title.to_s
     ENV['GITARRO_PR_NUMBER'] = pr.number.to_s
     ENV['GITARRO_PR_TARGET_REPO'] = @repo
-  end
-
-  def script_exists?(script)
-    n_exist = "\'#{script}\' doesn't exists.Enter valid file, -t option"
-    raise n_exist if File.file?(script) == false
   end
 end
 
