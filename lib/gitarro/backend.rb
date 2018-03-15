@@ -84,6 +84,7 @@ class TestExecutor
 
   # this will clone the repo and execute the tests
   def pr_test(pr)
+    export_pr_data_to_hidden_file(pr)
     clone_repo(@noshallow, pr)
     # export variables
     export_pr_variables(pr)
@@ -116,6 +117,16 @@ class TestExecutor
     git.merge_pr_totarget(pr.base.ref, pr.head.ref)
     git.del_pr_branch(pr.base.ref, pr.head.ref)
   end
+
+  def export_pr_data_to_hidden_file(pr)
+    # save this file in local dir where gitarro is executed.
+    File.open('.gitarro_vars', 'w') do |file|
+       file.write("GITARRO_PR_AUTHOR: #{pr.head.user.login}\n" \
+       "GITARRO_PR_TITLE:  #{pr.title}\n" \
+       "GITARRO_PR_NUMBER: #{pr.number}\n" \
+       "GITARRO_PR_TARGET_REPO: #{@repo}\n")
+    end
+  end 
 
   def export_pr_variables(pr)
     ENV['GITARRO_PR_AUTHOR'] = pr.head.user.login.to_s
