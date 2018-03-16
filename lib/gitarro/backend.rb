@@ -187,11 +187,12 @@ class Backend
   end
 
   # public always rerun tests against the pr number if this exists
-  def triggered_by_pr_number?(pr)
-    return false if @pr_number.nil? || @pr_number != pr.number
+  def triggered_by_pr_number?
+    return false if @pr_number.nil? 
+    pr_on_number = @client.pull_request(@repo, @pr_number) 
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     print_test_required
-    launch_test_and_setup_status(pr)
+    launch_test_and_setup_status(pr_on_number)
   end
 
   def unreviewed_new_pr?(pr, comm_st)

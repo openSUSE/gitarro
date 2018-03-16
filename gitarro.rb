@@ -18,7 +18,7 @@ prs.each do |pr|
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = b.client.status(b.repo, pr.head.sha)
   # pr number trigger.
-  break if b.triggered_by_pr_number?(pr)
+  break if b.triggered_by_pr_number?
   # retrigger if magic word found
   b.retrigger_check(pr)
   # 0) do test for unreviewed pr

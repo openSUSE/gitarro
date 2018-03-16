@@ -1,3 +1,4 @@
 .rspec.yml
 Gemfile.lock
 *.html
+.gitarro_vars 
