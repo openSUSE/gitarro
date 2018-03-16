@@ -89,7 +89,7 @@ module OptionalOptions
            'Force to rerun against a specific PR number,' \
            'even if it is not needed.'
     opt.on('-P', "--PR 'NUMBER'", desc) do |pr_number|
-      @options[:pr_number] = Integer(pr_number)
+      @options[:pr_number] = pr_number.to_i
     end
   end
 
