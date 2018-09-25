@@ -1,5 +1,6 @@
 #! /usr/bin/ruby
 
+require 'json'
 require 'octokit'
 require 'optparse'
 require 'time'
@@ -80,14 +81,13 @@ class TestExecutor
       instance_variable_set("@#{key}", value)
       self.class.send(:attr_accessor, key)
     end
+    Octokit.auto_paginate = true
+    @client = Octokit::Client.new(netrc: true)
   end
 
   # this will clone the repo and execute the tests
   def pr_test(pr)
-    export_pr_data_to_hidden_file(pr)
     clone_repo(@noshallow, pr)
-    # export variables
-    export_pr_variables(pr)
     # do valid tests and store the result
     test_status = run_script
     test_status
@@ -99,7 +99,41 @@ class TestExecutor
     $CHILD_STATUS.exitstatus.nonzero? ? 'failure' : 'success'
   end
 
+  def export_pr_data(pr)
+      export_pr_data_to_simple_file(pr)
+      export_pr_data_to_file(pr)
+  end
+
   private
+
+  def export_pr_data_to_simple_file(pr)
+    # save this file in local dir where gitarro is executed.
+    # This part is kept for compatibility purposes
+    File.open('.gitarro_vars', 'w') do |file|
+       file.write("GITARRO_PR_AUTHOR: #{pr.head.user.login}\n" \
+       "GITARRO_PR_TITLE:  #{pr.title}\n" \
+       "GITARRO_PR_NUMBER: #{pr.number}\n" \
+       "GITARRO_PR_TARGET_REPO: #{@repo}\n")
+    end
+  end
+
+  def export_pr_data_to_file(pr)
+    pr = pr.to_hash
+    pr[:files] = []
+    @client.pull_request_files(@repo, pr[:number]).each do |github_file|
+        pr[:files].push(github_file.to_hash)
+    end
+    File.open('.gitarro_pr.json', 'w') do |file|
+       file.write(JSON.generate(pr))
+    end
+  end
+
+  def export_pr_variables(pr)
+    ENV['GITARRO_PR_AUTHOR'] = pr.head.user.login.to_s
+    ENV['GITARRO_PR_TITLE'] = pr.title.to_s
+    ENV['GITARRO_PR_NUMBER'] = pr.number.to_s
+    ENV['GITARRO_PR_TARGET_REPO'] = @repo
+  end
 
   def clone_repo(noshallow, pr)
     shallow = GitShallowClone.new(@git_dir, pr, @options)
@@ -116,23 +150,6 @@ class TestExecutor
     git = GitOp.new(@git_dir, pr, @options)
     git.merge_pr_totarget(pr.base.ref, pr.head.ref)
     git.del_pr_branch(pr.base.ref, pr.head.ref)
-  end
-
-  def export_pr_data_to_hidden_file(pr)
-    # save this file in local dir where gitarro is executed.
-    File.open('.gitarro_vars', 'w') do |file|
-       file.write("GITARRO_PR_AUTHOR: #{pr.head.user.login}\n" \
-       "GITARRO_PR_TITLE:  #{pr.title}\n" \
-       "GITARRO_PR_NUMBER: #{pr.number}\n" \
-       "GITARRO_PR_TARGET_REPO: #{@repo}\n")
-    end
-  end 
-
-  def export_pr_variables(pr)
-    ENV['GITARRO_PR_AUTHOR'] = pr.head.user.login.to_s
-    ENV['GITARRO_PR_TITLE'] = pr.title.to_s
-    ENV['GITARRO_PR_NUMBER'] = pr.number.to_s
-    ENV['GITARRO_PR_TARGET_REPO'] = @repo
   end
 end
 
@@ -184,6 +201,7 @@ class Backend
 
     create_status(pr, 'pending')
     print_test_required
+    gbexec.export_pr_data(pr)
     exit 0 if @check
     launch_test_and_setup_status(pr) == 'success' ? exit(0) : exit(1)
   end
@@ -195,6 +213,7 @@ class Backend
     pr_on_number = @client.pull_request(@repo, @pr_number) 
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     print_test_required
+    gbexec.export_pr_data(pr)
     launch_test_and_setup_status(pr_on_number)
   end
 
@@ -207,6 +226,7 @@ class Backend
     # gb.check is true when there is a job running as scheduler
     # which doesn't execute the test but trigger another job
     print_test_required
+    gbexec.export_pr_data(pr)
     return false if @check
 
     launch_test_and_setup_status(pr)
@@ -220,6 +240,7 @@ class Backend
     return false unless pr_all_files_type(pr.number, @file_type).any?
 
     print_test_required
+    gbexec.export_pr_data(pr)
     exit(0) if @check
     launch_test_and_setup_status(pr)
   end
