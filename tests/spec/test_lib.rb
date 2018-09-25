@@ -71,6 +71,7 @@ module BasicTests
     # with check we have -1 has value ( used for retrigger)
     puts `ruby #{gitarro}`
     return true if $CHILD_STATUS.exitstatus.zero?
+
     false
   end
 
@@ -109,6 +110,7 @@ class GitarroTestingCmdLine
       puts `ruby #{gitarro}`
     end
     raise 'GITARRO SHOULDNT FAIL' if failed_status(comm_st, cont)
+
     File.file?('/tmp/foo2')
   end
 
@@ -127,6 +129,7 @@ class GitarroTestingCmdLine
   
     puts `ruby #{gitarro}`
     raise 'GITARRO SHOULDNT FAIL' if failed_status(comm_st, cont)
+
     true
   end
 

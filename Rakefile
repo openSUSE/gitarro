@@ -7,6 +7,7 @@ task default: %i[lint reek test buildgem]
 class RspecConfiguration
   def self.check_conf_file
     return true if File.file?('.rspec.yml')
+
     puts '*******************************'
     puts 'Create a .rspec.yml file first'
     puts 'repo and pr_number as variables'

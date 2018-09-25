@@ -162,6 +162,7 @@ class Backend
   def pr_equal_spefic_branch?(pr)
      return true if @branch.nil?
      return true if @branch == pr.base.ref 
+
      puts "branch \"#{pr.base.ref}\" should match github-branch \"#{@branch}\" (given) !!!"
      puts "skipping tests !!!"
      false
@@ -180,6 +181,7 @@ class Backend
   # public for retrigger the test
   def retrigger_check(pr)
     return unless retrigger_needed?(pr)
+
     create_status(pr, 'pending')
     print_test_required
     exit 0 if @check
@@ -188,7 +190,8 @@ class Backend
 
   # public always rerun tests against the pr number if this exists
   def triggered_by_pr_number?
-    return false if @pr_number.nil? 
+    return false if @pr_number.nil?
+
     pr_on_number = @client.pull_request(@repo, @pr_number) 
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     print_test_required
@@ -197,12 +200,15 @@ class Backend
 
   def unreviewed_new_pr?(pr, comm_st)
     return unless commit_is_unreviewed?(comm_st)
+
     pr_all_files_type(pr.number, @file_type)
     return if empty_files_changed_by_pr?(pr)
+
     # gb.check is true when there is a job running as scheduler
     # which doesn't execute the test but trigger another job
     print_test_required
     return false if @check
+
     launch_test_and_setup_status(pr)
   end
 
@@ -212,6 +218,7 @@ class Backend
     return false unless context_present?(comm_st) == false ||
                         pending_pr?(comm_st)
     return false unless pr_all_files_type(pr.number, @file_type).any?
+
     print_test_required
     exit(0) if @check
     launch_test_and_setup_status(pr)
@@ -297,6 +304,7 @@ class Backend
   def retrigger_needed?(pr)
     # we want redo sometimes tests
     return false unless retriggered_by_comment?(pr.number, @context)
+
     # if check is set, the comment in the trigger job will be del.
     # so setting it to pending, it will be remembered
     pr_all_files_type(pr.number, @file_type).any?
