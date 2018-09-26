@@ -1,13 +1,15 @@
 # How to release a new gem of gitarro:
 
+## Building a new gem of gitarro: 
+
 1) Update the version of the gem.
 
-vim gem/gitarro.gemspec
+`vim gem/gitarro.gemspec`
 
+Increase the number of version in cronological order xD
 
 2) build the new gem with
 ```rake buildgem```
-
 
 ## Installing: 
 (Adapt with your gem number version.)
