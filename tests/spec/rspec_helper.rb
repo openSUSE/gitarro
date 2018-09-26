@@ -9,6 +9,7 @@ class SetupRspec
     git_repo = ENV['repo']
     no_repo = 'No gitarro repo was given! use your forked repo'
     raise ArgumentError, no_repo if git_repo.nil?
+
     git_repo
   end
 
@@ -16,6 +17,7 @@ class SetupRspec
     number = ENV['pr_num']
     no_pr = 'No pr Number where to run tests was given'
     raise ArgumentError, no_pr if number.nil?
+
     number
   end
 end

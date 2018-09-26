@@ -67,6 +67,7 @@ class GitOp
     `git pull origin #{upstream}`
     `git checkout -b #{pr_fix}#{pr_branch} origin/#{pr_branch}`
     return if $CHILD_STATUS.exitstatus.zero?
+
     # if it fails the PR contain a forked external repo
     repo_external.checkout_into
   end
@@ -82,6 +83,7 @@ class GitOp
   def ck_or_clone_git
     git_repo_dir = git_dir + '/' + @options[:repo].split('/')[1]
     return if File.directory?(git_repo_dir)
+
     FileUtils.mkdir_p(git_dir) unless File.directory?(git_dir)
     Dir.chdir git_dir
     clone_repo

@@ -21,6 +21,7 @@ class ChangelogTests
   def changelog_modified?
     # if the pr contains changes on .changes file, test ok
     return true if pr_contains_changelog? || magic_comment?
+
     false
   end
 

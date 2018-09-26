@@ -136,6 +136,7 @@ class OptParserInternal
 
   def ck_mandatory_option(option)
     return unless @options[option.to_sym].nil?
+
     raise_incorrect_syntax("option --#{option} not found")
   end
 
