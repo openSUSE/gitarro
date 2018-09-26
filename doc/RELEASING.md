@@ -14,3 +14,10 @@ vim gem/gitarro.gemspec
 
 3) use `sudo gem install gem/gitarro-0.1.77.gem`
 
+
+4) Release to rubygem.org
+
+`gem push YOURGEM`
+
+
+You should be one maintainer of gitarro. If you want to become one just open an issue on upstream.

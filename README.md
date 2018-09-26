@@ -13,6 +13,7 @@
 - [Basic concepts, installation, configuration, tests, syntax and a basic example](doc/BASICS.md)
 - [Advanced usage](doc/ADVANCED.md)
 - [How to contribute to gitarro development](doc/CONTRIBUTING.md)
+- [Releasing gitarro](doc/RELEASING.md)
 
 gitarro allow you to run tests on Git Hub [Pull Requests](https://help.github.com/articles/about-pull-requests/) (also known as PRs) using almost any script, language or binary and providing easy integration with other tools, and testing env. (such containers, cloud, VMS, etc.)
 
