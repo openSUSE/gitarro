@@ -214,7 +214,7 @@ class Backend
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     print_test_required
     gbexec.export_pr_data(pr)
-    launch_test_and_setup_status(pr_on_number)
+    launch_test_and_setup_status(pr_on_number) == 'success' ? exit(0) : exit(1)
   end
 
   def unreviewed_new_pr?(pr, comm_st)
@@ -229,7 +229,7 @@ class Backend
     gbexec.export_pr_data(pr)
     return false if @check
 
-    launch_test_and_setup_status(pr)
+    launch_test_and_setup_status(pr) == 'success' ? exit(0) : exit(1)
   end
 
   def reviewed_pr?(comm_st, pr)
@@ -242,7 +242,7 @@ class Backend
     print_test_required
     gbexec.export_pr_data(pr)
     exit(0) if @check
-    launch_test_and_setup_status(pr)
+    launch_test_and_setup_status(pr) == 'success' ? exit(0) : exit(1)
   end
 
   # this function will check if the PR contains in comment the magic word
