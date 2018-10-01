@@ -2,9 +2,19 @@
 
 require 'octokit'
 
-REPO = ENV['GITARRO_PR_TARGET_REPO']
+if ENV.key?('GITARRO_PR_TARGET_REPO')
+  REPO = ENV['GITARRO_PR_TARGET_REPO']
+else
+  puts 'ERROR: Environment variable GITARRO_PR_TARGET_REPO not available'
+  exit(1)
+end
 
-PR_NUMBER = Integer(ENV['GITARRO_PR_NUMBER'])
+if ENV.key?('GITARRO_PR_NUMBER')
+  PR_NUMBER = Integer(ENV['GITARRO_PR_NUMBER'])
+else
+  puts 'ERROR: Environment variable GITARRO_PR_NUMBER not available'
+  exit(1)
+end
 
 # Warning: this script assume that octokit has access to netrc credentials.
 
