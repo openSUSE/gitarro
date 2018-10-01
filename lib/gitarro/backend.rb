@@ -214,7 +214,7 @@ class Backend
     pr_on_number = @client.pull_request(@repo, @pr_number) 
     puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
     print_test_required
-    gbexec.export_pr_data(pr)
+    gbexec.export_pr_data(pr_on_number)
     launch_test_and_setup_status(pr_on_number) == 'success' ? exit(0) : exit(1)
   end
 
