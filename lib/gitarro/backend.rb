@@ -100,8 +100,9 @@ class TestExecutor
   end
 
   def export_pr_data(pr)
+      export_pr_variables(pr)
       export_pr_data_to_simple_file(pr)
-      export_pr_data_to_file(pr)
+      export_pr_data_to_json_file(pr)
   end
 
   private
@@ -117,7 +118,7 @@ class TestExecutor
     end
   end
 
-  def export_pr_data_to_file(pr)
+  def export_pr_data_to_json_file(pr)
     pr = pr.to_hash
     pr[:files] = []
     @client.pull_request_files(@repo, pr[:number]).each do |github_file|
