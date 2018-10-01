@@ -1,6 +1,6 @@
 require 'date'
 
-GITARRO_VERSION = '0.1.77'.freeze
+GITARRO_VERSION = '0.1.78'.freeze
 GITARRO_TODAY = Date.today.strftime('%Y-%m-%d')
 Gem::Specification.new do |s|
   s.name = 'gitarro'
