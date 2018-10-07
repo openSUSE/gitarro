@@ -5,6 +5,7 @@
 
 [![Build Status Master branch](https://travis-ci.org/openSUSE/gitarro.svg?branch=master)](https://travis-ci.org/openSUSE/gitarro)
 [![Gem Version](https://badge.fury.io/rb/gitarro.svg)](https://badge.fury.io/rb/gitarro)
+![awesome-badge](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)
 
 ## Table of Content
 - [Introduction](#introduction)
@@ -57,3 +58,7 @@ See also the list of [contributors](https://github.com/openSUSE/gitarro/graphs/c
 ## License 
 
 This project is licensed under the MIT License - see the LICENSE.md file for details
+
+### Extra:
+
+Gitarro is part of the curate list [Awesome Ruby](http://awesome-ruby.com)
