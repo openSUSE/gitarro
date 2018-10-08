@@ -88,9 +88,8 @@ class TestExecutor
   # this will clone the repo and execute the tests
   def pr_test(pr)
     clone_repo(@noshallow, pr)
-    # do valid tests and store the result
-    test_status = run_script
-    test_status
+    # do valid tests and return the result
+    run_script
   end
 
   # run validation script for validating the PR.
