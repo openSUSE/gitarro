@@ -2,7 +2,7 @@
 
 # gitarro tests
 
-## Unit tests 
+## Unit tests
 
 These tests run automatically on Travis for new [PRs](https://travis-ci.org/openSUSE/gitarro/pull_requests) or when a [special comment at a PR](ADVANCED.md#retriggering-a-specific-test) triggers them.
 
@@ -26,15 +26,15 @@ These tests use [rspec](http://rspec.info/) are not executed on travis, so you n
 ### Syntax variables
 
 You need a fixed PR open for running some tests.
-REPO is the value of your forked repo.
-PR_NUM is the pr of the fake repo on your forked repo (this is needed for testing)
+REPO is the value of your forked repository.
+PR_NUM is the PR of the fake repository on your forked repository (this is needed for testing).
 
 Syntax:
 ```console
  +repo=<REPO> pr_num=<PR_NUM> rspec -fd cmdline_spec.rb
 ```
 
-Where ```REPO``` is your repository in format ```project/repo``` and ```PR_NUM``` is an opened and mergeable Pull Request.
+Where ```REPO``` is your repository in format ```project/repo``` and ```PR_NUM``` is an opened and can be merged PR.
 
 
 How to run them:
@@ -42,8 +42,8 @@ How to run them:
 #### Via rake (best way)
 
 Then create a file called: `.rspec.yml`
-And put your Repo and PR_Number in yml. (this file is ignored by git)
-The Pr number is the fake repo on your forked repo
+And put your repository and PR_Number in yml file. (this file is ignored by git)
+The Pr number is the fake repository on your forked repository.
 
 ```yaml
 repo: MalloZup/gitarro

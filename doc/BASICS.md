@@ -3,7 +3,7 @@
 
 # A basic example
 
-Substitute this with your cred
+Substitute this with your credential:
 GITHUB_USER="GRANDE_USER"
 GITUB_PWD_OR_TOKEN="MYPASSWORD"
 
@@ -13,7 +13,7 @@ echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN > /
 sudo chmod 0600 ~/.netrc
 echo "#! /bin/bash" > /tmp/tests.sh
 chmod +x /tmp/tests.sh
-gitarro.rb -r openSUSE/gitarro -c "ruby-test" -t /tmp/tests.sh 
+gitarro.rb -r openSUSE/gitarro -c "ruby-test" -t /tmp/tests.sh
 ```
 
 # Current syntax:
@@ -50,31 +50,31 @@ gitarro runs a validation script, binary or command (-t or --test) against PRs o
 
 ```gitarro.rb -r openSUSE/gitarro -c "ruby-test" -t /tmp/tests.sh --https ```
 
-Gitarro use shallow clone by default with a temporary gitrepo. 
+Gitarro use shallow clone by default with a temporary gitrepo.
 
 
-When you run this command, you will run the script tests.sh against the 1st PR open on the GitHub Repository openSUSE/gitarro. 
+When you run this command, you will run the script tests.sh against the 1st PR open on the GitHub Repository openSUSE/gitarro.
 
-When you run it for the 2nd time, it will run on the 2nd PR if open, otherwise if you have only 1 PR open, it will not reschedule any test. The `-c` option, is the context(mandatory), which is the Name of tests.
-If you change the context name, it will reschedule the test for the PR. 
+When you run it for the 2nd time, it will run on the 2nd PR if open, otherwise if you have only 1 PR open, it will not reschedule any test. The `-c` option, is the context(mandatory), which is the name of tests.
+If you change the context name, it will reschedule the test for the PR.
 
-Having 10 differents context, mean that you have 10 differents type of tests on PR. ( like python-pylint, python-acceptance, ruby-rspec etc..)
+Having 10 different contexts, mean that you have 10 different type of tests on PR. ( like python-pylint, python-acceptance, ruby-rspec etc..)
 
 # Basic concepts part 2.
 
 There are two basic ways of using it:
 
 * It can run against the first untested PR or the first PR with a comment to force a test, or against the PR you specify.
- 
+
   In this case you will need to run gitarro as many times as opened PRs requiring tests.  
-  
+
   It works this way so if you are using Jenkins pulling the repository, you can have one job build for each gitarro execution.
 
-  It is also posible instruct gitarro to scan only the Pull Requests changed during the last X seconds (--changed_since). From GitHub API perspective, and gitarro's perspective a change is either a new commit or a new comment at the PR.
+  It is also possible instruct gitarro to scan only the Pull Requests changed during the last X seconds (--changed_since). From GitHub API perspective, and gitarro's perspective a change is either a new commit or a new comment at the PR.
 
 * If you are using [webhooks](https://developer.github.com/webhooks/), then you just need to specify the ID of the Pull Requests that started the hook (--P or --PR)
 
-It is also posible to tell gitarro to ignore PRs unless specific files are changed (by path or by extension with -f or --file), and specify a URL to added to the Pull Requests with the link to the log with the test output, for example to a Jenkins log (-u o --url).
+It is also possible to tell gitarro to ignore PRs unless specific files are changed (by path or by extension with -f or --file), and specify a URL to added to the Pull Requests with the link to the log with the test output, for example to a Jenkins log (-u o --url).
 
 
 # Devel Installation
@@ -100,7 +100,7 @@ Configure the ```/~.netrc``` with the following format (you can add a new line i
 
 # Tests
 
-Tipically you will have a shell script making all the work for you, including possible parameters (but again, it is possible to use any other scripting language, binaries or commands).
+Typically you will have a shell script making all the work for you, including possible parameters (but again, it is possible to use any other scripting language, binaries or commands).
 
 For example:
 
@@ -109,9 +109,9 @@ For example:
 rubocop *.rb
 ```
 
-Would check Ruby source files for code that does not follow the [ruby style guide](https://github.com/bbatsov/ruby-style-guide). It will return 0 if everything is fine, or any other number if there are errors. With this return code gitarro is able to know if the test needs to be marked as failed 
+Would check Ruby source files for code that does not follow the [ruby style guide](https://github.com/bbatsov/ruby-style-guide). It will return 0 if everything is fine, or any other number if there are errors. With this return code gitarro is able to know if the test needs to be marked as failed
 
-Please take note that if you are using a script and decite to run it without calling the interpreter, it should be configured as executable.
+Please take note that if you are using a script and decide to run it without calling the interpreter, it should be configured as executable.
 
 # Syntax
 

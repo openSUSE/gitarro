@@ -12,24 +12,24 @@ So you want to be a gitarro hacker!
 Look at open issues with label: 'easy-fix'
 https://github.com/openSUSE/gitarro/issues?q=is%3Aopen+is%3Aissue+label%3Aeasy-fix
 
-## Issues before big Prs aka features 
+## Issues before big PRs aka features
 
 If you want to contribute, just look at current issues and start to discuss/thinking how you will solve some of them.
 If you have in mind a new feature, just **open an issue first.**
-Instead of Proposing directly a Pull Request, openining an issue where you describe what you want to do, how, etc.,
-will give you directly a feedeback, and have a sense of knowing what you will do by describing, discussing it **before**, 
+Instead of Proposing directly a Pull Request, opening an issue where you describe what you want to do, how, etc.,
+will give you directly a feedback, and have a sense of knowing what you will do by describing, discussing it **before**,
 will  increase the ease you will code ( discussing the design before, instead of changing it after).
-For small bugfixing/improvements of course you don't need an Issue referenced.
+For small bug-fixing/improvements of course you don't need an Issue referenced.
 
-## Ruby workflow
+## Ruby Workflow
 
-1. Run rake locally with `rake`. 
+1. Run rake locally with `rake`.
 2. Run `rake spec`. [Read more here](https://github.com/openSUSE/gitarro/blob/master/doc/TESTS.md#acceptance-tests)
 3. Run reek for improve your code `rake reek` or `reek your_file.rb`
 
 ## GIT Workflow
 
-Please follow theseg simple rules to make everyone's life easier, including yours :-)
+Please follow these simple rules to make everyone's life easier, including yours :-)
 
 1. First of all, fork the gitarro repository.
 
