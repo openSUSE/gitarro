@@ -119,10 +119,7 @@ class TestExecutor
 
   def export_pr_data_to_json_file(pr)
     pr = pr.to_hash
-    pr[:files] = []
-    @client.pull_request_files(@repo, pr[:number]).each do |github_file|
-        pr[:files].push(github_file.to_hash)
-    end
+    pr[:files] = @client.pull_request_files(@repo, pr[:number]).map(&:to_h)
     File.open('.gitarro_pr.json', 'w') do |file|
        file.write(JSON.generate(pr))
     end
