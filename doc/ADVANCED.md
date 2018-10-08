@@ -2,11 +2,11 @@
 
 # Using Env Variable in your script.
 
-Gitarro add some meta information about the PR your are testing, and this are passed as env. variables.
+Gitarro adds some meta-information about the PR your are testing, and these are passed as environment variables.
 
 The variable currently are:
 
-```console 
+```console
 GITARRO_PR_AUTHOR
 GITARRO_PR_TITLE
 GITARRO_PR_NUMBER
@@ -14,14 +14,14 @@ GITARRO_PR_TARGET_REPO
 
 ```
 
-In the script that you are using with the **-t option**, you can use them , reading the env var.
+In the script that you are using with the **-t option**, you can use them , reading the environment variables.
 
-Here just an example..
+Here just an example:
 ```ruby
  do_stuff if ENV['GITARRO_PR_AUTHOR'] == 'MalloZup'
  puts ENV['GITARRO_PR_TITLE']
- puts ENV['GITARRO_PR_NUMBER'] 
- puts ENV['GITARRO_PR_TARGET_REPO'] 
+ puts ENV['GITARRO_PR_NUMBER']
+ puts ENV['GITARRO_PR_TARGET_REPO']
 ```
 
 
@@ -31,8 +31,8 @@ Here just an example..
 
 In order to retrigger a specific test, you need to add a comment to the PR.
 
-**PLESE NOTE**: gitarro will delete the comment where you write the retriggering command, 
-so make sure you use a separate comment for this.
+**PLESE NOTE**: gitarro will delete the comment where you write the retriggering command,
+so make sure that you use a separate comment for this.
 
 Syntax:
 
@@ -47,22 +47,22 @@ In this examples you want to rerun a test called gitarro-magic.
 Valid examples:
 
 * ```gitarro rerun gitarro-magic !!!```
-  
+
   It will work since there is a space and at least three exclamation marks after the test name.
 * ```gitarro rerun gitarro-magic !!!!!!!```
-  
+
   It will work since there is a space and at least three exclamation marks after the test name.
 * ```I discovered a bug so I need to run tests again, gitarro rerun gitarro-magic !!!!!!!```
-  
+
   It will work since there is a space and at least three exclamation marks after the test name, but **the whole comment will be removed** and the developer will loose it.
 
 Invalid examples:
 
 * ```gitarro rerun gitarro-magic !```
- 
+
   It will not work since there is a space after the test name, but less than three exclamation marks.
 * ```gitarro rerun gitarro-magic2 !!!!!!!```
- 
+
   It will not work since there is a space and at least three exclamation marks after the test name, but the test name itself is incorrect.
 
 # Check for PRs
