@@ -20,7 +20,6 @@ rake test
 
 These tests use [rspec](http://rspec.info/) are not executed on travis, so you need to launch the execution manually.
 
-
 **Run your tests always on your forked repo!**
 
 ### Syntax variables
@@ -29,15 +28,16 @@ You need a fixed PR open for running some tests.
 REPO is the value of your forked repository.
 PR_NUM is the PR of the fake repository on your forked repository (this is needed for testing).
 
-Syntax:
-```console
+### Syntax
+
+```shell
  +repo=<REPO> pr_num=<PR_NUM> rspec -fd cmdline_spec.rb
 ```
 
-Where ```REPO``` is your repository in format ```project/repo``` and ```PR_NUM``` is an opened and can be merged PR.
+Where `REPO` is your repository in format `project/repo` and `PR_NUM` is an opened and mergeable Pull Request.
 
 
-How to run them:
+### How to run them
 
 #### Via rake (best way)
 
@@ -51,9 +51,10 @@ pr_num: 1
 ```
 
 Then run the tests with
-``` rake spec```
+`rake spec`
 
 #### Manually (using rspec)
+
 For example:
 
 ```console

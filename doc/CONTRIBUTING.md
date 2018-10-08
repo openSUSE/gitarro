@@ -1,6 +1,7 @@
 [Documentation index](../README.md#documentation)
 
 # Rubygem doc:
+
 http://www.rubydoc.info/gems/gitarro/
 
 # How to contribute to gitarro development
@@ -12,7 +13,7 @@ So you want to be a gitarro hacker!
 Look at open issues with label: 'easy-fix'
 https://github.com/openSUSE/gitarro/issues?q=is%3Aopen+is%3Aissue+label%3Aeasy-fix
 
-## Issues before big PRs aka features
+## Issues before big Prs aka features
 
 If you want to contribute, just look at current issues and start to discuss/thinking how you will solve some of them.
 If you have in mind a new feature, just **open an issue first.**
@@ -20,6 +21,7 @@ Instead of Proposing directly a Pull Request, opening an issue where you describ
 will give you directly a feedback, and have a sense of knowing what you will do by describing, discussing it **before**,
 will  increase the ease you will code ( discussing the design before, instead of changing it after).
 For small bug-fixing/improvements of course you don't need an Issue referenced.
+
 
 ## Ruby Workflow
 
