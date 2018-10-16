@@ -1,7 +1,4 @@
-# gitarro
-
-![GUNDAM image](doc/gundam.jpg)
-![GUNDAM image](doc/gundam.jpg)
+ <p align="center"><img src="https://i.postimg.cc/jdy1Rfw4/Mesa-de-trabajo-1ldpi-2.png"></p>
 
 [![Build Status Master branch](https://travis-ci.org/openSUSE/gitarro.svg?branch=master)](https://travis-ci.org/openSUSE/gitarro)
 [![Gem Version](https://badge.fury.io/rb/gitarro.svg)](https://badge.fury.io/rb/gitarro)
