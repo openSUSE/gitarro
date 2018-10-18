@@ -1,8 +1,8 @@
- <p align="center"><img src="https://i.postimg.cc/jdy1Rfw4/Mesa-de-trabajo-1ldpi-2.png"></p>
+ <p align="center"><img src=assets/images/Mesa-de-trabajo-1ldpi-2.png></p>
 
 [![Build Status Master branch](https://travis-ci.org/openSUSE/gitarro.svg?branch=master)](https://travis-ci.org/openSUSE/gitarro)
 [![Gem Version](https://badge.fury.io/rb/gitarro.svg)](https://badge.fury.io/rb/gitarro)
-![awesome-badge](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)
+![awesome-badge](assets/images/badge.svg)
 
 ## Table of Content
 
