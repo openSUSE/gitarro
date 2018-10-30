@@ -3,7 +3,7 @@
 # A basic example
 
 Substitute these with your credentials:
-
+```
 GITHUB_USER="GRANDE_USER"
 GITUB_PWD_OR_TOKEN="MYPASSWORD"
 ```
