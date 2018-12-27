@@ -28,7 +28,7 @@ It can run on any system that is able to use ruby and [octokit](https://github.c
 
 1. Setup the netrc file
     ```shell
-    GITHUB_USER=INSERT GITHUB_PWD_OR_TOKEN=foo echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN" > /~.netrc
+    GITHUB_USER=INSERT GITHUB_PWD_OR_TOKEN=foo echo "machine api.github.com login $GITHUB_USER password $GITUB_PWD_OR_TOKEN" > ~/.netrc
     sudo chmod 0600 ~/.netrc
     ```
 
@@ -44,7 +44,7 @@ It can run on any system that is able to use ruby and [octokit](https://github.c
 
     ```shell
     YOUR_GITHUB_PROJECT="MalloZup/gitarro"
-    gitarro.rb -r $YOUR_GITHUB_PROJECT -c "ruby-test" -t /tmp/tests.sh --https"
+    gitarro.rb -r $YOUR_GITHUB_PROJECT -c "ruby-test" -t /tmp/tests.sh --https
     ```
 
 ## Authors

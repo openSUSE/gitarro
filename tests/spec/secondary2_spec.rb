@@ -9,7 +9,7 @@ describe 'secondary2 features' do
   let(:test) { GitarroTestingCmdLine.new(gitarrorepo, '/tmp/bar') }
   let(:comm_st) { rgit.commit_status(pr) }
 
-  it 'gitarro should see PR requiring test' do
+  it 'gitarro should see PR requiring test through a comment' do
     context = 'pr-should-retest'
     comment = rgit.create_comment(pr, "gitarro rerun #{context} !!!")
     result, output = test.changed_since(comm_st, 60, context)
@@ -18,11 +18,27 @@ describe 'secondary2 features' do
     expect(output).to match(/^\[TESTREQUIRED=true\].*/)
   end
 
-  it 'gitarro should see PR as not requiring test' do
+  it 'gitarro should see PR as not requiring test through a comment' do
     context = 'pr-should-not-retest'
     comment = rgit.create_comment(pr, "Updating PR for #{context} !!!")
     result, output = test.changed_since(comm_st, 60, context)
     rgit.delete_c(comment.id)
+    expect(result).to be true
+    expect(output).not_to match(/^\[TESTREQUIRED=true\].*/)
+  end
+
+  it 'gitarro should see PR requiring test through a checkbox' do
+    context = 'pr-should-retest'
+    rgit.change_description(pr, "[x] Re-run test \"#{context}\"")
+    result, output = test.changed_since(comm_st, 60, context)
+    expect(result).to be true
+    expect(output).to match(/^\[TESTREQUIRED=true\].*/)
+  end
+
+  it 'gitarro should see PR as not requiring test through a checkbox' do
+    context = 'pr-should-not-retest'
+    rgit.change_description(pr, "[ ] Re-run test \"#{context}\"")
+    result, output = test.changed_since(comm_st, 60, context)
     expect(result).to be true
     expect(output).not_to match(/^\[TESTREQUIRED=true\].*/)
   end

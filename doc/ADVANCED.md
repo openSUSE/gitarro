@@ -26,24 +26,24 @@ Here just an example:
 
 ## Instructions
 
-In order to retrigger a specific test, you need to add a comment to the PR.
+In order to retrigger a specific test, you need to add a comment to the PR or add a checkbox into the description of the PR.
 
 **PLESE NOTE**: gitarro will delete the comment where you write the retriggering command,
 so make sure that you use a separate comment for this.
 
 ### Syntax
 
+#### Using a comment
 ```shell
 gitarro rerun <test_name> !!!
 ```
-
 Notice that there is a space and three exclamation marks (`!!!`) after the test name. This is required for the command to work.
 
-## Examples
+##### Examples
 
 In this examples you want to rerun a test called gitarro-magic.
 
-### Valid examples:
+###### Valid examples:
 
 - `gitarro rerun gitarro-magic !!!`
 
@@ -55,10 +55,9 @@ In this examples you want to rerun a test called gitarro-magic.
 
 - `I discovered a bug so I need to run tests again, gitarro rerun gitarro-magic !!!!!!!`
 
-
   It will work since there is a space and at least three exclamation marks after the test name, but **the whole comment will be removed** and the developer will loose it.
 
-### Invalid examples:
+###### Invalid examples:
 
 - `gitarro rerun gitarro-magic !`
 
@@ -67,6 +66,32 @@ In this examples you want to rerun a test called gitarro-magic.
 - `gitarro rerun gitarro-magic2 !!!!!!!`
 
   It will not work since there is a space and at least three exclamation marks after the test name, but the test name itself is incorrect.
+
+#### Using a checkbox
+```shell
+- [x] Re-run test "<test_name>"
+```
+
+##### Examples
+
+In this examples you want to rerun a test called gitarro-magic.
+
+###### Valid examples:
+
+- `- [x] Re-run test "gitarro-magic"`
+
+  It will trigger the test and uncheck automatically, even if the test fails
+  
+- `- [x] Re-run test "gitarro-magic" (I discovered a bug so I need to run tests again)`
+
+  It will work since since is matching the regular expression
+
+###### Invalid examples:
+
+- `- [x] Re-run test gitarro-magic`
+
+  It will not work since is not matching the regular expression
+
 
 ## Check for PRs
 
