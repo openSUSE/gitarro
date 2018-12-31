@@ -246,7 +246,11 @@ class Backend
   # # for retrigger all the tests.
   # TODO: To be deprecated when retriggered_by_checkbox? is welcomed by users
   def retriggered_by_comment?(pr_number, context)
-    magic_word_trigger = "gitarro rerun #{context} !!!"
+    if context == 'all'
+      magic_word_trigger = "gitarro rerun"
+    else
+      magic_word_trigger = "gitarro rerun #{context} !!!" unless context == 'all'
+    end
     # a pr contain always a comments, cannot be nil
     @client.issue_comments(@repo, pr_number).each do |com|
       # delete comment otherwise it will be retrigger infinetely
@@ -263,14 +267,15 @@ class Backend
   # for retrigger all the tests.
   def retriggered_by_checkbox?(pr, context)
     return false if pr.nil?
+    if context == 'all'
+      return true if pr.body.include? "[x] Re-run test"
+    end
     return false unless pr.body.include? "[x] Re-run test \"#{context}\""
     puts "Re-run test \"#{context}\""
     new_pr_body = pr.body.gsub("[x] Re-run test \"#{context}\"", "[ ] Re-run test \"#{context}\"")
     @client.update_pull_request(@repo, pr.number, body: new_pr_body)
     true
   end
-
-  private
 
   # Show a message stating if there are opened PRs or not
   def print_pr_resume(prs)
@@ -289,6 +294,8 @@ class Backend
   def print_test_required
     puts '[TESTREQUIRED=true] PR requires test'
   end
+
+  private
 
   # this function setup first pending to PR, then execute the tests
   # then set the status according to the results of script executed.
@@ -332,12 +339,12 @@ class Backend
     pr_all_files_type(pr.number, @file_type).any?
   end
 
-  def retrigger_needed?(pr)
-    # we want redo sometimes tests
-    return false unless retriggered_by_checkbox?(pr, @context) || retriggered_by_comment?(pr, @context)
+end
 
-    # if check is set, the comment in the trigger job will be del.
-    # so setting it to pending, it will be remembered
-    pr_all_files_type(pr.number, @file_type).any?
-  end
+def silenced
+  $stdout = StringIO.new
+
+  yield
+ensure
+  $stdout = STDOUT
 end

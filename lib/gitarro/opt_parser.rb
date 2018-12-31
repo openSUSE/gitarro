@@ -37,6 +37,11 @@ module OptionalOptions
     opt.on('-C', '--check', desc) { |check| @options[:check] = check }
   end
 
+  def basic_check_opt(opt)
+    desc = 'Return the amount of PRs requiring a test, but do not run it.'
+    opt.on('-B', '--basiccheck', desc) { |basiccheck| @options[:basiccheck] = basiccheck }
+  end
+
   def no_shallow(opt)
     desc = 'If enabled, gitarro will not use git shallow clone'
     opt.on('--noshallow', desc) { |noshallow| @options[:noshallow] = noshallow }
@@ -106,6 +111,7 @@ module OptionalOptions
     opt.separator "\n Optional options:"
     desc_opt(opt)
     check_opt(opt)
+    basic_check_opt(opt)
     branch_opt(opt)
     no_shallow(opt)
     file_opt(opt)
