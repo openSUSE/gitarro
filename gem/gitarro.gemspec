@@ -26,4 +26,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'rubocop', '~> 0.49'
   s.add_development_dependency 'rubocop-rspec', '~> 1.19'
+  s.metadata = {
+	   'changelog_uri' => 'https://github.com/openSUSE/gitarro/blob/master/CHANGELOG.md'
+  }
 end
