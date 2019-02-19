@@ -55,11 +55,15 @@ Layout/TrailingWhitespace:
 # ExcludedMethods: refine
 Metrics/BlockLength:
   Max: 39
+  Exclude:
+    - 'tests/spec/secondary2_spec.rb'
 
 # Offense count: 1
 # Configuration parameters: CountComments.
 Metrics/ClassLength:
   Max: 112
+  Exclude:
+  - 'lib/gitarro/backend.rb'
 
 # Offense count: 3
 # Configuration parameters: CountComments, ExcludedMethods.

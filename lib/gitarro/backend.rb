@@ -178,7 +178,7 @@ class Backend
      return true if @branch == pr.base.ref 
 
      puts "branch \"#{pr.base.ref}\" should match github-branch \"#{@branch}\" (given) !!!"
-     puts "skipping tests !!!"
+     puts 'skipping tests !!!'
      false
   end
 
@@ -249,12 +249,25 @@ class Backend
     # a pr contain always a comments, cannot be nil
     @client.issue_comments(@repo, pr_number).each do |com|
       # delete comment otherwise it will be retrigger infinetely
-      if com.body.include? magic_word_trigger
-        @client.delete_comment(@repo, com.id)
-        return true
-      end
+      next unless com.body.include? magic_word_trigger
+
+      puts "Re-run test \"#{context}\""
+      @client.delete_comment(@repo, com.id)
+      return true
     end
     false
+  end
+
+  # this function will check if the PR contains a checkbox
+  # for retrigger all the tests.
+  def retriggered_by_checkbox?(pr, context)
+    return false unless pr.body.include? "[x] Re-run test \"#{context}\""
+
+    puts "Re-run test \"#{context}\""
+    new_pr_body = pr.body.gsub("[x] Re-run test \"#{context}\"",
+                               "[ ] Re-run test \"#{context}\"")
+    @client.update_pull_request(@repo, pr.number, body: new_pr_body)
+    true
   end
 
   private
@@ -321,7 +334,8 @@ class Backend
 
   def retrigger_needed?(pr)
     # we want redo sometimes tests
-    return false unless retriggered_by_comment?(pr.number, @context)
+    return false unless retriggered_by_checkbox?(pr, @context) ||
+                        retriggered_by_comment?(pr, @context)
 
     # if check is set, the comment in the trigger job will be del.
     # so setting it to pending, it will be remembered

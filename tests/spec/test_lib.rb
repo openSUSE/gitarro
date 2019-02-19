@@ -32,6 +32,10 @@ class GitRemoteOperations
     client.add_comment(repo, pr.number, comment)
   end
 
+  def change_description(pr, description)
+    client.update_pull_request(repo, pr.number, body: description)
+  end
+
   def delete_c(comment_id)
     client.delete_comment(repo, comment_id)
   end

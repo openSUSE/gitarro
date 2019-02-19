@@ -30,7 +30,7 @@ class ChangelogTests
 
   def changelog_modified?
     # if the pr contains changes on .changes file, test ok
-    return true if pr_contains_changelog? || magic_comment?
+    return true if pr_contains_changelog? || no_changelog_needed? || magic_comment?
 
     false
   end
@@ -41,6 +41,16 @@ class ChangelogTests
     @client.issue_comments(repo, pr_num).any? do |com|
       com.body.include?('no changelog needed')
     end
+  end
+
+  def no_changelog_needed?
+    return false if pr_num.nil?
+
+    pr = @client.pull_request(repo, pr_num)
+    return true unless pr.body.include? '[x] No changelog needed'
+
+    puts 'Skipping changelog update verification'
+    false
   end
 
   def pr_contains_changelog?
