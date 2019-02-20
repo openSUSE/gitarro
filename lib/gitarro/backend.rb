@@ -244,10 +244,10 @@ class Backend
 
   # this function will check if the PR contains in comment the magic word
   # # for retrigger all the tests.
-  def retriggered_by_comment?(pr_number, context)
+  def retriggered_by_comment?(pr, context)
     magic_word_trigger = "gitarro rerun #{context} !!!"
     # a pr contain always a comments, cannot be nil
-    @client.issue_comments(@repo, pr_number).each do |com|
+    @client.issue_comments(@repo, pr.number).each do |com|
       # delete comment otherwise it will be retrigger infinetely
       next unless com.body.include? magic_word_trigger
 
