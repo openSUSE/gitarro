@@ -196,7 +196,6 @@ class Backend
   def retrigger_check(pr)
     return unless retrigger_needed?(pr)
 
-    create_status(pr, 'pending')
     print_test_required
     gbexec.export_pr_data(pr)
     exit 0 if @check
@@ -217,7 +216,6 @@ class Backend
   def unreviewed_new_pr?(pr, comm_st)
     return unless commit_is_unreviewed?(comm_st)
 
-    pr_all_files_type(pr.number, @file_type)
     return if empty_files_changed_by_pr?(pr)
 
     # gb.check is true when there is a job running as scheduler
@@ -263,9 +261,18 @@ class Backend
   def retriggered_by_checkbox?(pr, context)
     return false unless pr.body.include? "[x] Re-run test \"#{context}\""
 
-    puts "Re-run test \"#{context}\""
+    return true if @check
+
+    skipped = ''
+    unless empty_files_changed_by_pr?(pr)
+      skipped = '(Test skipped, there are no changes to test)'
+    end
+
+    puts "Re-run test \"#{context}\" #{skipped}"
     new_pr_body = pr.body.gsub("[x] Re-run test \"#{context}\"",
-                               "[ ] Re-run test \"#{context}\"")
+                               "[ ] Re-run test \"#{context}\" #{skipped}")
+    new_pr_body = new_pr_body.gsub("#{skipped} #{skipped}", skipped) unless skipped.empty?
+                    
     @client.update_pull_request(@repo, pr.number, body: new_pr_body)
     true
   end
@@ -339,6 +346,6 @@ class Backend
 
     # if check is set, the comment in the trigger job will be del.
     # so setting it to pending, it will be remembered
-    pr_all_files_type(pr.number, @file_type).any?
+    empty_files_changed_by_pr?(pr)
   end
 end

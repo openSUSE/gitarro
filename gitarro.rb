@@ -8,6 +8,8 @@ require_relative 'lib/gitarro/git_op'
 require_relative 'lib/gitarro/backend'
 
 b = Backend.new
+exit 0 if b.triggered_by_pr_number?
+
 prs = b.open_newer_prs
 exit 0 if prs.empty?
 
@@ -18,8 +20,6 @@ prs.each do |pr|
 
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = b.client.status(b.repo, pr.head.sha)
-  # pr number trigger.
-  break if b.triggered_by_pr_number?
 
   # retrigger if magic word found
   b.retrigger_check(pr)
