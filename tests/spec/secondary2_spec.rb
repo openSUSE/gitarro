@@ -10,7 +10,7 @@ describe 'secondary2 features' do
   let(:comm_st) { rgit.commit_status(pr) }
 
   it 'gitarro should see PR requiring test through a comment' do
-    context = 'pr-should-retest'
+    context = 'pr-should-retest-through-comment'
     comment = rgit.create_comment(pr, "gitarro rerun #{context} !!!")
     result, output = test.changed_since(comm_st, 60, context)
     rgit.delete_c(comment.id)
@@ -19,7 +19,7 @@ describe 'secondary2 features' do
   end
 
   it 'gitarro should see PR as not requiring test through a comment' do
-    context = 'pr-should-not-retest'
+    context = 'pr-should-not-retest-through-comment'
     comment = rgit.create_comment(pr, "Updating PR for #{context} !!!")
     result, output = test.changed_since(comm_st, 60, context)
     rgit.delete_c(comment.id)
@@ -28,17 +28,19 @@ describe 'secondary2 features' do
   end
 
   it 'gitarro should see PR requiring test through a checkbox' do
-    context = 'pr-should-retest'
-    rgit.change_description(pr, "[x] Re-run test \"#{context}\"")
+    context = 'pr-should-retest-through-checkbox'
+    rgit.change_description(pr, "- [x] Re-run test \"#{context}\"")
     result, output = test.changed_since(comm_st, 60, context)
+    rgit.change_description(pr, '')
     expect(result).to be true
     expect(output).to match(/^\[TESTREQUIRED=true\].*/)
   end
 
   it 'gitarro should see PR as not requiring test through a checkbox' do
-    context = 'pr-should-not-retest'
-    rgit.change_description(pr, "[ ] Re-run test \"#{context}\"")
+    context = 'pr-should-not-retest-through-checkbox'
+    rgit.change_description(pr, "- [ ] Re-run test \"#{context}\"")
     result, output = test.changed_since(comm_st, 60, context)
+    rgit.change_description(pr, '')
     expect(result).to be true
     expect(output).not_to match(/^\[TESTREQUIRED=true\].*/)
   end
