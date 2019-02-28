@@ -173,7 +173,7 @@ class Backend
   # public method for check if pr belong to user specified branch
   # if the pr belong to the branch continue tests
   # otherwise just skip tests without setting any status
-  def pr_equal_spefic_branch?(pr)
+  def pr_equal_specific_branch?(pr)
      return true if @branch.nil?
      return true if @branch == pr.base.ref 
 
@@ -202,15 +202,15 @@ class Backend
     launch_test_and_setup_status(pr)
   end
 
-  # public always rerun tests against the pr number if this exists
+  # public tests against the pr number passed by parameter
   def triggered_by_pr_number?
     return false if @pr_number.nil?
 
-    pr_on_number = @client.pull_request(@repo, @pr_number) 
-    puts "Got triggered by PR_NUMBER OPTION, rerunning on #{@pr_number}"
-    print_test_required
-    gbexec.export_pr_data(pr_on_number)
-    launch_test_and_setup_status(pr_on_number)
+    # Note that the test will only run if it pass the checks on unreviewed_new_pr
+    pr_on_number = @client.pull_request(@repo, @pr_number)
+    puts "Got triggered by PR_NUMBER OPTION, PR: #{@pr_number}"
+    comm_st = @client.status(@repo, pr_on_number.head.sha)
+    unreviewed_new_pr?(pr_on_number, comm_st)
   end
 
   def unreviewed_new_pr?(pr, comm_st)
@@ -260,8 +260,6 @@ class Backend
   # for retrigger all the tests.
   def retriggered_by_checkbox?(pr, context)
     return false unless pr.body.include? "[x] Re-run test \"#{context}\""
-
-    return true if @check
 
     skipped = ''
     unless empty_files_changed_by_pr?(pr)
