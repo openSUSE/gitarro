@@ -1,5 +1,10 @@
 # Changelog Gitarro
 
+## 0.1.85
+
+- uncheck the re-run checkbox even if --check option is passed by parameter
+- triggered_by_pr_number will trigger a concrete PR by doing the same checks than unreviewed_new_pr
+
 ## 0.1.84
 
 - Fix the bug discussed in #166
