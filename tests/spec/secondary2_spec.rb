@@ -45,6 +45,15 @@ describe 'secondary2 features' do
     expect(output).not_to match(/^\[TESTREQUIRED=true\].*/)
   end
 
+  it 'gitarro should re-run the test if we force it for a specific PR' do
+    context = 'pr-force-test-only-one-pr'
+    rgit.change_description(pr, "- [x] Re-run test \"#{context}\"")
+    result, output = test.force_test_with_specific_pr(comm_st, pr.number, context)
+    rgit.change_description(pr, '')
+    expect(result).to be true
+    expect(output).not_to match(/^\[TESTREQUIRED=true\].*/)
+  end
+
   # env variables
   it 'Passing env variable to script, we can use them in script' do
     cont = 'env_test_script'

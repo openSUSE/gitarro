@@ -114,8 +114,19 @@ Style/StringLiterals:
   Exclude:
     - 'lib/gitarro/backend.rb'
 
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/NumericPredicate:
+  Enabled: false
+
 # Offense count: 3
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
 # URISchemes: http, https
 Metrics/LineLength:
   Max: 91
+
+Metrics/CyclomaticComplexity:
+  Exclude:
+  - 'lib/gitarro/opt_parser.rb'
+

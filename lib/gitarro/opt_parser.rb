@@ -37,6 +37,11 @@ module OptionalOptions
     opt.on('-C', '--check', desc) { |check| @options[:check] = check }
   end
 
+  def force_test_opt(opt)
+    desc = 'Force to run a test, even if is not marked to be re-triggered.'
+    opt.on('-F', '--force_test', desc) { |force_test| @options[:force_test] = force_test }
+  end
+
   def no_shallow(opt)
     desc = 'If enabled, gitarro will not use git shallow clone'
     opt.on('--noshallow', desc) { |noshallow| @options[:noshallow] = noshallow }
@@ -106,6 +111,7 @@ module OptionalOptions
     opt.separator "\n Optional options:"
     desc_opt(opt)
     check_opt(opt)
+    force_test_opt(opt)
     branch_opt(opt)
     no_shallow(opt)
     file_opt(opt)
@@ -171,6 +177,7 @@ class OptParserInternal
 
   # set some default values
   def defaults_false
+    @options[:force_test] = false if @options[:force_test].nil?
     @options[:check] = false if @options[:check].nil?
     @options[:target_url] = '' if @options[:target_url].nil?
     @options[:https] = false if @options[:https].nil?
