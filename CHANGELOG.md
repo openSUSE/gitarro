@@ -1,5 +1,10 @@
 # Changelog Gitarro
 
+## 0.1.86
+
+- fix: append token to http url correctly
+- minor: remove rendundant attribute.
+
 ## 0.1.85
 
 - uncheck the re-run checkbox even if --check option is passed by parameter

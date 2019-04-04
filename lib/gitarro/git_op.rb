@@ -4,20 +4,23 @@ require 'English'
 require 'fileutils'
 require 'timeout'
 require 'tmpdir'
+require 'netrc'
 
 # handle shallow clone by default
 class GitShallowClone
-  attr_reader :git_dir, :pr, :options, :repo_protocol
+  attr_reader :git_dir, :pr, :options
   def initialize(git_dir, pr, options)
     @git_dir = git_dir
     # pr object for extract all relev. data.
     @pr = pr
     # All gitarro options
     @options = options
-    gh = 'https://github.com/'
-    gg = 'git@github.com:'
-    @repo_protocol = @options[:https] ? gh : gg
-    @repo_url = @options[:https] ? pr.head.repo.html_url : pr.head.repo.ssh_url
+    # get token from netrc file for --https. we need to concatenate it
+    #  to github url like https://TOKEN_HERE@github.com/openSUSE/repo.git
+    netrc = Netrc.read
+    _, token = netrc['api.github.com']
+    http_with_token = pr.head.repo.html_url.insert(8, "#{token}@")
+    @repo_url = @options[:https] ? http_with_token : pr.head.repo.ssh_url
   end
 
   # shallow clone
@@ -51,7 +54,9 @@ class GitOp
     @options = options
     # object to handle external repos
     @repo_external = ExternalRepoGit.new(pr, options)
-    gh = 'https://github.com/'
+    netrc = Netrc.read
+    _, token = netrc['api.github.com']
+    gh = "https://#{token}@github.com/"
     gg = 'git@github.com:'
     @repo_protocol = @options[:https] ? gh : gg
   end
@@ -90,7 +95,7 @@ class GitOp
   end
 
   def clone_repo
-    repo_url = "#{repo_protocol}#{@options[:repo]}.git"
+    repo_url = "#{@repo_protocol}#{@options[:repo]}.git"
     puts `git clone #{repo_url}`
     exit 1 if $CHILD_STATUS.exitstatus.nonzero?
   end
