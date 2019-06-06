@@ -259,7 +259,7 @@ class Backend
   # this function will check if the PR contains a checkbox
   # for retrigger all the tests.
   def retriggered_by_checkbox?(pr, context)
-    return false unless pr.body.include? "[x] Re-run test \"#{context}\""
+    return false unless pr.body.match(/\[x\]\s+Re-run\s+test\s+#{context}/i)
 
     skipped = ''
     unless empty_files_changed_by_pr?(pr)
