@@ -8,23 +8,28 @@ require_relative 'lib/gitarro/git_op'
 require_relative 'lib/gitarro/backend'
 
 b = Backend.new
-exit 0 if b.triggered_by_pr_number?
+prs = b.required_prs
 
-prs = b.open_newer_prs
 exit 0 if prs.empty?
 
 prs.each do |pr|
-  puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}\n" + '=' * 30
+  puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}"
+  puts "DESCRIPTION:\n#{pr.body}\n" + '=' * 30
+
   # check if prs contains the branch given otherwise just break
   next unless b.pr_equal_specific_branch?(pr)
 
   # this check the last commit state, catch for review or not reviewd status.
   comm_st = b.client.status(b.repo, pr.head.sha)
 
+  # force test without any filter or check
+  break if b.force_run_test(pr)
+
   # retrigger if magic word found
   b.retrigger_check(pr)
   # 0) do test for unreviewed pr
   break if b.unreviewed_new_pr?(pr, comm_st)
+
   # we run the test in 2 conditions:
   # 1) the context  is not set, test didnt run
   # 2) the pending status is set on commit, repeat always when pending set

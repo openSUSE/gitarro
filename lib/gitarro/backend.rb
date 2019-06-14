@@ -170,6 +170,13 @@ class Backend
     @gbexec = TestExecutor.new(@options)
   end
 
+  # public method retrieve pull request to process
+  def required_prs
+    return open_newer_prs if @options[:pr_number].nil?
+
+    [@client.pull_request(@repo, @options[:pr_number])]
+  end
+
   # public method for check if pr belong to user specified branch
   # if the pr belong to the branch continue tests
   # otherwise just skip tests without setting any status
@@ -192,9 +199,18 @@ class Backend
     prs
   end
 
+  # public forcing to run the test
+  def force_run_test(pr)
+    return false unless @force_test && defined?(@pr_number)
+
+    print_test_required
+    gbexec.export_pr_data(pr)
+    launch_test_and_setup_status(pr)
+  end
+
   # public for retrigger the test
   def retrigger_check(pr)
-    return unless retrigger_needed?(pr)
+    return false unless retrigger_needed?(pr)
 
     print_test_required
     gbexec.export_pr_data(pr)
@@ -216,7 +232,7 @@ class Backend
   def unreviewed_new_pr?(pr, comm_st)
     return unless commit_is_unreviewed?(comm_st)
 
-    return if empty_files_changed_by_pr?(pr)
+    return true if empty_files_changed_by_pr?(pr)
 
     # gb.check is true when there is a job running as scheduler
     # which doesn't execute the test but trigger another job
