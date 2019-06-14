@@ -51,6 +51,12 @@ It can run on any system that is able to use ruby and [octokit](https://github.c
 
 - [Dario Maiocchi](https://github.com/MalloZup)
 
+ Contributor and Maintainers:
+ 
+ - @juliogonzalez
+ - @srbarrios
+ - @MalloZup
+
 See also the list of [contributors](https://github.com/openSUSE/gitarro/graphs/contributors) who participated in this project.
 
 ## License
