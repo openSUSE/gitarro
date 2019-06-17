@@ -1,5 +1,9 @@
 # Changelog Gitarro
 
+## 0.1.87
+
+- Fix regular expression to Re-run tests
+
 ## 0.1.86
 
 - Triggered_by_pr_number method removed

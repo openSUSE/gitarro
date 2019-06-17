@@ -128,8 +128,8 @@ class GitarroTestingCmdLine
   end
 
   def force_test_with_specific_pr(comm_st, pr_number, cont)
-    gitarro = "#{script} --force_test --PR #{pr_number} -r #{repo} -c #{cont} -d #{cont} -g #{git_dir}" \
-              " -t #{valid_test} -f #{ftype} -u #{url}"
+    gitarro = "#{script} --force_test --PR #{pr_number} -r #{repo} -c #{cont}" \
+              " -d #{cont} -g #{git_dir} -t #{valid_test} -f #{ftype} -u #{url}"
 
     puts `ruby #{gitarro}`
     raise 'GITARRO SHOULDNT FAIL' if failed_status(comm_st, cont)
