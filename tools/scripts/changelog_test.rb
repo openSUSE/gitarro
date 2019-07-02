@@ -47,7 +47,7 @@ class ChangelogTests
     return false if pr_num.nil?
 
     pr = @client.pull_request(repo, pr_num)
-    return true unless pr.body.match(/\[x\]\s+No\s+changelog\s+needed/i)
+    return true if pr.body.match(/\[x\]\s+No\s+changelog\s+needed/i)
 
     false
   end
