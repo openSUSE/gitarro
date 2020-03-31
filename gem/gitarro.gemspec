@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'octokit', '~> 4.7'
   s.add_development_dependency 'minitest', '~> 5.9'
   s.add_development_dependency 'minitest-reporters', '~> 1.1'
-  s.add_development_dependency 'rake', '~> 10.5'
+  s.add_development_dependency 'rake', '>= 12.3.3'
   s.add_development_dependency 'rspec', '~> 3.6'
   s.add_development_dependency 'rubocop', '~> 0.49'
   s.add_development_dependency 'rubocop-rspec', '~> 1.19'
