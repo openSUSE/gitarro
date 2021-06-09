@@ -339,6 +339,12 @@ class Backend
   def filter_files_by_type(files, type)
     # ff: filtered files array
     puts "DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! eoeoeoeoe\n"
+    puts "DEBUG: files #{files}"
+    puts "DEBUG: type #{type}"
+    files.each do |f|
+      puts "filename #{f.filename}"
+      puts "contents_url #{f.contents_url}"
+    end
     ff = []
     if type == 'notype'
       ff = files
