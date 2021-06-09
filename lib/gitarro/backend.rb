@@ -338,6 +338,7 @@ class Backend
   # otherwise we filter the file '.rb' type or fs ''
   def filter_files_by_type(files, type)
     # ff: filtered files array
+    puts "DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! eoeoeoeoe\n"
     ff = []
     if type == 'notype'
       ff = files
