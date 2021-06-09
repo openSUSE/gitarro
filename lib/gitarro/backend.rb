@@ -349,7 +349,12 @@ class Backend
     if type == 'notype'
       ff = files
     else
-      files.each { |f| ff.push(f.filename) if f.filename.include? type }
+      files.each do |f|
+        if f.filename.include? type
+          ff.push(f.filename)
+          puts "DEBUG: YEAHHHHHHHH filename #{f.filename} includes type #{type}!!!"
+        end
+      end
     end
     ff
   end
