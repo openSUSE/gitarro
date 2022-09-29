@@ -247,7 +247,7 @@ class Backend
     # if PR status is not on pending and the context is not set,
     #  we dont run the tests
     return false unless context_present?(comm_st) == false ||
-                        pending_pr?(comm_st)
+                        pending_pr?(comm_st) == false
     return false unless pr_all_files_type(pr.number, @file_type).any?
 
     print_test_required
