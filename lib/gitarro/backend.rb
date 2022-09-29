@@ -244,10 +244,8 @@ class Backend
   end
 
   def reviewed_pr?(comm_st, pr)
-    # if PR status is not on pending and the context is not set,
-    #  we dont run the tests
-    return false unless context_present?(comm_st) == false ||
-                        pending_pr?(comm_st) == false
+    # if PR status is not set we dont run the tests
+    return false if context_present?(comm_st)
     return false unless pr_all_files_type(pr.number, @file_type).any?
 
     print_test_required
