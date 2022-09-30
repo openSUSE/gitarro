@@ -1,5 +1,9 @@
 # Changelog Gitarro
 
+## 0.1.89
+
+- Fix faraday version to work with ruby 2.5
+
 ## 0.1.88
 
 - Skip test if there is a job status for it to avoid spurious reruns on long tests
