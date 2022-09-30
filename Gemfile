@@ -1,10 +1,13 @@
 source 'https://rubygems.org'
 
 gem 'english'
+gem 'farday', '<= 1.10.2'
+gem 'faraday-net_http', '<= 2.1.0'
 gem 'minitest'
 gem 'minitest-reporters'
 gem 'netrc'
 gem 'octokit'
+gem 'public_suffix', '<= 4.0.7'
 gem 'rake'
 gem 'reek'
 gem 'rspec'

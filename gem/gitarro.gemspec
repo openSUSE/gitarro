@@ -17,9 +17,12 @@ Gem::Specification.new do |s|
   s.files = ['lib/gitarro/backend.rb',
              'lib/gitarro/opt_parser.rb', 'lib/gitarro/git_op.rb']
   s.executables = 'gitarro'
+  s.add_dependency 'faraday', '<= 1.10.2'
+  s.add_dependency 'faraday-net_http', '<= 2.1.0'
   s.add_dependency 'english', '~> 0.6'
   s.add_dependency 'netrc', '~> 0.11'
   s.add_dependency 'octokit', '~> 4.7'
+  s.add_dependency 'public_suffix', '<= 4.0.7'
   s.add_development_dependency 'minitest', '~> 5.9'
   s.add_development_dependency 'minitest-reporters', '~> 1.1'
   s.add_development_dependency 'rake', '>= 12.3.3'
