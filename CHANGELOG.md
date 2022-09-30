@@ -1,5 +1,9 @@
 # Changelog Gitarro
 
+## 0.1.88
+
+- Skip test if there is a job status for it to avoid spurious reruns on long tests
+
 ## 0.1.87
 
 - Fix regular expression to Re-run tests
