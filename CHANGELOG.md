@@ -1,5 +1,7 @@
 # Changelog Gitarro
 
+## 0.1.90
+
 - Don't uncheck re-run boxes in check mode as those will be checked again in the next gitarro run triggering the test
 
 ## 0.1.89
