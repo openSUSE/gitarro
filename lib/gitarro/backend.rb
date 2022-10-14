@@ -275,6 +275,9 @@ class Backend
   def retriggered_by_checkbox?(pr, context)
     return false if pr.body.nil? || !pr.body.match(/\[x\]\s+Re-run\s+test\s+"#{context}"/i)
 
+    # In check mode, don't uncheck the box as that would prevent a next gitarro run to actually run the test
+    return true if @check
+
     skipped = ''
     unless empty_files_changed_by_pr?(pr)
       skipped = '(Test skipped, there are no changes to test)'
