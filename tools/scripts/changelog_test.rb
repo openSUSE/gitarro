@@ -24,14 +24,33 @@ class ChangelogTests
 
   def initialize(client, repo, pr_num)
     @client = client
+    client.auto_paginate = true
     @pr_num = pr_num
     @repo = repo
   end
 
   def changelog_modified?
-    # if the pr contains changes on .changes file, test ok
-    return true if pr_contains_changelog? || magic_checkbox? || magic_comment?
+    files = @client.pull_request_files(repo, pr_num)
+    puts("Files modified by PR ##{@pr_num}:")
+    puts files.collect{|f| "  - #{f.filename}"}
+    puts
 
+    # First test if the master changelog files have been modified
+    return false if master_chlog_modified?(files)
+
+    # Return success if the bypass flags are set
+    if magic_comment? || magic_checkbox?
+      puts "Changelog test skipped by user."
+      return true
+    end
+
+    # Return success if changelogs are added
+    if changelog_added?(files)
+      puts "Changelog test passed."
+      return true
+    end
+
+    puts "No changelog entry found. Please add the required changelog entries."
     false
   end
 
@@ -52,26 +71,31 @@ class ChangelogTests
     false
   end
 
-  def pr_contains_changelog?
-    pr_file_have_changelog?(@client.pull_request_files(repo, pr_num))
+  def master_chlog_modified?(files)
+    # Master changelog files (*.changes) cannot be modified directly
+    master_files = files.select{|f| f.filename.end_with? '.changes'}
+    if not master_files.empty?
+      puts "Master changelog files cannot be modified directly."
+      puts "Please revert your changes on the following master changelog file(s):"
+      puts master_files.collect{|f| "  - #{f.filename}"}
+      return true
+    end
+    false
   end
 
-  def pr_file_have_changelog?(files)
-    # .changes file is where we track changelog entries.
-    files.any? { |f| f.filename.include? '.changes' }
+  def changelog_added?(files)
+    # Changelog filenames must be in the following format:
+    # <packagename>.changes.<user>.<feature>
+    files.any? { |f| f.filename.include? '.changes.' }
   end
 end
 
 def success_exit
-  puts 'CHANGELOG TEST WAS OK!!!'
+  puts 'Changelog test passed.'
   exit(0)
 end
 client = Octokit::Client.new(netrc: true)
 chlog = ChangelogTests.new(client, REPO, PR_NUMBER)
 
-# if true we exit with 0, so the test is sucessefull. otherwise the test fail.
-
-success_exit if chlog.changelog_modified?
-puts
-puts 'CHANGELOG TESTS FAILED UPDATE YOUR .changes file in the PR!!'
+exit(0) if chlog.changelog_modified?
 exit(1)

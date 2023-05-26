@@ -2,6 +2,7 @@
 
 ## 0.1.91
 
+- Implement split/merge method in the changelog test
 - Fix typo in 'faraday' entry in the Gemfile
 
 ## 0.1.90
