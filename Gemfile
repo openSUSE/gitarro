@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 gem 'english'
-gem 'farday', '<= 1.10.2'
+gem 'faraday', '<= 1.10.2'
 gem 'faraday-net_http', '<= 2.1.0'
 gem 'minitest'
 gem 'minitest-reporters'
