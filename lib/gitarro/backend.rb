@@ -339,11 +339,23 @@ class Backend
   # otherwise we filter the file '.rb' type or fs ''
   def filter_files_by_type(files, type)
     # ff: filtered files array
+    puts "DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! eoeoeoeoe\n"
+    puts "DEBUG: files #{files}"
+    puts "DEBUG: type #{type}"
+    files.each do |f|
+      puts "filename #{f.filename}"
+      puts "contents_url #{f.contents_url}"
+    end
     ff = []
     if type == 'notype'
       ff = files
     else
-      files.each { |f| ff.push(f.filename) if f.filename.include? type }
+      files.each do |f|
+        if f.filename.include? type
+          ff.push(f.filename)
+          puts "DEBUG: YEAHHHHHHHH filename #{f.filename} includes type #{type}!!!"
+        end
+      end
     end
     ff
   end
