@@ -1,5 +1,9 @@
 # Changelog Gitarro
 
+## 0.1.91
+
+- Allow regexps in the filter
+
 ## 0.1.90
 
 - Don't uncheck re-run boxes in check mode as those will be checked again in the next gitarro run triggering the test
