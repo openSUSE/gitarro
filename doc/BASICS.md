@@ -27,7 +27,7 @@ Mandatory options:
     -t, --test 'TEST.SH'             Command, or full path to script/binary to be used to run the test.
 
 Optional options:
-    -f, --file '.py'                 pr_file type to filter/trigger the test against: .py, .rb
+    -f, --file '.py'                 pr_file type to filter/trigger the test against: .py, .rb or a regular expression
     -d, --description 'DESCRIPTION'  Test decription
     -C, --check                      Check if there is any PR requiring a test, but do not run it.
     -F, --force_test                 Force to run a test, even if is not marked to be re-triggered.

@@ -343,7 +343,8 @@ class Backend
     if type == 'notype'
       ff = files
     else
-      files.each { |f| ff.push(f.filename) if f.filename.include? type }
+      r = Regexp.new(type)
+      files.each { |f| ff.push(f.filename) if f.filename.match?(type) }
     end
     ff
   end

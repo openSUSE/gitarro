@@ -78,7 +78,7 @@ module OptionalOptions
   end
 
   def file_opt(opt)
-    file_description = 'pr_file type to run the test against: .py, .rb'
+    file_description = 'pr_file type to run the test against: .py, .rb or a regular expression'
     opt.on('-f', "--file \'.py\'", file_description) do |file_type|
       @options[:file_type] = file_type
     end

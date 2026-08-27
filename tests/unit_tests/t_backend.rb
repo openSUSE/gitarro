@@ -36,4 +36,25 @@ class BackendTest2 < Minitest::Test
     gbex.test_file = 'test_data/script_fail.sh'
     assert_equal('failure', gbex.run_script)
   end
+
+  def test_filter_files_by_type
+    gitarro = Backend.new(@full_hash)
+    class << gitarro
+        public :filter_files_by_type
+    end
+
+    agent = Sawyer::Agent.new("https://api.example.com")
+    test = Sawyer::Resource.new(agent, { filename: 'path/test.sh'})
+    item1 = Sawyer::Resource.new(agent, { filename: 'item1.yaml'})
+    item2 = Sawyer::Resource.new(agent, { filename: 'item2.yaml'})
+
+    actual = gitarro.filter_files_by_type([test, item1, item2], '.sh')
+    assert_equal(['path/test.sh'], actual)
+
+    actual = gitarro.filter_files_by_type([test, item1, item2], 'path/')
+    assert_equal(['path/test.sh'], actual)
+
+    actual = gitarro.filter_files_by_type([test, item1, item2], 'item.*\.yaml')
+    assert_equal(['item1.yaml', 'item2.yaml'], actual)
+  end
 end
