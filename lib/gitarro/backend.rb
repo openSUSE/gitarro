@@ -207,6 +207,7 @@ class Backend
   # public forcing to run the test
   def force_run_test(pr)
     return false unless @force_test && defined?(@pr_number)
+    puts "Test run forced on PR #{@pr_number}"
 
     print_test_required
     gbexec.export_pr_data(pr)
@@ -216,6 +217,7 @@ class Backend
   # public for retrigger the test
   def retrigger_check(pr)
     return false unless retrigger_needed?(pr)
+    puts "Retrigger requested on PR #{@pr_number}"
 
     print_test_required
     gbexec.export_pr_data(pr)
@@ -251,7 +253,13 @@ class Backend
   def reviewed_pr?(comm_st, pr)
     # if PR status is not set we dont run the tests
     return false if context_present?(comm_st)
-    return false unless pr_all_files_type(pr.number, @file_type).any?
+
+    matching_files = pr_all_files_type(pr.number, @file_type)
+    if matching_files.empty?
+      puts 'Found no file matching the type'
+      return false
+    end
+    puts "Files matching the type: #{matching_files.join(', ')}"
 
     print_test_required
     gbexec.export_pr_data(pr)

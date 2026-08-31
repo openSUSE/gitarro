@@ -13,8 +13,7 @@ prs = b.required_prs
 exit 0 if prs.empty?
 
 prs.each do |pr|
-  puts '=' * 30 + "\n" + "TITLE_PR: #{pr.title}, NR: #{pr.number}"
-  puts "DESCRIPTION:\n#{pr.body}\n" + '=' * 30
+  puts '=' * 30 + "\n#{pr.number} - #{pr.title} https://github.com/#{b.repo}/pull/#{pr.number}\n"
 
   # check if prs contains the branch given otherwise just break
   next unless b.pr_equal_specific_branch?(pr)
