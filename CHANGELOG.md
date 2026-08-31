@@ -1,5 +1,10 @@
 # Changelog Gitarro
 
+## 0.1.92
+
+- Report checks with missing tests script as failures
+- Rationalize the output
+
 ## 0.1.91
 
 - Allow regexps in the filter
