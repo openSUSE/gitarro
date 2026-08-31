@@ -37,6 +37,12 @@ class BackendTest2 < Minitest::Test
     assert_equal('failure', gbex.run_script)
   end
 
+  def test_run_noscript
+    @full_hash[:test_file] = 'test_data/script_missing.sh'
+    gbex = TestExecutor.new(@full_hash)
+    assert_equal('failure', gbex.run_script)
+  end
+
   def test_filter_files_by_type
     gitarro = Backend.new(@full_hash)
     class << gitarro

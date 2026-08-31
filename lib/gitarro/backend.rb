@@ -94,8 +94,13 @@ class TestExecutor
 
   # run validation script for validating the PR.
   def run_script
-    puts `#{@test_file}`
-    $CHILD_STATUS.exitstatus.nonzero? ? 'failure' : 'success'
+    begin
+      puts `#{@test_file}`
+      $CHILD_STATUS.exitstatus.nonzero? ? 'failure' : 'success'
+    rescue => e
+      puts e.message
+      'failure'
+    end
   end
 
   def export_pr_data(pr)
